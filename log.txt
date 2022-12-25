@@ -1,0 +1,100 @@
+
+git submodule add https://github.com/theNewDynamic/gohugo-theme-ananke.git themes/ananke
+git submodule add https://github.com/matcornic/hugo-theme-learn.git themes/hugo-theme-learn
+
+hugo new posts/my-first-post.md
+
+```
+---
+title: "My First Post"
+date: 2022-09-29T13:06:25+09:00
+draft: true
+---
+```
+
+Drafts do not get deployed; once you finish a post, 
+update the header of the post to say draft: false. More info here.
+
+
+start the Hugo server with drafts enabled:
+
+```
+hugo server -D
+```
+
+
+```
+git submodule--helper list
+git submodule deinit -f themes/hugo-theme-learn
+rm -rf .git/modules/themes/hugo-theme-learn
+rm -f themes/hugo-theme-learn
+```
+
+```
+hugo new --kind chapter basics/_index.md
+
+hugo new --kind chapter lecture1/_index.md
+hugo new --kind chapter gitlet/_index.md
+
+
+hugo new Lecture1.md
+
+hugo new ros_basic_noetic/lecture1.kr.md
+
+hugo new basics/first-content.md
+hugo new basics/second-content/_index.md
+
+{{% notice tip %}}
+
+{{% /notice %}}
+
+{{% notice note %}}
+
+{{% /notice %}}
+
+{{%expand "Is this learn theme rocks ?" %}}Yes !.{{% /expand%}}
+
+
+```
+
+Deploy
+```
+hugo -t hugo-theme-learn
+
+git submodule add -b master <Github Page repository url> public
+git submodule add -b master https://github.com/com2018-fa22/com2018-fa22.github.io.git public
+
+git submodule add -b master https://github.com/RB2023ROS/RB2023ROS.github.io.git public
+```
+
+
+
+{{< tabs >}}
+{{% tab name="TestSort.java" %}}
+
+
+{{% /tab %}}
+{{% tab name="Sort.java" %}}
+
+{{% /tab %}}
+{{< /tabs >}}
+
+
+
+{{< tabs >}}
+{{% tab name="GoogleMaps.java" %}}
+
+{{% /tab %}}
+{{% tab name="Restaurant.java" %}}
+
+
+{{% /tab %}}
+{{% tab name="실행 결과" %}}
+
+
+{{% /tab %}}
+{{< /tabs >}}
+
+![A Chapter](/en/basics/installation/images/chapter.png?classes=shadow&width=60pc)
+
+![img1](/kr/lecture12/images/lec12_1.png?height=300px)
