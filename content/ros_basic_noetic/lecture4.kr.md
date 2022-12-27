@@ -1,5 +1,5 @@
 ---
-title: "Lecture4 - Node Programming, Topic Pub,Sub and Message"
+title: "Lecture4 - First Programming, ROS Topic"
 date: 2022-12-25T13:36:28+09:00
 draft: false
 ---
@@ -832,3 +832,11 @@ class CollisionAvoidNode:
 {{% notice note %}}
 제가 작성한 예시를 수정하여 더욱 똑똑한 로봇을 구현하셔도 좋고, 자유롭게 실습해보시기 바랍니다.
 {{% /notice %}}
+
+---
+
+**참고자료**
+
+- [https://rsl.ethz.ch/education-students/lectures/ros.html](https://rsl.ethz.ch/education-students/lectures/ros.html)
+- [https://docs.ros.org/en/foxy/index.html](https://docs.ros.org/en/foxy/index.html)
+- [http://wiki.ros.org/msg](http://wiki.ros.org/msg)

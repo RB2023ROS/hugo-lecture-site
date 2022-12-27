@@ -506,3 +506,12 @@ def stop_cb(self, request):
 ![lec5_9.png](/kr/ros_basic_noetic/images5/lec5_9.png?height=400px)
 
 > 지금까지 ROS Service에 대해 배워보았습니다. Topic과 더불어 많이 사용되는 통신 메커니즘이므로 잘 숙지하고 복습하시기 바랍니다.
+
+---
+
+**참고자료**
+
+- [https://rsl.ethz.ch/education-students/lectures/ros.html](https://rsl.ethz.ch/education-students/lectures/ros.html)
+- [https://ko.wikipedia.org/wiki/아르키메데스\_와선](https://ko.wikipedia.org/wiki/%EC%95%84%EB%A5%B4%ED%82%A4%EB%A9%94%EB%8D%B0%EC%8A%A4_%EC%99%80%EC%84%A0)
+- [https://docs.ros.org/en/foxy/index.html](https://docs.ros.org/en/foxy/index.html)
+- [http://wiki.ros.org/Services](http://wiki.ros.org/Services)

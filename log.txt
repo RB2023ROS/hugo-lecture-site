@@ -97,4 +97,4 @@ git submodule add -b master https://github.com/RB2023ROS/RB2023ROS.github.io.git
 
 ![A Chapter](/en/basics/installation/images/chapter.png?classes=shadow&width=60pc)
 
-![img1](/kr/lecture12/images/lec12_1.png?height=300px)
+![lec8_0.png](/kr/ros_basic_noetic/images2/lec8_0.png?height=400px)
