@@ -1,517 +1,842 @@
 ---
-title: "Lecture5 - ROS Service, Parameter"
+title: "Lecture5 - First Programming, ROS Topic"
 date: 2022-12-25T13:36:26+09:00
 draft: false
 ---
 
-> 지난 시간 마지막 예시였던 장애물 회피 코드부터 간단하게 리뷰해보고자 합니다.
+#### 이번 강의부터, 본격적인 프로그래밍이 시작됩니다.
 
-![lec5_0.png](/kr/ros_basic_noetic/images5/lec5_0.png?height=400px)
+> 첫번째로 Node의 프로그래밍을 살펴보고자 하며, 시작 전 간단한 복습을 진행하고 시작하겠습니다.
 
-제가 작성한 로직은 다음과 같습니다.
+![lec4_0.png](/kr/ros_basic_noetic/images5/lec4_0.png?height=300px)
 
-- 과제를 해보셨다면 아시겠지만, 측정 범위를 벗어나게 되면 data.ranges는 inf 값을 갖게 됩니다. 이를 걸러내는 코드가 아래 부분입니다.
+image from : [clearpathrobotics](http://www.clearpathrobotics.com/assets/guides/kinetic/ros/Intro%20to%20the%20Robot%20Operating%20System.html)
 
-```python
-        for i, point in enumerate(data.ranges):
-            if not math.isinf(point) and point < 1.0:
+- Workspace와 패키지
+
+```xml
+# WS 생성
+mkdir -p catkin_ws/src
+cd catkin_ws
+catkin config --init
+
+# Package 생성
+catkin_create_pkg <pkg-name> <depend1> <depend2> ...
 ```
 
-![lec5_1.png](/kr/ros_basic_noetic/images5/lec5_1.png?height=400px)
+## ROS Node Programming
 
-- 저의 로직은, 정면을 기점으로 왼쪽과 오른쪽 각각 inf가 아닌 데이터의 개수를 카운팅합니다. 전체 데이터가 362개이고 마지막 데이터는 사용하기 않는 값이기 때문에, 180을 기점으로 잡았습니다.
+- C++ 코드는 src 폴더 안에, 파이썬 코드는 **scripts**라는 폴더 안에 위치시키는 것이 일반적입니다.
 
-```python
-        left_side_count = 0
-        right_side_count = 0
-
-        for i, point in enumerate(data.ranges):
-            if not math.isinf(point) and point < 1.0:
-                if i > 180:
-                    left_side_count += 1
-                else:
-                    right_side_count += 1
+```xml
+cd <pkg-name>
+mkdir scripts
 ```
 
-- 이제, 제어 데이터를 만들어줍니다. ROS를 비롯하여 로봇 시스템에서는 대부분 **오른손 좌표계**를 사용합니다. 따라서 위에서 보았을 rospy.loginfo(hello_du)때 오른손이 감기는 **반시계 방향이 + 부호를** 갖게 됩니다. 이를 고려하여 각속도를 정했습니다. 180은 magic number, 일종의 변환 상수입니다.
+> 지금부터, 직접 명령어를 한줄씩 따라치면서 실습하셔도 좋고, 제가 미리 준비해둔 Package를 사용하셔도 좋습니다.
 
-![lec5_2.png](/kr/ros_basic_noetic/images5/lec5_2.png?height=300px)
+다음으로, 파이썬 코드를 작성하고 패키지를 빌드해봅시다.
 
-image from : [오로카](https://cafe.naver.com/openrt/24274)
-
-```python
-		def laser_cb(self, data):
-
-        left_side_count = 0
-        right_side_count = 0
-
-        for i, point in enumerate(data.ranges):
-            if not math.isinf(point) and point < 1.0:
-                if i > 180:
-                    left_side_count += 1
-                else:
-                    right_side_count += 1
-
-        self.twist_.linear.x = 0.3
-        self.twist_.angular.z = (right_side_count - left_side_count) / 100
-
-        self.cmd_vel_pub_.publish(self.twist_)
-
+```xml
+cd scripts
+# my_first_node.py 생성
 ```
 
-지난 강의에서 이야기한 것과 같이 이 문제의 정답은 없습니다.
+> 첫번째 프로그래밍 코드는 Node의 기본입니다.
 
-다만, Topic의 Pub / Sub을 모두 사용할 수 있는지 스스로 점검해볼 수 있을 것입니다.
+{{% notice note %}}
+모든 소스코드는 [github repo](https://github.com/RB2022ROS/du2023-ros1)에서 확인 가능합니다.
+{{% /notice %}}
+
+- **my_first_node.py**
+
+```python
+#!/usr/bin/env python3
+
+import rospy
+from std_msgs.msg import String
+
+def my_first_node():
+    # ROS nodes require initialization
+    # It contains master registration, uploading parameters
+    rospy.init_node('my_first_node', anonymous=True)
+
+    # ROS safe timer
+    rate = rospy.Rate(10) # 10hz
+
+    # Loop control Example
+    while not rospy.is_shutdown():
+        hello_du = "hello du %s" % rospy.get_time()
+        rospy.loginfo(hello_du)
+        # Below line calls sleep method in Python internally.
+        rate.sleep()
+
+if __name__ == '__main__':
+    try:
+        my_first_node()
+    except rospy.ROSInterruptException:
+        pass
+```
+
+- 코드를 새로 작성한 다음에는 습관적으로 패키지를 빌드하고 실행합니다. 파이썬 코드의 경우 파일의 실행 권한이 주어져 있어야 합니다.
+
+```bash
+cd scripts
+chmod +x *
+
+cd ~/catkin_ws
+catkin build my_first_pkg
+```
+
+- 작성한 node를 실행해봅시다. 반복해서 터미널 로그가 남을 것입니다.
+
+```xml
+# Terminal 1
+roscore
+
+# Terminal 2
+rosrun my_first_package my_first_node.py
+```
+
+![my_first_node.gif](/kr/ros_basic_noetic/images5/my_first_node.gif?height=300px)
 
 ---
 
-### ROS Parameter
+#### 코드 분석
 
-앞선 저의 예시에서 마지막 속도로 변환하는 부분 수식에 나누기 100이 있었던 것을 기억하시나요? 이런 상수를 직접 코드에 적는 것은 사실 추천되지 않습니다. 개발 이후 해당 상수를 변경하고자 하였을 시, 직접 코드를 수정하고 다시 실행해야 하기 때문에 불편을 야기합니다.
+> 첫 코드인 만큼 자세하게 분석하고 넘어가보려 합니다.
 
-> 이러한 문제의 해결 방법으로 ROS의 매개변수, **parameter**를 다루는 방법을 알아보겠습니다.
+- **ROS Noetic은 Python 3**를 사용합니다. 가상환경의 파이썬, 직접 설치한 파이썬 등 여러 버전이 설치되어 있을 것입니다. 공식 문서에서는 이러한 혼란을 방지하기 위해 코드의 제일 처음 아래 라인을 추가하는 것을 추천하고 있습니다.
 
-- **py_param_pkg/scripts/various_params.py**
+```python
+#!/usr/bin/env python3
+```
+
+- Python을 사용하여 ROS를 다루기 위해 사용되는 패키지는 **rospy**입니다. import를 사용해도 좋고 from / import를 통해 특정 클래스만 가져올 수도 있습니다.
+
+```python
+import rospy
+from std_msgs.msg import String
+```
+
+- 당장 사용하지는 않지만 Test Code를 작성해야 하는 경우가 있습니다. 이러한 상황에 대비하기 위해 main 함수를 따로 두고 아래와 같이 프로그램을 시작하기를 권장합니다.
+
+```python
+if __name__ == '__main__':
+    try:
+        my_first_node()
+    except rospy.ROSInterruptException:
+        pass
+```
+
+- 이제, my_first_node를 분석해 보겠습니다. Node의 실행을 위해 Master에 등록하고, 초기화하는 작업이 필요하며, 이를 위해 별도로 **init_node**라는 메소드를 실행해주어야 합니다.
+
+```python
+def my_first_node():
+    # ROS nodes require initialization
+    # It contains master registration, uploading parameters
+    rospy.init_node('my_first_node', anonymous=True)
+```
+
+- ROS 시스템은 기본적으로 **무한 Loop**입니다. 이 Loop가 한차례 반복되는 주기를 설정하는 부분입니다. ROS의 시간 체계에 대해서는 이후 한번 더 다루겠습니다.
+
+```python
+		# ROS safe timer
+    rate = rospy.Rate(10) # 10hz
+```
+
+- rospy를 통해 실행 중인 Node의 상태를 확인할 수 있으며, `is_shutdown()`은 예기치 못한 에러가 발생하거나 사용자의 종료를 인지할 수 있습니다. 10Hz를 맞추기 위해 Loop마다 sleep을 걸어주고 있습니다.
+
+```python
+		# Loop control Example
+    while not rospy.is_shutdown():
+				...
+        rate.sleep()
+```
+
+- ROS에서 콘솔 로그를 얻는 방법으로 print 보다 `rospy.log`를 사용하기를 추천합니다.
+
+```python
+        hello_du = "hello du %s" % rospy.get_time()
+        rospy.loginfo(hello_du)
+        # Below line calls sleep method in Python internally.
+```
+
+![lec4_1.png](/kr/ros_basic_noetic/images5/lec4_1.png?height=300px)
+
+---
+
+### ROS Timer
+
+ROS는 기본적으로 무한 Loop를 하나의 프로세스 안에서 동작시키는 프로그램입니다. Timer를 통해 일정 시간마다 동작하는 코드를 구현할 수 있습니다.
+
+```bash
+cd my_first_pkg/scripts
+# spin_node.py 생성
+```
+
+- spin_node.py
 
 ```python
 #!/usr/bin/env python3
 
 import rospy
 
-class ParamNode:
+# callback method requires event, which is TimerEvent
+def hello_du(event=None):
+    hello_du = "hello du %s" % rospy.get_time()
+    rospy.loginfo(hello_du)
 
-    def __init__(self):
-        self.str_param_ = rospy.get_param('~str_param', 'hello_world')
-        self.int_param_ = rospy.get_param('~int_param', 2023)
-        self.double_param_ = rospy.get_param('~double_param', 3.14)
-        self.bool_param_ = rospy.get_param('~bool_param', True)
-        self.list_of_float_param_ = rospy.get_param('~list_of_float_param', [1., 2., 3., 4.])
+def my_first_node():
+    rospy.init_node('my_first_node', anonymous=True)
 
-        rospy.loginfo(f"""
-        self.str_param_ = {self.str_param_}
-        self.int_param_ = {self.int_param_}
-        self.double_param_ = {self.double_param_}
-        self.bool_param_ = {self.bool_param_}
-        self.list_of_float_param_ = {self.list_of_float_param_}
-        """)
-
-def param_node():
-    rospy.init_node('param_node', anonymous=True)
-    param_node = ParamNode()
+    # Timer Class is kind of Thread.
+    # It's rule is execute sleep in certain period with given event.
+    rospy.Timer(rospy.Duration(1.0/100.0), hello_du)
     rospy.spin()
 
 if __name__ == '__main__':
     try:
-        param_node()
+        my_first_node()
     except rospy.ROSInterruptException:
-        pa
+        pass
 ```
 
-- 실행 결과는 다음과 같습니다.
+코드의 실행 결과는 이전과 같기 때문에 Timer와 spin에 대해서만 짚고 넘어가겠습니다.
+
+- Timer는 크게 두가지 매개변수를 받습니다. 실행 주기와 Callback 함수입니다. 해당 주기마다 Callback 함수를 실행시킵니다.
 
 ```python
-$ rosrun py_param_pkg various_params.py
-[INFO] [1672014267.630578]:
-        self.str_param_ = hello_world
-        self.int_param_ = 2023
-        self.double_param_ = 3.14
-        self.bool_param_ = True
-        self.list_of_float_param_ = [1.0, 2.0, 3.0, 4.0]
+    rospy.Timer(rospy.Duration(1.0/100.0), hello_du)
 ```
 
-- 매개변수를 선언하고 기본값을 지정하는 방법은 **rospy.get_param()**을 사용하는 것입니다. 두번째 기본값을 잘 보면 어떤 타입을 사용하는지 알 수 있습니다.
+- 앞으로 여러분들은 직접 while loop를 구현하기보다 `rospy.spin()`을 더 많이 사용하시게 될 겁니다. Timer를 선언한 이후, 하나의 Thread에서 막혀버리는 것을 방지하는 역할을 수행합니다.
 
 ```python
+		rospy.Timer(rospy.Duration(1.0/100.0), hello_du)
+    rospy.spin()
+```
+
+![lec4_2.png](/kr/ros_basic_noetic/images5/lec4_2.png?height=200px)
+
+image from : [python tutorial](https://www.pythontutorial.net/python-concurrency/python-threading/)
+
+### OOP Node Programming
+
+- my_first_oop_node.py
+
+```dart
+#!/usr/bin/env python3
+
+import rospy
+
+class OOPNode:
+
     def __init__(self):
-        self.str_param_ = rospy.get_param('~str_param', 'hello_world')
-        self.int_param_ = rospy.get_param('~int_param', 2023)
-        self.double_param_ = rospy.get_param('~double_param', 3.14)
-        self.bool_param_ = rospy.get_param('~bool_param', True)
-        self.list_of_float_param_ = rospy.get_param('~list_of_float_param', [1., 2., 3., 4.])
+        self.counter_ = 0
+        self.timer_ = rospy.Timer(rospy.Duration(1.0/100.0), self.hello_du)
+
+    def hello_du(self, event=None):
+        hello_du = f"hello du {rospy.get_time()}, counter: {self.counter_}"
+        rospy.loginfo(hello_du)
+        self.counter_ += 1
+
+def my_first_oop_node():
+    rospy.init_node('my_first_oop_node', anonymous=True)
+
+    oop_node = OOPNode()
+
+    rospy.spin()
+
+if __name__ == '__main__':
+    try:
+        my_first_oop_node()
+    except rospy.ROSInterruptException:
+        pass
 ```
 
-- parameter 앞에 붙는 물결 표시 (~)는 **private parameter**를 의미합니다. 이에 대해 궁금하다면 아래의 추가 자료를 학습해보세요.
+이후의 실습들을 위해 한가지 예시만 더 살펴보고자 합니다. **객체 지향을 사용한 ROS Node 작성**방법입니다. 파이썬에서 OOP를 사용하기 위해 Class 키워드를 사용하며, self등 OOP와 관련된 내용은 모두 알고 있다는 상태에서 진행하겠습니다.
+
+- OOP를 사용하면 main 메소드가 매우 간편해진다는 장점이 있습니다. 클래스를 생성하고, spin을 하기만 하면 됩니다.
+
+```dart
+def my_first_oop_node():
+    rospy.init_node('my_first_oop_node', anonymous=True)
+    oop_node = OOPNode()
+    rospy.spin()
+```
+
+- OOP로 전환되면서 변경된 구현에 주목합시다. Timer의 Callback 함수로 클래스 메소드가 사용되었으며, 클래스 변수인 counter를 사용하여 구현한 점에 주목합니다.
+
+```dart
+class OOPNode:
+    def __init__(self):
+        self.counter_ = 0
+        self.timer_ = rospy.Timer(rospy.Duration(1.0/100.0), self.hello_du)
+
+    def hello_du(self, event=None):
+        hello_du = f"hello du {rospy.get_time()}, counter: {self.counter_}"
+        rospy.loginfo(hello_du)
+        self.counter_ += 1
+```
+
+앞으로, 대부분의 코드는 OOP 기반으로 작성됩니다. 파이썬의 클래스에 대해 숙지가 되어있지 않다면 꼭 복습하고 다음 강의를 청취하세요!
+
+---
+
+## ROS Topic
+
+다시 개념 학습으로 돌아와보았습니다. 아래 그림은 지난 강의의 rqt_graph입니다.
+
+![lec4_3.png](/kr/ros_basic_noetic/images5/lec4_3.png)
+
+위 그림에서 동그라미는 Node를 뜻하고, 화살표는 topic을 뜻합니다.
+
+> 이번 시간에는 이 Topic이 무엇인지 배워보고자 합니다.
+
+### Topic은 Node들 사이에 데이터(Message)가 오가는 길(Bus)의 이름입니다.
+
+![topic.gif](/kr/ros_basic_noetic/images5/topic.gif?height=300px)
+
+- image from : [docs.ros.org](https://docs.ros.org/en/foxy/Tutorials/Topics/Understanding-ROS2-Topics.html)
+
+> 그림에서와 같이 ROS Topic은
+
+- **Publisher(발행자) Subscriber(구독자)로 나누어 Topic의 송신, 수신자를 구분합니다.**
+- **Publisher, Subscriber는 Node안에서 생성되며 별도로 사용할 수는 없습니다.**
+- **Pub/Sub 사이에 Message가 전달되며, 이 길의 이름이 Topic인 것입니다.**
+- 주의할 점은, **Publisher, Subscriber는 오로지 Topic의 이름으로 소통한다는 것입니다.** 어떤 Node에 publish 할지 Publisher는 전혀 모르며 오로지 Topic이 같은 Subscriber가 데이터를 받게 됩니다.
+
+더불어, Topic은 여러 Node들로 부터 데이터를 받을 수 있고, 전송 시에도 여러 Node들에게 전송이 가능한 방식입니다. ⇒ Topic의 중요한 속성이니 꼭 알아두셨으면 좋겠습니다.
+
+![topic2.gif](/kr/ros_basic_noetic/images5/topic2.gif?height=300px)
+
+- image from : [docs.ros.org](https://docs.ros.org/en/foxy/Tutorials/Topics/Understanding-ROS2-Topics.html)
+
+**Node와 Topic의 개념을 다시 한 번 다잡고 갑시다.**
+
+- Node는 실행되는 프로그램이며, ROS Master에 등록하고 관리됩니다.
+
+![lec4_4.png](/kr/ros_basic_noetic/images5/lec4_4.png?height=200px)
+
+- Node들 사이의 통신 메커니즘 중 Topic이라는 것이 있으며, 이는 Publisher와 Subscriber라는 개념을 갖고 있습니다.
+
+![lec4_5.png](/kr/ros_basic_noetic/images5/lec4_5.png?height=250px)
+
+- Publisher와 Subscriber 사이의 오가는 데이터는 특정한 타입을 갖습니다. 이를 Message라고 부릅니다.
+
+![lec4_6.png](/kr/ros_basic_noetic/images5/lec4_6.png?height=300px)
+
+---
+
+## Topic Message
+
+- 로봇 프로그래밍 시에는 다양한 센서 데이터들이 다뤄집니다.
+
+![lec4_7.png](/kr/ros_basic_noetic/images5/lec4_7.png?height=200px)
+
+- 센서 뿐만 아니라, 제어 데이터도 주고 받아야 합니다.
+
+![lec4_8.png](/kr/ros_basic_noetic/images5/lec4_8.png?height=200px)
+
+ROS에서는 주로 사용되는 이러한 데이터 형식을 **Message**라는 이름으로 지칭하며, 여러 기본 형태를 제공합니다. 더불어 사용자가 직접 Message를 커스터마이징할 수도 있습니다.
+
+- 일전 예시의 분석을 통해 Topic과 Message에 대해 다시 한 번 살펴봅시다.
 
 ```python
-global_name = rospy.get_param("/global_name")
-relative_name = rospy.get_param("relative_name")
-private_param = rospy.get_param('~private_name')
-default_param = rospy.get_param('default_param', 'default_value')
+# Terminal 1
+roscore
+# Terminal 2
+rosrun roscpp_tutorials talker
+# Terminal 3
+rosrun roscpp_tutorials listener
 ```
 
-추가 자료 : [wiki.ros](http://wiki.ros.org/rospy/Overview/Parameter%20Server)
+![talker_listener.gif](/kr/ros_basic_noetic/images5/talker_listener.gif?height=400px)
 
-- 매개변수를 변경하는 가장 보변적인 방법은 **launch file**을 사용하는 것입니다. launch file의 **param** 태그를 사용하여 Node에 원하는 parameter를 전달할 수 있습니다.
+두 프로그램이 실행되고 있는 상태를 유지하면서, 아래 내용을 따라와주세요
 
-```xml
-<launch>
-  <node name="various_param_node" pkg="py_param_pkg" type="various_params.py" respawn="false" output="screen" >
-    <param name="str_param" type="string" value="roslaunch changed me" />
-  </node>
-</launch>
+- rostopic list를 통해 사용중인 topic들을 모두 조회 가능합니다.
+
+```bash
+$ rostopic list
+/chatter
+/rosout
+/rosout_agg
 ```
 
-ROS 프로그래밍을 하다 보면 매개변수가 아주 많이 필요한 경우가 있습니다. 이럴 때마다 launch file에 param 태그 라인을 추가하는 것은 매우 귀찮은 일입니다.
+- 특정 topic에 대한 자세한 정보를 알고 싶다면 rostopic info를 사용합니다. **talker**와 **listener**가 조회된 모습도 보입니다.
 
-**yaml**이라는 형식의 파일로 매개변수를 한번에 관리할 수 있습니다.
+```bash
+$ rostopic info /chatter
+Type: std_msgs/String
 
-- **py_param_pkg/param/config.yaml**
+Publishers:
+ * /talker_215337_1671763968667 (http://192.168.55.236:37863/)
 
-```yaml
-str_param: "yaml string"
-int_param: 9
-double_param: 2.71828
-bool_param: "false"
-list_of_float_param: [3., 2., 1.]
+Subscribers:
+ * /listener_215355_1671763970127 (http://192.168.55.236:44969/)
 ```
 
-- **py_param_pkg/launch/param_with_yaml.launch**
+- 해당 topic이 사용중인 Message를 조회하기 위해 rostopic type을 사용합니다.
 
-```xml
-<launch>
-  <node name="various_param_node" pkg="py_param_pkg" type="various_params.py" respawn="false" output="screen" >
-    <rosparam command="load" file="$(find py_param_pkg)/param/config.yaml" />
-    <param name="str_param" type="string" value="roslaunch changed me" />
-  </node>
-</launch>
+```bash
+$ rostopic type /chatter
+std_msgs/String
 ```
 
-launch file에 rosparam 태그를 추가하고, load command를 사용하며 사용하는 yaml 파일의 위치를 file 옵션을 통해 전달합니다.
+- rosmsg show를 통해 Message의 원형을 확인할 수 있습니다.
 
-### **ROS parameter Commands**
-
-rostopic, rosnode와 같이 parameter 또한 터미널 명령어를 갖고 있습니다.
-
-- 접근 가능한 모든 parameter들을 나열합니다.
-
-```xml
-rosparam list
+```bash
+$ rosmsg show std_msgs/String
+string data
 ```
 
-- 특정 paramter의 값을 얻고자하면 아래 키워드를 사용합니다.
+- topic 데이터를 엿볼 수 있는 rostopic echo입니다.
 
-```xml
-rosparam get <parameter_name>
-```
-
-- 선언되어 있는 parameter의 값을 변경하고 싶은 경우 아래 키워드를 사용합니다.
-
-```xml
-rosparam set <parameter_name> <value>
-```
-
-여러분들이 작성한 회피 프로그램에도 매개변수로 작용하는 상수들이 있을 것입니다. 이를 parameter로 변경하여 launch file과 yaml file로 업데이트하는 작업을 해보세요
-
+```bash
+$ rostopic echo /chatter
+data: "hello world 1671764088.1913402"
 ---
-
-### ROS Service
-
-> Topic에 이어 ROS의 통신 메커니즘 두번째로 Service를 배워보겠습니다.
-
-Service가 동작하는 방식은 아래와 같습니다.
-
-그림과 같이 Client Node가 Server Node로 **request**를 주면, 해당 request에 대응하는 적절한 **response**가 다시 Client에게로 전달됩니다. 이 과정을 **Service Call**이라고 부릅니다.
-
-![service1.gif](/kr/ros_basic_noetic/images5/service1.gif?height=300px)
-
-image from : [docs.ros.org](https://docs.ros.org/en/foxy/Tutorials/Services/Understanding-ROS2-Services.html)
-
-- 하나의 Service Server에는 여러 Client Node가 request 할 수 있지만, **Server는 동시에 여러 request를 처리하지는 못합니다.** 두 Node에서 동시에 request가 왔다면, 조금이라도 먼저 통신한 Node의 작업을 우선 진행하고, 그동안 다른 Node는 기다리고 있어야 합니다.
-
-![service2.gif](/kr/ros_basic_noetic/images5/service2.gif?height=300px)
-
-image from : [https://docs.ros.org/en/foxy/Tutorials/Services/Understanding-ROS2-Services.html](https://docs.ros.org/en/foxy/Tutorials/Services/Understanding-ROS2-Services.html)
-
-**Topic과 비교하여 Service의 특징을 알아봅시다.**
-
-- 1:1 통신 : Topic publish를 하면 여러 Node가 Subscribe 가능합니다. 반면, **Service는 request가 온 대상에게만 response를 줍니다.**
-- 순차적 통신 : Service Server는 동시에 여러 request를 처리할 수 없습니다. **현재 작업중인 request가 처리될 때 까지 다른 request는 기다리고 있어야 합니다.**
-- 단발성 : Topic은 대부분 **지속적으로** publish를 진행하는 반면, Service는 **1회성** 통신입니다.
-
-> 실제 로봇 프로그램에서 Service는 어떻게 사용될 수 있을지, 예시를 통해 살펴봅시다.
-
-- 예제 패키지 빌드
-
-```xml
-cd ~/catkin_ws
-catkin build py_service_pkg
-source devel/setup.bash
+data: "hello world 1671764088.2913551"
+---
+...
 ```
 
----
+- rostopic hz로 topic의 pub/sub 주기를 분석할 수 있습니다.
 
-### Service Client
+```bash
+$ rostopic hz /chatter
+subscribed to [/chatter]
+average rate: 10.000
+	min: 0.100s max: 0.100s std dev: 0.00014s window: 10
+average rate: 9.999
+	min: 0.099s max: 0.100s std dev: 0.00023s window: 20
+```
 
-- **예제 실행 - 아르키메데스 나선**
+마지막으로 rqt_graph를 다시 한 번 살펴봅시다.
+
+```dart
+rqt_graph
+```
+
+![lec4_9.png](/kr/ros_basic_noetic/images5/lec4_9.png?height=80px)
+
+> 방금 살펴본 커멘드 라인들을 충분히 숙지하시기 바랍니다. 그러한 의미에서, 이번에는 Gazebo 예시를 분석해볼까 합니다.
 
 ```bash
 # Terminal 1
-roslaunch py_service_pkg empty_gazebo.launch
+roslaunch smb_gazebo smb_gazebo.launch
 # Terminal 2
-rosrun py_service_pkg spawn_model_client.py
+rosrun teleop_twist_keyboard teleop_twist_keyboard.py
 ```
 
-![helix.gif](/kr/ros_basic_noetic/images5/helix.gif?height=500px)
+![lec4_10.png](/kr/ros_basic_noetic/images5/lec4_10.png?height=400px)
 
-방금 실행한 예시는 Gazebo에게 box를 등장시켜달라고 하는 **Service Client**를 포함하고 있습니다.
-
-Box가 등장하는 위치를 아래 사진과 같은 수식에 맞추어 설정한 것 뿐입니다.
-
-![lec5_3.png](/kr/ros_basic_noetic/images5/lec5_3.png?height=300px)
-
-> 그럼, 코드를 분석해 볼까요?
-
-- 필요한 파이썬 패키지들을 import 합니다.
+- rostopic list 결과
 
 ```bash
-import math
-import rospy
-import rospkg
-from geometry_msgs.msg import Pose
-from gazebo_msgs.srv import SpawnModel
-```
-
-여기서 중요한 점은 **msg**와 **srv** 부분입니다. topic에서 사용되는 데이터 타입이 Message였고, 프로그래밍 시에는 msg로 사용하였습니다.
-
-- Service에서는 msg가 아니라 **srv**라는 데이터 타입을 사용합니다.
-
-![lec5_4.png](/kr/ros_basic_noetic/images5/lec5_4.png?height=300px)
-
-image from : [rsl.eth](https://rsl.ethz.ch/education-students/lectures/ros.html)
-
-- 이 srv는 msg와 다른 점이 있는데, **request**와 **response**로 나뉘어 있다는 점입니다. **---** 표시를 기점으로 위쪽은 Server에게 전달하는 request, 아래쪽은 Server가 다시 회답하는 response 부분입니다.
-
-![lec5_5.png](/kr/ros_basic_noetic/images5/lec5_5.png?height=200px)
-
-- 이번 예시에서 사용한 **gazebo_msgs/SpawnModel**도 아래와 같은 구조를 갖습니다.
-
-![lec5_6.png](/kr/ros_basic_noetic/images5/lec5_6.png?height=300px)
-
-image from : [docs.ros.org](http://docs.ros.org/en/jade/api/gazebo_msgs/html/srv/SpawnModel.html)
-
-> gazebo_msgs/SpawnModel를 살펴보면 파란 글자로 geometry_msgs/Pose라는 부분이 있습니다. 이와 같이 srv는 다른 msg를 품을 수도 있고, 이렇게 만든 srv를 또다시 다른 srv에 포함시킬 수도 있습니다.
-
-코드 구현 관점에서, geometry_msgs/Pose는 Model을 등장시킬 초기 위치를 지정하는데 사용됩니다.
-
-```python
-# initial_pose
-initial_pose = Pose()
-initial_pose.position.x = 0.0
-initial_pose.position.y = -1
-initial_pose.position.z = 0.2
-
-# z rotation -pi/2 to Quaternion
-initial_pose.orientation.z = -0.707
-initial_pose.orientation.w = 0.707
-```
-
-- **Service Client**의 생성과 사용은 아래와 같습니다.
-
-```python
-spawn_model_prox = rospy.ServiceProxy("gazebo/spawn_urdf_model", SpawnModel)
-...
-result = spawn_model_prox(
-    entity_name, model_xml, robot_namespace, initial_pose, reference_frame
-)
-```
-
-`rospy.ServiceProxy()`는 2개의 매개변수를 필요로 합니다.
-
-- **service 이름**
-- **service 데이터 타입 (srv)**
-
-생성한 client로 request를 하기 위해서는 생성한 인스턴스에 매개변수를 전달하기만 하면 됩니다. 마치 함수 호출처럼 말이지요. 이는 ServiceProxy 내부적으로 **call** 메소드가 구현되어있기 때문입니다.
-
-service call의 결과로 result가 반환되며, 예시에서는 성공 여부를 반환하도록 되어 있습니다.
-
-- 추가적으로, model을 불러오는 부분을 간단하게 설명하고자 합니다.
-
-```python
-    # model_xml
-    rospack = rospkg.RosPack()
-    model_path = rospack.get_path("py_service_pkg") + "/urdf/"
-
-    with open(model_path + model_name + ".urdf", "r") as xml_file:
-        model_xml = xml_file.read().replace("\n", "")
-```
-
-Gazebo는 urdf라는 파일을 전달하면 해당 파일을 기반으로 시뮬레이션에 물체를 등장시켜줍니다. 이 urdf라는 것은 로봇을 표현하기 위한 일종의 약속된 파일 확장명입니다.
-
-![lec5_7.png](/kr/ros_basic_noetic/images5/lec5_7.png?height=300px)
-
-image from : [spart](https://spart.readthedocs.io/en/latest/Tutorial_Robot.html)
-
-- 세상 모든 로봇들은 joint와 link로 표현 가능합니다.
-- 이러한 개념을 바탕으로 로봇의 특성을 텍스트 파일로 표현하는 형식이 바로 urdf이며, 아래와 같이 여러 태그와 속성을 사용하여 작성 가능합니다.
-
-```xml
-<?xml version="1.0"?>
-<robot name="box">
-  <link name="box">
-    <inertial>
-      <mass value="1"/>
-      <!-- Inertia values were calculated to be consistent with the mass and
-           geometry size, assuming a uniform density. -->
-      <inertia ixx="0.0108" ixy="0" ixz="0" iyy="0.0083" iyz="0" izz="0.0042"/>
-    </inertial>
-    <visual>
-      <geometry>
-        <box size=".1 .2 .3"/>
-      </geometry>
-    </visual>
-    <collision name="box">
-      <geometry>
-        <box size=".1 .2 .3"/>
-      </geometry>
-    </collision>
-  </link>
-</robot>
-```
-
-### ROS Service Commands
-
-**gazebo/spawn_urdf_model**과 같은 service는 gazebo_ros를 사용할 때 자동으로 함께 실행됩니다. 이렇게 현재 어떠한 service가 존재하며, 또 구체적인 정보는 어떻게 조회하는지 알아봅시다.
-
-- 현재 사용 가능한 모든 service를 조회해봅시다.
-
-```python
-$ ros2 service list
-/delete_entity
-/gazebo/describe_parameters
-/gazebo/get_parameter_types
-/gazebo/get_parameters
-/gazebo/list_parameters
-/gazebo/set_parameters
+$ rostopicist
+/clicked_point
+/clock
+/cmd_vel
+/diagnostics
+/e_stop
+/gazebo/link_states
+/gazebo/model_states
+/gazebo/parameter_descriptions
+/gazebo/parameter_updates
+/gazebo/performance_metrics
+/gazebo/set_link_state
 ...
 ```
 
-{{% notice tip %}}
-리눅스의 grep 명령어를 함께 사용해 보세요.
-{{% /notice %}}
+우리가 집중하고자 하는 topic은 로봇을 제어하는 **/cmd_vel**입니다.
 
-- 특정 service가 어떤 srv 타입을 사용하는지 검색하고 싶다면 다음 커멘드 라인을 사용합니다.
+- rostopic info 결과
 
 ```bash
-$ rosservice type /gazebo/spawn_urdf_model
-****
+$ rostopic info /cmd_vel
+Type: geometry_msgs/Twist
+
+Publishers:
+ * /teleop_twist_keyboard (http://192.168.55.236:33903/)
+
+Subscribers:
+ * /twist_mux (http://192.168.55.236:38201/)
+ * /gazebo (http://192.168.55.236:33033/)
 ```
 
-- 이렇게 검색된 srv는 rossrv show와 결합할 때 더욱 진가를 발휘합니다.
-
-```python
-$ rossrv show `rosservice type /gazebo/spawn_urdf_model`
-
-```
-
-- 특정 srv 타입에 대한 자세한 정보는 다음과 같이 조회할 수 있습니다.
+- rostopic type 결과
 
 ```bash
-$ rosservice info /gazebo/spawn_urdf_model
-
+$ rostopic type /cmd_vel
+geometry_msgs/Twist
 ```
 
-gazebo_ros에서 제공하는 다양한 service들이 있습니다. rosservice 커멘드를 사용하여 조회해보고 여러분들만의 Application을 생각해 보세요.
+- geometry_msgs/Twist의 rosmsg show 결과
+
+```bash
+$ rosmsg show geometry_msgs/Twist
+geometry_msgs/Vector3 linear
+  float64 x
+  float64 y
+  float64 z
+geometry_msgs/Vector3 angular
+  float64 x
+  float64 y
+  float64 z
+```
+
+- /scan의 rostopic echo 결과
+
+```bash
+$ rostopic echo /scan
+header:
+  seq: 0
+  stamp:
+    secs: 204
+    nsecs: 678000000
+  frame_id: "rslidar"
+angle_min: -1.5707999467849731
+angle_max: 1.5707999467849731
+angle_increment: 0.008700000122189522
+time_increment: 0.0
+scan_time: 0.033330000936985016
+range_min: 0.44999998807907104
+range_max: 50.0
+ranges: [inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, ...
+```
+
+- /scan의 rostopic hz결과
+
+```bash
+$ rostopic hz /scan
+subscribed to [/scan]
+WARNING: may be using simulated time
+average rate: 10.000
+	min: 0.100s max: 0.100s std dev: 0.00000s window: 8
+average rate: 10.000
+	min: 0.100s max: 0.100s std dev: 0.00000s window: 17
+```
+
+rqt_graph에서 /cmd_vel을 찾아볼까요?
+
+```dart
+rqt_graph
+```
+
+![lec4_11.png](/kr/ros_basic_noetic/images5/lec4_11.png?height=200px)
 
 ---
 
-## Service Server
+### Publisher 프로그래밍
 
-- 예제 실행 - 긴급 정지
+이번 시간 사용할 Package는 py_topic_pkg 입니다. 실습 전 실행부터 해보겠습니다.
+
+- Package Build
+
+```dart
+cd ~/catkin_ws
+catkin build py_topic_pkg
+source devel/setup.bash
+```
+
+- 예제 실행
+
+```bash
+# Terminal 1
+roslaunch smb_gazebo smb_gazebo.launch
+
+# Terminal 2
+rosrun py_topic_pkg cmd_vel_pub.py
+```
+
+로봇이 아래와 같이 원을 그리며 움직일 것입니다.
+
+![smb_circle.gif](/kr/ros_basic_noetic/images5/smb_circle.gif?height=300px)
+
+- cmd_vel_pub.py
+
+```python
+#!/usr/bin/env python3
+
+import rospy
+from geometry_msgs.msg import Twist
+
+class CmdVelPubNode:
+
+    def __init__(self):
+        # Publisher requires 3 paramters
+        #  1. topic name
+        #  2. topic msg type
+        #  3. topic queue size
+        self.cmd_vel_pub_ = rospy.Publisher("cmd_vel", Twist, queue_size=10)
+        self.timer_ = rospy.Timer(rospy.Duration(1.0/10.0), self.pub_msg)
+        self.twist_ = Twist()
+
+    def pub_msg(self, event=None):
+        # geometry_msgs.Twist
+        # ref: http://docs.ros.org/en/melodic/api/geometry_msgs/html/msg/Twist.html
+        self.twist_.linear.x = 0.5
+        self.twist_.angular.z = 1.0
+
+        self.cmd_vel_pub_.publish(self.twist_)
+
+def cmd_vel_node():
+    rospy.init_node('cmd_vel_node', anonymous=True)
+    cmd_vel_pub_node = CmdVelPubNode()
+    rospy.spin()
+
+if __name__ == '__main__':
+    try:
+        cmd_vel_node()
+    except rospy.ROSInterruptException:
+        pass
+```
+
+- 파이썬 ros 프로그래밍을 위한 rospy, 로봇의 속도 제어에 필요한 Message type인 Twist를 import 하고 있습니다.
+
+```python
+import rospy
+from geometry_msgs.msg import Twist
+```
+
+- rospy.Publisher를 통해 publisher를 생성할 수 있습니다. 이는 최소 3개의 매개변수를 필요로 합니다.
+
+1. **topic 이름**
+2. **topic type**
+3. **queue size**
+
+```bash
+self.cmd_vel_pub_ = rospy.Publisher("cmd_vel", Twist, queue_size=10)=
+```
+
+- 우리는 로봇의 제어 신호를 주기적으로 전송하고자 합니다. 따라서 **Timer**도 선언하였습니다.
+
+```bash
+self.timer_ = rospy.Timer(rospy.Duration(1.0/10.0), self.pub_msg)
+```
+
+- 다음으로, Message Type인 **geometry_msgs/Twist** 값을 채웁니다. 현재 우리 로봇은 2차원 평면에서 움직이며, 로봇 형태 때문에 앞뒤 선속도와 각속도를 갖게 됩니다.
+
+```bash
+				...
+				self.twist_ = Twist()
+
+    def pub_msg(self, event=None):
+        self.twist_.linear.x = 0.5
+        self.twist_.angular.z = 1.0
+```
+
+> Message의 종류는 매우 많습니다. 구글을 통해 검색하면서 코딩하는 습관을 들여봅시다.
+
+![lec4_12.png](/kr/ros_basic_noetic/images5/lec4_12.png?height=350px)
+
+- from : [http://docs.ros.org/](http://docs.ros.org/en/melodic/api/geometry_msgs/html/msg/Twist.html)
+
+{{% notice note %}}
+linear의 단위는 m/s 이며, angular의 단위는 rad/s 입니다. pi = 3.14
+{{% /notice %}}
+
+- 마지막, 가장 중요한 topic publish는 생성한 Publisher의 publish() 메소드를 사용합니다. 미리 준비해둔 topic message를 사용합시다.
+
+```python
+	 def pub_msg(self, event=None):
+        # geometry_msgs.Twist
+        # ref: http://docs.ros.org/en/melodic/api/geometry_msgs/html/msg/Twist.html
+        self.twist_.linear.x = 0.5
+        self.twist_.angular.z = 1.0
+
+        self.cmd_vel_pub_.publish(self.twist_)
+```
+
+이 Node를 실행하면, 우리의 ROS가 일정 주기에 맞추어 알맞게 topic publish를 실행시켜줄 것입니다. 우리는 정해진 구현에 맞추어 코드만 작성하면 되는 것이지요 😊
+
+```python
+def cmd_vel_node():
+    rospy.init_node('cmd_vel_node', anonymous=True)
+    cmd_vel_pub_node = CmdVelPubNode()
+    rospy.spin()
+```
+
+---
+
+## Subscriber 프로그래밍
+
+- 이번 예시에는 로봇에 장착된 라이다 센서를 사용해보려 합니다. 예시를 실행해보겠습니다.
 
 ```python
 # Terminal 1
 roslaunch smb_gazebo smb_gazebo.launch
+
 # Terminal 2
-rosrun py_service_pkg emergency_stop.py
-# Terminal 3
-rqt
+rosrun py_topic_pkg laser_scan_sub.py
 ```
 
-- 두번째 Node 실행 시, 로봇이 원을 그리며 움직이기 시작합니다.
-- 세번째 명령어를 통해 등장하는 rqt는 아래와 같이 사용 가능합니다. 로봇에게 긴급 정지 명령을 내려보겠습니다.
+- 실행 이후, 영상과 같이 박스를 로봇의 전방에 배치해봅시다.
 
-![srv_stop.gif](/kr/ros_basic_noetic/images5/srv_stop.gif?height=400px)
+![box_gazebo.gif](/kr/ros_basic_noetic/images5/box_gazebo.gif?height=400px)
 
-실제 로봇 개발시에도 Service는 이렇게 **단발성이고, 빠르게 실행되어야 하는 동작**에 주로 사용됩니다. 더불어, 지금 실행한 예시가 Service Server임을 다시 한 번 상기시켜드립니다.
+> 터미널에 등장하는 문구에 집중해보세요. 박스가 추가되면서 출력창에 어떠한 변화가 생기나요?
 
-![lec5_4.png](/kr/ros_basic_noetic/images5/lec5_4.png?height=300px)
+![lec4_13.png](/kr/ros_basic_noetic/images5/lec4_13.png?height=200px)
 
-image from : [rsl.eth](https://rsl.ethz.ch/education-students/lectures/ros.html)
+로봇에 부착된 라이다 센서는 전방 180도 사방으로 360개의 레이저를 흩뿌립니다.
 
-> 코드를 분석해 봅시다.
+레이저의 특성상 물체를 맞고 되돌아오게 되며, 이 시간을 통해 물체와의 거리를 알 수 있습니다.
 
-- py_service_pkg/scripts/emergency_stop.py
+![lec4_14.png](/kr/ros_basic_noetic/images5/lec4_14.png?height=300px)
 
-```python
-from geometry_msgs.msg import Twist
-from std_srvs.srv import SetBool, SetBoolResponse
-```
+예시의 프로그램은 로봇에 부착된 레이저에서 **publish**되는 데이터를 **subscribe**한 것입니다. 이를 프로그래밍하면서 python으로 subscriber를 다루는 방법에 대해 배워봅시다.
 
-이번에 사용하는 데이터 타입은 크게 2 종류입니다.
-
-- 로봇 제어 topic에 사용되는 **Twist**
-- 긴급 정지 service에 사용될 **SetBool**
-
-![lec5_8.png](/kr/ros_basic_noetic/images5/lec5_8.png?height=400px)
-
-image from : [docs.ros.org](http://docs.ros.org/en/api/std_srvs/html/srv/SetBool.html)
-
-**SetBoolResponse**이라는 것은 SetBool srv 중 response 부분에 해당합니다. 기본 데이터 타입 이름 + Response를 붙여주기만 하면 사용 가능합니다.
-
-ROS의 msg, srv는 다양한 언어와 상황을 고려하도록 만들어져 있으며, ROS 2에서는 **IDL**이라는 이름으로 더욱 발전하였습니다. 이후의 커스텀 데이터 타입 제작을 통해 이 과정을 다시 살펴봅시다.
-
-- 다음으로 통신 메커니즘을 생성합니다.
+- **laser_scan_sub.py**
 
 ```python
-class EmergencyStopNode(object):
+#!/usr/bin/env python3
+
+import rospy
+from sensor_msgs.msg import LaserScan
+
+class LaserSubNode:
 
     def __init__(self):
+        # Publisher requires 3 paramters
+        #  1. topic name
+        #  2. topic msg type
+        #  3. sub callback method
+        self.laser_sub_ = rospy.Subscriber("scan", LaserScan, self.laser_cb)
+
+    # first param of callback method is always topic msg
+    def laser_cb(self, data):
+        rospy.loginfo( len(data.ranges))
+
+        print(f"""
+        data.ranges[0]: {data.ranges[0]}
+        data.ranges[90]: {data.ranges[90]}
+        data.ranges[179]: {data.ranges[179]}
+        data.ranges[270]: {data.ranges[270]}
+        data.ranges[360]: {data.ranges[360]}
+        """)
+
+def laser_sub_node():
+    rospy.init_node('laser_sub_node', anonymous=True)
+    laser_sub_node = LaserSubNode()
+    rospy.spin()
+
+if __name__ == '__main__':
+    try:
+        laser_sub_node()
+    except rospy.ROSInterruptException:
+        pass
+```
+
+- 이번에 사용하는 topic message는 [sensor_msgs/LaserScan](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/LaserScan.html)입니다.
+
+```python
+import rospy
+from sensor_msgs.msg import LaserScan
+```
+
+subscriber는 publisher와 달리 **Timer가 필요하지 않습니다.** publish되는 데이터가 없으면 아무 동작을 할 수 없으며, publish 주기에 맞추어 subscribe할 수밖에 없는 것이지요.
+
+- subscriber는 rospy.Subscriber로 생성하며 최소 3개의 매개변수를 요구합니다.
+
+1. **topic 이름**
+2. **topic message 이름**
+3. **subscribe 마다 실행되는 callback 메소드**
+
+```python
+class LaserSubNode:
+
+    def __init__(self):
+        # Publisher requires 3 paramters
+        #  1. topic name
+        #  2. topic msg type
+        #  3. sub callback method
+        self.laser_sub_ = rospy.Subscriber("scan", LaserScan, self.laser_cb)
+```
+
+- 이 callback 메소드에서 주의해야 할 점은, 항상 callback method의 매개변수가 subscribe된 데이터라는 점입니다. 지금의 경우 LaserScan 타입의 데이터일 것입니다.
+
+```python
+		# first param of callback method is always topic msg
+    def laser_cb(self, data):
+        rospy.loginfo( len(data.ranges))
+				...
+```
+
+- 마지막으로, 깔끔한 터미널 출력을 위해 print 함수를 사용하였습니다.
+
+```python
+print(f"""
+    data.ranges[0]: {data.ranges[0]}
+    data.ranges[90]: {data.ranges[90]}
+    data.ranges[179]: {data.ranges[179]}
+    data.ranges[270]: {data.ranges[270]}
+    data.ranges[360]: {data.ranges[360]}
+    """)
+```
+
+Subscriber 실행 시에는 항상 `rospy.spin()`을 잊지 말도록 합니다. spin 되지 않는다면 특정 쓰레드가 자원을 점유하기 때문에 subscriber의 상태를 갱신할 수 없습니다.
+
+```python
+def laser_sub_node():
+    rospy.init_node('laser_sub_node', anonymous=True)
+    laser_sub_node = LaserSubNode()
+    rospy.spin()
+```
+
+---
+
+### 과제 - 물체 회피하기
+
+> pub/sub의 개념을 잘 이해하였는지 알아볼 수 있는 과제를 준비해보았습니다.
+> 정답이 따로 있는 것은 아니기에 부담 없이 해보시고, 저의 답안도 한번 살펴보세요.
+
+- 예제 실행
+
+```python
+# Terminal 1
+roslaunch smb_gazebo smb_gazebo.launch
+# Ternimal 2
+rosrun py_topic_pkg collision_aviod.py
+```
+
+- Gazebo 예제를 실행하였다면, 로봇의 전방에 장애물을 놓아 진로를 막아봅니다.
+- 여러분께서 구현해야 하는 것은, 라이다 센서를 사용하여 로봇이 회피 주행을 하도록 만드는 것입니다.
+
+![lec4_15.png](/kr/ros_basic_noetic/images5/lec4_15.png?height=350px)
+
+일종의 템플렛 코드를 첨부하였으며, **my_collision_aviod.py**라는 이름의 코드입니다.
+
+해당 코드의 TODO 부분을 작성하여 여러분만의 회피 알고리즘을 만들어 보세요!
+
+- 로봇의 라이다 데이터인 **LaserScan**을 Subscribe하여 Twist Type을 사용하는 scan topic으로 publish를 하게 됩니다.
+
+```python
+class CollisionAvoidNode:
+
+    def __init__(self):
+        self.laser_sub_ = rospy.Subscriber("scan", LaserScan, self.laser_cb)
         self.cmd_vel_pub_ = rospy.Publisher("cmd_vel", Twist, queue_size=10)
-        self.stop_server_ = rospy.Service("emergency_stop", SetBool, self.stop_cb)
+        self.twist_ = Twist()
+
+    def laser_cb(self, data):
+        # TODO: Prevent robot from collision
+        # make your own logic to do that
+
+        return None
 ```
 
-로봇 제어를 위한 topic publisher와 service server를 생성합니다.
-
-`rospy.Service()`를 통해 Service Server를 생성할 수 있으며 다음과 같은 매개변수를 필요로합니다.
-
-- **Service 이름**
-- **srv 타입**
-- **Client로부터 request가 올 시 실행되는 callback 함수**
-
-callback 함수는 일전 subscriber에서 살펴본 바 있습니다. service server의 callback 함수는 항상 매개변수로 request srv를 받습니다. 그리고 return 값은 항상 response가 됩니다.
-
-```python
-def stop_cb(self, request):
-	  ...
-    return self.response_
-```
-
-- request 데이터 중 boolean 값을 갖는 data의 true / false 여부에 따라 로봇의 정지 여부가 결정됩니다.
-
-```python
-    if request.data is True:
-        self.twist_msg_.linear.x = 0.0
-        self.twist_msg_.angular.z = 0.0
-        self.cmd_vel_pub_.publish(self.twist_msg_)
-
-        self.response_.success = True
-        self.response_.message = "Successfully Stopped"
-    else:
-        self.response_.success = False
-        self.response_.message = "Stop Failed"
-```
-
-마지막에 사용한 rqt의 service caller는 별도의 프로그래밍이나 복잡한 터미널 명령어 없이도 손쉽게 service를 다룰 수 있게 해주는 ROS의 툴입니다.
-
-![lec5_9.png](/kr/ros_basic_noetic/images5/lec5_9.png?height=400px)
-
-> 지금까지 ROS Service에 대해 배워보았습니다. Topic과 더불어 많이 사용되는 통신 메커니즘이므로 잘 숙지하고 복습하시기 바랍니다.
+{{% notice note %}}
+제가 작성한 예시를 수정하여 더욱 똑똑한 로봇을 구현하셔도 좋고, 자유롭게 실습해보시기 바랍니다.
+{{% /notice %}}
 
 ---
 
 **참고자료**
 
 - [https://rsl.ethz.ch/education-students/lectures/ros.html](https://rsl.ethz.ch/education-students/lectures/ros.html)
-- [https://ko.wikipedia.org/wiki/아르키메데스\_와선](https://ko.wikipedia.org/wiki/%EC%95%84%EB%A5%B4%ED%82%A4%EB%A9%94%EB%8D%B0%EC%8A%A4_%EC%99%80%EC%84%A0)
 - [https://docs.ros.org/en/foxy/index.html](https://docs.ros.org/en/foxy/index.html)
-- [http://wiki.ros.org/Services](http://wiki.ros.org/Services)
+- [http://wiki.ros.org/msg](http://wiki.ros.org/msg)
