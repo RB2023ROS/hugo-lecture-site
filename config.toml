@@ -64,19 +64,19 @@ landingPageName = "<i class='fas fa-home'></i> Home"
 [[Languages.kr.menu.shortcuts]]
 name = "<i class='fab fa-fw fa-github'></i> GitHub repo"
 identifier = "ds"
-url = "https://github.com/com2018-fa22/hugo-blog"
+url = "https://github.com/RB2023ROS/du2023-ros1"
 weight = 10
 
-[[Languages.kr.menu.shortcuts]]
-name = "<i class='fas fa-fw fa-bookmark'></i> About our Instructor"
-identifier = "instuctor"
-url = "https://hokeun.github.io/"
-weight = 20
+#[[Languages.kr.menu.shortcuts]]
+#name = "<i class='fas fa-fw fa-bookmark'></i> About our Instructor"
+#identifier = "instuctor"
+#url = "https://hokeun.github.io/"
+#weight = 20
 
-[[Languages.kr.menu.shortcuts]]
-name = "<i class='fas fa-fw fa-bullhorn'></i> CS 61B Spring 2021"
-url = "https://sp21.datastructur.es/"
-weight = 30
+#[[Languages.kr.menu.shortcuts]]
+#name = "<i class='fas fa-fw fa-bullhorn'></i> CS 61B Spring 2021"
+#url = "https://sp21.datastructur.es/"
+#weight = 30
 
 
 [Languages.en]

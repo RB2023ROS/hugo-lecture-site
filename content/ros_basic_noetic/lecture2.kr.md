@@ -44,8 +44,9 @@ sudo apt install terminator -y
 
 terminator 화면 분할 예시
 
-- ctrl + shift + e : 가로 분할
-- ctrl + shift + o : 세로 분할
+- ctrl + alt + t : 터미널 실행
+- ctrl + shift + e : 세로 분할
+- ctrl + shift + o : 가로 분할
 - ctrl + shift + w : 창 닫기
 - alt + 화살표 : 창 간 이동
 
