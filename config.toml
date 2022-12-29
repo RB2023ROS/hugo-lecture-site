@@ -92,13 +92,13 @@ identifier = "ds"
 url = "https://github.com/matcornic/hugo-theme-learn"
 weight = 10
 
-[[Languages.en.menu.shortcuts]]
-name = "<i class='fas fa-fw fa-bookmark'></i> About our Instructor"
-identifier = "instuctor"
-url = "https://hokeun.github.io/"
-weight = 20
+#[[Languages.en.menu.shortcuts]]
+#name = "<i class='fas fa-fw fa-bookmark'></i> About our Instructor"
+#identifier = "instuctor"
+#url = "https://hokeun.github.io/"
+#weight = 20
 
-[[Languages.en.menu.shortcuts]]
-name = "<i class='fas fa-fw fa-bullhorn'></i> CS 61B Spring 2021"
-url = "https://sp21.datastructur.es/"
-weight = 30
+#[[Languages.en.menu.shortcuts]]
+#name = "<i class='fas fa-fw fa-bullhorn'></i> CS 61B Spring 2021"
+#url = "https://sp21.datastructur.es/"
+#weight = 30
