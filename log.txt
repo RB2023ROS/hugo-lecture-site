@@ -39,7 +39,7 @@ hugo new --kind chapter gitlet/_index.md
 
 hugo new Lecture1.md
 
-hugo new ros_basic_noetic/lecture1.kr.md
+hugo new ros2_basic_foxy/lecture10.kr.md
 
 hugo new basics/first-content.md
 hugo new basics/second-content/_index.md
