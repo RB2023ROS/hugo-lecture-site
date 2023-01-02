@@ -79,7 +79,7 @@ launch file은 시작과 끝, **<launch> </launch>** 태그로 감싸집니다.
 **arg**란, argument의 약자이며 launch 파일에서 인자로 작용하는 일종의 변수입니다.
 
 - arg 태그를 통해 argument를 선언하고 **default**를 통해 초기값을 정할 수 있습니다.
-- argument의 선언 후 사용은 **_$(arg <argument name>)_**입니다.
+- argument의 선언 후 사용은 **$(arg "argument name")** 입니다.
 - roslaunch 시 argument를 바꿔 실행이 가능합니다.
 
 예를 들어, smb_gazebo.launch 실행 시. world를 바꾸어 아래와 같이 사용이 가능합니다.
