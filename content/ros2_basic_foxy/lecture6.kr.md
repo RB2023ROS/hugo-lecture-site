@@ -6,9 +6,9 @@ draft: false
 
 ### ROS 2 Service
 
-ROS Service의 개념을 다시 복습해봅시다.
+> ROS Service의 개념을 다시 복습해봅시다.
 
-![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/d297a106-65b6-4d10-9ed3-aff85c05791a/service1.gif](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/d297a106-65b6-4d10-9ed3-aff85c05791a/service1.gif)
+![service1.gif](/kr/ros2_basic_foxy/images6/service1.gif?height=300px)
 
 - image from : [docs.ros.org](https://docs.ros.org/en/foxy/Tutorials/Services/Understanding-ROS2-Services.html)
 
@@ -20,7 +20,7 @@ Service 개념 정리
 
 Service의 중요한 특징 한 가지 추가하자면, 하나의 Service Server에 여러 Client가 request 할 수 있지만, **Server는 동시에 여러 request를 처리하지 못합니다.**
 
-![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/40d5add4-7b6a-4bd5-a5ea-a357222d7e6b/service2.gif](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/40d5add4-7b6a-4bd5-a5ea-a357222d7e6b/service2.gif)
+![service2.gif](/kr/ros2_basic_foxy/images6/service2.gif?height=300px)
 
 - image from : [docs.ros.org](https://docs.ros.org/en/foxy/Tutorials/Services/Understanding-ROS2-Services.html)
 
@@ -70,7 +70,7 @@ $ rqt
 
 - Service Caller의 사용법과 결과는 다음과 같습니다.
 
-![picture_srv.gif](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/7af0c0d2-4e50-4b4a-9f75-ae755a97da24/picture_srv.gif)
+![picture_srv.gif](/kr/ros2_basic_foxy/images6/picture_srv.gif?height=300px)
 
 코드를 살펴보기 전에, 이를 어떻게 구현할 수 있을지 같이 생각해봅시다.
 
@@ -130,21 +130,21 @@ string message # informational, e.g. for error messages
 - 정답은 subscription callback에서 찾을 수 있습니다. subscribe된 이미지 데이터는 is_request가 True인 순간에만 사용됩니다. CV Bridge를 통해 ROS topic을 OpenCV 포맷으로 바꿀 수 있으며, **imwrite**를 통해 이미지를 저장할 수 있습니다.
 
 ```python
-		def sub_callback(self, data):
+    def sub_callback(self, data):
 
-        if self.is_request:
-            current_frame = self.br.imgmsg_to_cv2(data, "bgr8")
+    if self.is_request:
+        current_frame = self.br.imgmsg_to_cv2(data, "bgr8")
 
-            file_name = str(self.get_clock().now().to_msg().sec) + '.png'
-            cv2.imwrite(file_name, current_frame)
-            self.get_logger().info(f'Image saved in {file_name}')
+        file_name = str(self.get_clock().now().to_msg().sec) + '.png'
+        cv2.imwrite(file_name, current_frame)
+        self.get_logger().info(f'Image saved in {file_name}')
 
-            self.is_request = False
+        self.is_request = False
 ```
 
-- Gazebo에 다양한 물체를 배치시킨 뒤 사진을 찍어보는 것도 좋은 실습이 될 것입니다. 제가 준비한 dataset을 사용하여 여러분들만의 실습도 해보세요.
+> Gazebo에 다양한 물체를 배치시킨 뒤 사진을 찍어보는 것도 좋은 실습이 될 것입니다. 제가 준비한 dataset을 사용하여 여러분들만의 실습도 해보세요.
 
-📂 [3DGEMS.zip](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/0c308c38-663f-4103-ae61-b286e1e068ef/3DGEMS.zip)
+📁 [3DGEMS.zip](https://drive.google.com/file/d/14P83HSgLmN5iC4Yx6TMl7XvbIKuFr7as/view?usp=sharing)
 
 - 제공되는 3DGEMS 폴더를 압축해제한 뒤, **~/.gazebo/models** 폴더에 위치시킵니다.
 
@@ -158,7 +158,7 @@ WSL2를 사용하시는 분들께서는 터미널에서 **explorer.exe .** 를 �
 
 - 다시 한 번 Gazebo를 실행시킨 뒤 새로 추가된 모델들을 사용해봅시다.
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/6ed41d84-e01a-49e7-b5c9-572642af59ab/Untitled.png)
+![lec6_0.png](/kr/ros2_basic_foxy/images6/lec6_0.png?height=300px)
 
 ### Custom Interface와 코딩 과제 - Turtle Jail
 
@@ -171,7 +171,7 @@ $ ros2 pkg create --build-type ament_cmake custom_interfaces
 
 - 해당 패키지 내 action, msg, srv 라는 폴더를 만들고 해당 폴더 안에 나만의 인터페이스를 작성합니다.
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/65c35a06-5c07-4c09-9b35-458418cc1653/Untitled.png)
+![lec6_1.png](/kr/ros2_basic_foxy/images6/lec6_1.png?height=300px)
 
 {{% notice note %}}
 사용할 수 있는 기본 데이터 형식들은 [이 링크](https://design.ros2.org/articles/interface_definition.html)를 참고합니다.
@@ -240,7 +240,7 @@ custom interface의 사용 시 파이썬 패키지에서는 별도 작업 없이
 
 > topic과 service에 대해서 모두 살펴본 지금 상황에서 여러분들께 **코딩 과제**를 제시해보고자 합니다. 이번 코딩 과제에서 구현해야 하는 최종 결과는 다음과 같습니다.
 
-![turtle_jail.gif](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/0dbcb75c-2db1-4c7c-be08-0ee38a7135b0/turtle_jail.gif)
+![turtle_jail.gif](/kr/ros2_basic_foxy/images6/turtle_jail.gif?height=300px)
 
 rqt를 통해 turtle_jail_size service call을 하며, 감옥의 사이즈를 설정합니다.
 
@@ -274,6 +274,6 @@ rqt
 
 - 힌트1 : turtlesim의 좌표계
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/44f6a4c9-8389-49ea-9e8e-dd2367d34ef1/Untitled.png)
+![lec6_2.png](/kr/ros2_basic_foxy/images6/lec6_2.png?height=300px)
 
 - 힌트 2 : 거북이를 순간이동시키기 위해 **/turtle1/teleport_absolute** service를 사용하세요.

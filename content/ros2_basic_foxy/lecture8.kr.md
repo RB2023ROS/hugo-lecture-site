@@ -12,13 +12,13 @@ Action은 Service와 Topic의 특성을 모두 갖고 있으며, 실제로 가�
 
 Service의 중요한 특징 한 가지 추가하자면, 하나의 Service Server에 여러 Client가 request 할 수 있지만, **Server는 동시에 여러 request를 처리하지 못합니다.**
 
-![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/40d5add4-7b6a-4bd5-a5ea-a357222d7e6b/service2.gif](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/40d5add4-7b6a-4bd5-a5ea-a357222d7e6b/service2.gif)
+![service2.gif](/kr/ros2_basic_foxy/images8/service2.gif?height=300px)
 
 - image from : [docs.ros.org](https://docs.ros.org/en/foxy/Tutorials/Services/Understanding-ROS2-Services.html)
 
 Action은 바로 이러한 Service의 단점을 극복하기 위해 탄생한 통신 메커니즘입니다.
 
-**Action의 특징**
+#### Action의 특징
 
 1. **action client**는 action server가 Result를 보내기 전까지 마냥 기다리지 않고, 다른 일을 할 수 있습니다.
 2. **action client**는 Result Response를 받기 전에도 지속적으로 Feedback을 받을 수 있습니다.
@@ -26,7 +26,7 @@ Action은 바로 이러한 Service의 단점을 극복하기 위해 탄생한 �
 
 ⇒ 하지만, 여러 request를 동시에 작업하는 것이나, Feedback 중에 topic subscribe와 같은 작업은 본질적으로 불가합니다. 이에 대한 해결 방법도 후에 살펴보겠습니다.
 
-![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/583e145d-cfd1-4d08-96ad-c3d459a79172/action.gif](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/583e145d-cfd1-4d08-96ad-c3d459a79172/action.gif)
+![action.gif](/kr/ros2_basic_foxy/images8/action.gif?height=300px)
 
 image from : [https://docs.ros.org/en/foxy/Tutorials/Understanding-ROS2-Actions.html](https://docs.ros.org/en/foxy/Tutorials/Understanding-ROS2-Actions.html)
 
@@ -38,7 +38,7 @@ image from : [https://docs.ros.org/en/foxy/Tutorials/Understanding-ROS2-Actions.
 4. server ⇒ client, Feedback (topic과 유사합니다.)
 5. server ⇒ client, Result Response
 
-   만약 4번 도중 cancel이 발생하면 Action은 종료됩니다.
+만약 4번 도중 cancel이 발생하면 Action은 종료됩니다.
 
 이렇게 Action은 Topic, Service의 특징을 모두 갖고 있으며 Cancel이라는 추가 기능까지 갖추고 있는 복잡한 통신 메커니즘입니다.
 
@@ -99,7 +99,7 @@ Result:
 Goal finished with status: SUCCEEDED
 ```
 
-![action_turn_turtle.gif](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/6dd03c7a-1bfd-4b5e-99df-6d1b9e909bb1/action_turn_turtle.gif)
+![action_turn_turtle.gif](/kr/ros2_basic_foxy/images8/action_turn_turtle.gif?height=300px)
 
 ## Action 프로그래밍
 
@@ -119,9 +119,9 @@ Enter Target Angle : 3.14
 [WARN] [1672647549.226111271] [turtle_rotate_client]: Action Done !! Result: -0.12800025939941406
 ```
 
-![actoin_client.gif](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/ee2f4b2d-50d9-4aba-a359-70c66af18a7a/actoin_client.gif)
+![actoin_client.gif](/kr/ros2_basic_foxy/images8/actoin_client.gif?height=300px)
 
-- Action Client를 생성하기 위해서는 **ActionClient** 패키지를 \*\*\*\*추가해야 합니다.
+- Action Client를 생성하기 위해서는 **ActionClient** 패키지를 추가해야 합니다.
 
 ```bash
 import rclpy
@@ -151,7 +151,6 @@ self.action_client = ActionClient(self, RotateAbsolute, 'turtle1/rotate_absolute
 
 - **action type** : Client가 사용할 action 데이터 타입
 - **action name** : Action Server 이름
-
 - **wait_for_server**를 통해 Action Server의 존재 여부를 우선 확인합니다.
 
 ```python
@@ -172,13 +171,10 @@ self._send_goal_future = self.action_client.send_goal_async(
 self._send_goal_future.add_done_callback(self.goal_response_callback)
 ```
 
-**send_goal** : main 함수에서 호출되며, Goal request를 진행합니다.
-
-**feedback_callback** : Server로부터의 Feedback이 들어올 때마다 실행되는 Callback 입니다.
-
-**goal_response_callback** : Goal Accpet와 Reject 여부를 확인합니다.
-
-**get_result_callback** : 최종 result에 대한 Callback으로, Action의 제일 마지막에 실행됩니다.
+- **send_goal** : main 함수에서 호출되며, Goal request를 진행합니다.
+- **feedback_callback** : Server로부터의 Feedback이 들어올 때마다 실행되는 Callback 입니다.
+- **goal_response_callback** : Goal Accpet와 Reject 여부를 확인합니다.
+- **get_result_callback** : 최종 result에 대한 Callback으로, Action의 제일 마지막에 실행됩니다.
 
 Action은 메커니즘 자체가 어렵기 때문에 일부러 쉬운 예제를 가져왔습니다. 코드의 로직은 간단하며, **Action Client API 자체에 집중하며 따라와주세요.**
 
@@ -215,7 +211,7 @@ def get_result_callback(self, future):
 - 이번 예시에 구현되어 있지는 않지만, goal_handle로부터 **cancel handler**를 생성할 수도 있습니다. 아래 코드를 예시에 적용한 다음, cancel도 실습해보세요.
 
 ```python
-		# Cancel the goal
+    # Cancel the goal
     future = self.goal_handle.cancel_goal_async()
     future.add_done_callback(self.cancel_done)
 
@@ -234,7 +230,7 @@ def cancel_done(self, future):
 
 ### Action Server Example - Parking Master
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/c3fa31a3-5fee-4f05-9205-77ea3717f177/Untitled.png)
+![lec8_0.png](/kr/ros2_basic_foxy/images8/lec8_0.png?height=300px)
 
 image from : [기호일보](https://www.kihoilbo.co.kr/news/articleView.html?idxno=1006073)
 
@@ -267,20 +263,20 @@ Feedback:
 ...
 ```
 
-벽에 인접하여 흰색 상자들이 주차 공간을 배정해줄 것입니다. rqt_robot_steering으로 로봇을 잘 제어하여 주어진 주차 공간에 알맞게 주차를 해보세요!
+> 벽에 인접하여 흰색 상자들이 주차 공간을 배정해줄 것입니다. rqt_robot_steering으로 로봇을 잘 제어하여 주어진 주차 공간에 알맞게 주차를 해보세요!
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/b0e06746-3c24-4cd8-afbb-0d5c39df2170/Untitled.png)
+![lec8_1.png](/kr/ros2_basic_foxy/images8/lec8_1.png?height=300px)
 
 Feedback을 통해 벽과의 거리를 확인할 수 있으며, 이 거리가 **0.5m 이내**가 되면 주차가 완료됩니다. 이 시점에서 좌우 공간이 얼마가 균형이 맞는지에 따라 다른 Result를 얻게 됩니다.
 
 - 올바른 주차 시 ⇒ Success!
 - 잘못된 주차 시 ⇒ Fail
 
-![src_parking.gif](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/4181d7bb-25c1-4bf1-a079-6f53c0d75169/src_parking.gif)
+![src_parking.gif](/kr/ros2_basic_foxy/images8/src_parking.gif?height=300px)
 
 ### Action Server 프로그래밍
 
-프로그래밍을 시작하기 전, 필요한 통신 메커니즘들을 살펴봅시다.
+> 프로그래밍을 시작하기 전, 필요한 통신 메커니즘들을 살펴봅시다.
 
 - **Action Server** : Goal을 받으면, 정면 벽과의 거리를 feedback으로 전달합니다. 최종 Result는 String으로 성공 여부를 알려줍니다.
 - **LaserScan Sub** : 주변 물체와의 스캔된 거리를 알 수 있습니다.
@@ -345,7 +341,7 @@ def execute_callback(self, goal_handle):
 - while loop를 벗어나게 되면 **goal succed**를 수행하고, Result를 리턴합니다. 현재의 로직은 좌우 물체와의 거리가 균일할 때 성공으로 판정짓습니다.
 
 ```python
-		goal_handle.succeed()
+    goal_handle.succeed()
 
     result = Parking.Result()
     lr_diff = abs(self.r_obs_distance - self.l_obs_distance)
@@ -380,15 +376,16 @@ finally:
 - main 문의 주석을 토글하고, **sub_callback**에 디버깅 메세지를 심은 다음, 다시 예제를 실행 시켜봅니다. 어떠한 결과를 얻으셨나요?
 
 ```python
-	def sub_callback(self, data):
+def sub_callback(self, data):
 
     if self.is_sub:
         self.f_obs_distance = data.ranges[60]
         self.r_obs_distance = data.ranges[30]
         self.l_obs_distance = data.ranges[90]
         self.get_logger().info("sub success")
-				...
-		# parking_action_server = ParkingActionServer()
+        ...
+
+    # parking_action_server = ParkingActionServer()
     # rclpy.spin(parking_action_server)
     # parking_action_server.destroy_node()
     # rclpy.shutdown()
@@ -396,11 +393,13 @@ finally:
 
 현재의 시스템은 두 종류의 callback을 갖고 있습니다. **execute_callback**이 실행되면서 while loop로 진입하면, 자원을 점유하여 sub_callback이 동작할 수 없는 구조가 됩니다. 이를 해결하기 위해 ROS 2에서는 rclpy단에서 멀티 스레딩을 구현해 두었습니다.
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/be904395-f1a5-44cb-bbbe-c52a2dfb5776/Untitled.png)
+![lec8_2.png](/kr/ros2_basic_foxy/images8/lec8_2.png?height=300px)
 
 - image from : [docs.ros.org](https://docs.ros.org/en/foxy/Concepts/About-Executors.html)
 
-이후 여러가지 구현을 하다 보면 지금처럼 다중 Subscribe를 해야하는 경우가 반드시 생깁니다. 혹은 하나의 프로세스에서 여러개의 Node를 실행시켜야 하는 경우가 발생합니다. 이때, **Node Composition**과 **MultiThreadedExecutor**를 적극 사용해보세요!
+> 이후 여러가지 구현을 하다 보면 지금처럼 다중 Subscribe를 해야하는 경우가 반드시 생깁니다. 혹은 하나의 프로세스에서 여러개의 Node를 실행시켜야 하는 경우가 발생합니다. 이때, **Node Composition**과 **MultiThreadedExecutor**를 적극 사용해보세요!
+
+---
 
 **참고자료**
 
