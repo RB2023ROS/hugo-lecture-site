@@ -8,7 +8,7 @@ pre = "<b>ROS 2 Foxy. </b>"
 
 ![lec1_0.png](/kr/ros_basic_noetic/images1/lec1_0.png?height=100px)
 
-- [Lecture1. Lecture1 - Introduction to ROS](/kr/ros_basic_noetic/lecture1)
+- [Lecture1. Lecture1 - Introduction to ROS 2](/kr/ros_basic_noetic/lecture1)
 - [Lecture2. Dev Env Setup](/kr/ros_basic_noetic/lecture2)
 - [Lecture3. Core of ROS](/kr/ros_basic_noetic/lecture3)
 - [Lecture4. ROS Launch, RViz](/kr/ros_basic_noetic/lecture4)
