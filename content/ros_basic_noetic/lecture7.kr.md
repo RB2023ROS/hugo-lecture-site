@@ -211,7 +211,7 @@ def hello_du(self, event=None):
 시간 간격을 나타내는 클래스로 Duration이 사용되며, Time 인스턴스와 +,- 연산이 가능합니다.
 
 ```bash
-		delta = rospy.Duration(0.5)
+    delta = rospy.Duration(0.5)
     past  = now - delta
     rospy.loginfo("Past time %i %i", past.secs, past.nsecs)
 ```
@@ -221,7 +221,7 @@ def hello_du(self, event=None):
 while loop와 Rate를 사용하여 일정 주기다마 반복되는 구현이 가능합니다. 이때 사용되는 시간 기준은 PC의 Clock입니다.
 
 ```bash
-		r = rospy.Rate(10) # 10hz
+    r = rospy.Rate(10) # 10hz
     while not rospy.is_shutdown():
         time_ex.hello_du()
         r.sleep()
