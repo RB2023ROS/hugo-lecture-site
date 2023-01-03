@@ -374,7 +374,7 @@ image from : [spart](https://spart.readthedocs.io/en/latest/Tutorial_Robot.html)
 - 현재 사용 가능한 모든 service를 조회해봅시다.
 
 ```python
-$ ros2 service list
+$ rosservice list
 /delete_entity
 /gazebo/describe_parameters
 /gazebo/get_parameter_types
