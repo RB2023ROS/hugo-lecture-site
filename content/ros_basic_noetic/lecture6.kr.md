@@ -118,7 +118,7 @@ $ rosrun py_param_pkg various_params.py
         self.list_of_float_param_ = [1.0, 2.0, 3.0, 4.0]
 ```
 
-- 매개변수를 선언하고 기본값을 지정하는 방법은 **rospy.get_param()**을 사용하는 것입니다. 두번째 기본값을 잘 보면 어떤 타입을 사용하는지 알 수 있습니다.
+- 매개변수를 선언하고 기본값을 지정하는 방법은 **rospy.get_param**을 사용하는 것입니다. 두번째 기본값을 잘 보면 어떤 타입을 사용하는지 알 수 있습니다.
 
 ```python
     def __init__(self):
