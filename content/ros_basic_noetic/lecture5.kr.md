@@ -141,16 +141,16 @@ def my_first_node():
 - ROS 시스템은 기본적으로 **무한 Loop**입니다. 이 Loop가 한차례 반복되는 주기를 설정하는 부분입니다. ROS의 시간 체계에 대해서는 이후 한번 더 다루겠습니다.
 
 ```python
-		# ROS safe timer
+    # ROS safe timer
     rate = rospy.Rate(10) # 10hz
 ```
 
 - rospy를 통해 실행 중인 Node의 상태를 확인할 수 있으며, `is_shutdown()`은 예기치 못한 에러가 발생하거나 사용자의 종료를 인지할 수 있습니다. 10Hz를 맞추기 위해 Loop마다 sleep을 걸어주고 있습니다.
 
 ```python
-		# Loop control Example
+    # Loop control Example
     while not rospy.is_shutdown():
-				...
+        ...
         rate.sleep()
 ```
 
@@ -213,7 +213,7 @@ if __name__ == '__main__':
 - 앞으로 여러분들은 직접 while loop를 구현하기보다 `rospy.spin()`을 더 많이 사용하시게 될 겁니다. Timer를 선언한 이후, 하나의 Thread에서 막혀버리는 것을 방지하는 역할을 수행합니다.
 
 ```python
-		rospy.Timer(rospy.Duration(1.0/100.0), hello_du)
+    rospy.Timer(rospy.Duration(1.0/100.0), hello_du)
     rospy.spin()
 ```
 
@@ -225,7 +225,7 @@ image from : [python tutorial](https://www.pythontutorial.net/python-concurrency
 
 - my_first_oop_node.py
 
-```dart
+```python
 #!/usr/bin/env python3
 
 import rospy
@@ -259,7 +259,7 @@ if __name__ == '__main__':
 
 - OOP를 사용하면 main 메소드가 매우 간편해진다는 장점이 있습니다. 클래스를 생성하고, spin을 하기만 하면 됩니다.
 
-```dart
+```python
 def my_first_oop_node():
     rospy.init_node('my_first_oop_node', anonymous=True)
     oop_node = OOPNode()
@@ -268,7 +268,7 @@ def my_first_oop_node():
 
 - OOP로 전환되면서 변경된 구현에 주목합시다. Timer의 Callback 함수로 클래스 메소드가 사용되었으며, 클래스 변수인 counter를 사용하여 구현한 점에 주목합니다.
 
-```dart
+```python
 class OOPNode:
     def __init__(self):
         self.counter_ = 0
@@ -436,7 +436,7 @@ rosrun teleop_twist_keyboard teleop_twist_keyboard.py
 - rostopic list 결과
 
 ```bash
-$ rostopicist
+$ rostopic list
 /clicked_point
 /clock
 /cmd_vel
