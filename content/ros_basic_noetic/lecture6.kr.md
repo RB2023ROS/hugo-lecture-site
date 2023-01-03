@@ -40,8 +40,7 @@ draft: false
 image from : [오로카](https://cafe.naver.com/openrt/24274)
 
 ```python
-		def laser_cb(self, data):
-
+    def laser_cb(self, data):
         left_side_count = 0
         right_side_count = 0
 
@@ -393,21 +392,40 @@ $ ros2 service list
 
 ```bash
 $ rosservice type /gazebo/spawn_urdf_model
-****
+gazebo_msgs/SpawnModel
 ```
 
 - 이렇게 검색된 srv는 rossrv show와 결합할 때 더욱 진가를 발휘합니다.
 
-```python
+```bash
 $ rossrv show `rosservice type /gazebo/spawn_urdf_model`
-
+string model_name
+string model_xml
+string robot_namespace
+geometry_msgs/Pose initial_pose
+  geometry_msgs/Point position
+    float64 x
+    float64 y
+    float64 z
+  geometry_msgs/Quaternion orientation
+    float64 x
+    float64 y
+    float64 z
+    float64 w
+string reference_frame
+---
+bool success
+string status_message
 ```
 
 - 특정 srv 타입에 대한 자세한 정보는 다음과 같이 조회할 수 있습니다.
 
 ```bash
 $ rosservice info /gazebo/spawn_urdf_model
-
+Node: /gazebo
+URI: rosrpc://192.168.55.236:55405
+Type: gazebo_msgs/SpawnModel
+Args: model_name model_xml robot_namespace initial_pose reference_frame
 ```
 
 gazebo_ros에서 제공하는 다양한 service들이 있습니다. rosservice 커멘드를 사용하여 조회해보고 여러분들만의 Application을 생각해 보세요.
@@ -482,7 +500,7 @@ callback 함수는 일전 subscriber에서 살펴본 바 있습니다. service s
 
 ```python
 def stop_cb(self, request):
-	  ...
+    ...
     return self.response_
 ```
 

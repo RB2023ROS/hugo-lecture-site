@@ -621,8 +621,8 @@ self.timer_ = rospy.Timer(rospy.Duration(1.0/10.0), self.pub_msg)
 - 다음으로, Message Type인 **geometry_msgs/Twist** 값을 채웁니다. 현재 우리 로봇은 2차원 평면에서 움직이며, 로봇 형태 때문에 앞뒤 선속도와 각속도를 갖게 됩니다.
 
 ```bash
-				...
-				self.twist_ = Twist()
+        ...
+        self.twist_ = Twist()
 
     def pub_msg(self, event=None):
         self.twist_.linear.x = 0.5
@@ -642,7 +642,7 @@ linear의 단위는 m/s 이며, angular의 단위는 rad/s 입니다. pi = 3.14
 - 마지막, 가장 중요한 topic publish는 생성한 Publisher의 publish() 메소드를 사용합니다. 미리 준비해둔 topic message를 사용합시다.
 
 ```python
-	 def pub_msg(self, event=None):
+    def pub_msg(self, event=None):
         # geometry_msgs.Twist
         # ref: http://docs.ros.org/en/melodic/api/geometry_msgs/html/msg/Twist.html
         self.twist_.linear.x = 0.5
@@ -654,10 +654,10 @@ linear의 단위는 m/s 이며, angular의 단위는 rad/s 입니다. pi = 3.14
 이 Node를 실행하면, 우리의 ROS가 일정 주기에 맞추어 알맞게 topic publish를 실행시켜줄 것입니다. 우리는 정해진 구현에 맞추어 코드만 작성하면 되는 것이지요 😊
 
 ```python
-def cmd_vel_node():
-    rospy.init_node('cmd_vel_node', anonymous=True)
-    cmd_vel_pub_node = CmdVelPubNode()
-    rospy.spin()
+    def cmd_vel_node():
+        rospy.init_node('cmd_vel_node', anonymous=True)
+        cmd_vel_pub_node = CmdVelPubNode()
+        rospy.spin()
 ```
 
 ---
@@ -775,7 +775,7 @@ print(f"""
     data.ranges[179]: {data.ranges[179]}
     data.ranges[270]: {data.ranges[270]}
     data.ranges[360]: {data.ranges[360]}
-    """)
+""")
 ```
 
 Subscriber 실행 시에는 항상 `rospy.spin()`을 잊지 말도록 합니다. spin 되지 않는다면 특정 쓰레드가 자원을 점유하기 때문에 subscriber의 상태를 갱신할 수 없습니다.
