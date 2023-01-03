@@ -76,7 +76,7 @@ def main(args=None):
 > 파이썬 파일을 `ros2 run` 으로 실행하기 위해서 패키지 내 **setup.py** 파일에 **entry_points**를 추가해 주어야 합니다.
 
 ```python
-		entry_points={
+    entry_points={
         'console_scripts': [
             'example_node_1 = py_node_tutorial.node_example_1:main',
             'example_node_2 = py_node_tutorial.node_example_2:main',
@@ -228,7 +228,7 @@ ROS 1과 달리, ROS 2의 OOP 구현은 **Node**를 상속받습니다. (때문�
 - **rclpy logger**
 
 ```python
-		super().__init__('node_name')
+    super().__init__('node_name')
 		...
     node.get_logger().info('\n==== Hello ROS 2 ====')
 ```
@@ -331,7 +331,7 @@ class ParamExNode(rclpy.node.Node):
 - 선언된 매개변수의 값은 **get_parameter**를 통해 확인 가능합니다. get_parameter 자체는 Object이고, value 속성이 실제 값을 갖고 있습니다.
 
 ```python
-		string_param = self.get_parameter('string_param')
+    string_param = self.get_parameter('string_param')
     int_param = self.get_parameter('int_param')
     float_param = self.get_parameter('float_param')
     arr_param = self.get_parameter('arr_param')
@@ -359,7 +359,7 @@ $ ros2 launch py_param_tutorial launch_with_param.launch.py
 
 - launch file의 parameters 옵션을 사용하여 이러한 작업이 가능합니다.
 
-```bash
+```python
 def generate_launch_description():
 
     param_ex_node = Node(
@@ -377,7 +377,7 @@ def generate_launch_description():
 - parameter가 매우 많은 경우에는 ROS 1에서와 같이 yaml 파일을 사용해 관리할 수 있습니다. launch file의 주석된 부분을 해제하고 다시 실행해봅시다.
 
 ```python
-		config = os.path.join(
+    config = os.path.join(
         get_package_share_directory('py_param_tutorial'), 'config', 'params.yaml'
     )
 
@@ -448,7 +448,7 @@ setup(
 - launch file에 추가된 내용을 다시 살펴보면, 방금 전의 yaml 파일을 불러와서 node의 실행 option에 전달하고 있습니다.
 
 ```python
-		config = os.path.join(
+    config = os.path.join(
         get_package_share_directory('py_param_tutorial'), 'config', 'params.yaml'
     )
 

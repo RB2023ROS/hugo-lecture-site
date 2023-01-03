@@ -373,7 +373,7 @@ def up_down_cb(self, request):
 - request의 seconds 시간동안 로봇이 움직여야 할 것이며, 이를 위해 now를 갱신하며 지나간 시간을 계속해서 tracking 합니다.
 
 ```python
-		start = rospy.Time.now()
+    start = rospy.Time.now()
     now = rospy.Time.now()
     while (now - start).secs < request.seconds:
         now = rospy.Time.now()
@@ -383,7 +383,7 @@ def up_down_cb(self, request):
 - 모든 동작이 완료된 이후에는 로봇을 다시 정지시킵니다.
 
 ```python
-		rospy.loginfo(f"{request.command} done, quadrotor stop")
+    rospy.loginfo(f"{request.command} done, quadrotor stop")
     self.twist_msg_.linear.z = 0.0
     self.cmd_vel_pub_.publish(self.twist_msg_)
 

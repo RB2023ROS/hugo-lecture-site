@@ -267,7 +267,7 @@ _lookup_transform의 계산 결과는 target frame인 turtle2의 위치가 sourc
 - 두번째 거북이를 등장시키는 **service client**
 
 ```python
-		# Spawn second turtle
+    # Spawn second turtle
     rospy.wait_for_service('spawn')
     spawner = rospy.ServiceProxy('spawn', turtlesim.srv.Spawn)
     turtle_name = rospy.get_param('turtle', 'turtle2')
@@ -277,7 +277,7 @@ _lookup_transform의 계산 결과는 target frame인 turtle2의 위치가 sourc
 - 거북이를 제어하기 위한 **Twist msg topic publisher**
 
 ```python
-		# turtle2 controller
+    # turtle2 controller
     turtle_vel = rospy.Publisher('%s/cmd_vel' % turtle_name, geometry_msgs.msg.Twist, queue_size=1)
 
     rate = rospy.Rate(50.0)

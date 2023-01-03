@@ -474,7 +474,7 @@ class ParkingNode(Node):
 - **sub_callback**에서는 전방 (msg.ranges[60]) 물체와의 거리를 탐지하고, 이 거리가 0.5m 이하가 되면 정지 topic을 publish 합니다.
 
 ```python
-		def sub_callback(self, msg):
+    def sub_callback(self, msg):
 
         twist_msg = Twist()
         distance_forward = msg.ranges[60]

@@ -115,7 +115,7 @@ string message # informational, e.g. for error messages
 - service call에 대한 callback입니다. **is_request**를 바꿔주기만 하는데, 이것이 하는 역할이 무엇일지 생각해보세요.
 
 ```python
-		def take_picture_callback(self, request, response):
+    def take_picture_callback(self, request, response):
 
         if request.data is True:
             self.get_logger().info('KimChi~')
@@ -130,7 +130,7 @@ string message # informational, e.g. for error messages
 - 정답은 subscription callback에서 찾을 수 있습니다. subscribe된 이미지 데이터는 is_request가 True인 순간에만 사용됩니다. CV Bridge를 통해 ROS topic을 OpenCV 포맷으로 바꿀 수 있으며, **imwrite**를 통해 이미지를 저장할 수 있습니다.
 
 ```python
-    def sub_callback(self, data):
+def sub_callback(self, data):
 
     if self.is_request:
         current_frame = self.br.imgmsg_to_cv2(data, "bgr8")
