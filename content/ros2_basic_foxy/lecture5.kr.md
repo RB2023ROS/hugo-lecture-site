@@ -556,10 +556,10 @@ class ImageSubscriber(Node):
 
         # Used to convert between ROS and OpenCV images
         self.br = CvBridge()
-				...
+        ...
 
-		def listener_callback(self, data):
-				...
+    def listener_callback(self, data):
+        ...
         # Convert ROS Image message to OpenCV image
         current_frame = self.br.imgmsg_to_cv2(data, "bgr8")
         edge_frame = self.hough_transform(current_frame)

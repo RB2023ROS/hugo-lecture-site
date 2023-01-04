@@ -160,6 +160,98 @@ WSL2를 사용하시는 분들께서는 터미널에서 **explorer.exe .** 를 �
 
 ![lec6_0.png](/kr/ros2_basic_foxy/images6/lec6_0.png?height=300px)
 
+### Server Client Example - Spawn Model
+
+> 이번 예시는 ROS 1강의에서도 살펴본 바 있는, urdf를 사용하여 gazebo 상에 물체를 등장시키는 예시입니다.
+
+- 예시 실행
+
+```bash
+ros2 launch src_gazebo wall_world.launch.py
+```
+
+![spawn_srv.gif](/kr/ros2_basic_foxy/images6/spawn_srv.gif?height=300px)
+
+Gazebo에서 일정한 간격을 두고, 하얀색 박스가 등장하게 됩니다. 매번 박스가 등장할 때마다 **service call**이 이루어지는 것이지요.
+
+- ROS 1에서의 예시와 기능은 동일하므로 중요한 코드들만 간단히 분석해봅시다. 사용하는 srv는 **gazebo_msgs/srv/SpawnEntity** 입니다.
+
+```python
+from gazebo_msgs.srv import SpawnEntity
+import rclpy
+from rclpy.node import Node
+```
+
+- **create_client**를 통해 Service Client를 생설할 수 있습니다.
+
+```python
+class SpawnRobot(Node):
+
+    def __init__(self):
+        super().__init__('gazebo_model_spawner')
+        self.client = self.create_client(SpawnEntity, 'spawn_entity')
+
+        while not self.client.wait_for_service(timeout_sec=1.0):
+            self.get_logger().error('service not available, waiting again...')
+```
+
+create_client의 매개변수는 각각 다음과 같습니다.
+
+- **Service srv type** - SpawnEntity
+- **Service server 이름** - 'spawn_entity'
+
+main문은, 일반적인 node 실행과 다소 차이를 보입니다. **Future**라는 개념을 사용하여 이벤트 기반 spin을 구현하였습니다.
+
+```python
+future = robot_spawn_node.send_req()
+
+rclpy.spin_until_future_complete(robot_spawn_node, future)
+
+if future.done():
+    try:
+        response = future.result()
+    except Exception:
+        raise RuntimeError(
+            'exception while calling service: %r' % future.exception()
+        )
+    else:
+        robot_spawn_node.get_logger().info('==== Service Call Done ====')
+        robot_spawn_node.get_logger().info(f'Status_message : {response.status_message}')
+    finally:
+        robot_spawn_node.get_logger().warn('==== Shutting down node. ====')
+```
+
+친구와 명확한 약속을 했다면, 그동안 다른 일을 할 수 있는 것처럼 Future는, 효율적인 비동기 프로그래밍을 위해 사용됩니다.
+
+![promise.png](/kr/ros2_basic_foxy/images6/promise.png?height=300px)
+
+image from : [brunch.co](https://brunch.co.kr/@plusclov/17)
+
+- service call이 이루어지는 **send_req**에서 이 Future를 반환하고 있습니다.
+
+```python
+def send_req(self):
+		...
+		self.future = self.client.call_async(self.req)
+
+		return self.future
+```
+
+- launch file을 보면 gazebo의 실행을 비롯하여 spawn_model node도 함께 실행됩니다. 그래서 gazebo가 등장하자마자 하얀 박스들이 생성되었던 것입니다.
+
+```bash
+spawn_parking_lot = Node(
+    package='py_service_tutorial',
+    executable='spawn_model',
+    name='spawn_model',
+    output='screen'
+)
+```
+
+{{% notice note %}}
+이 예시는 다음 Action에서도 활용되므로 잘 기억해두시기 바랍니다.
+{{% /notice %}}
+
 ### Custom Interface와 코딩 과제 - Turtle Jail
 
 > ROS 2에서 custom interface를 만들기 위해서는 **C++ Package**에서 작업이 이루어져야 합니다. C++ package는 build type ament_cmake를 사용하는 package였습니다.

@@ -237,6 +237,10 @@ image from : [기호일보](https://www.kihoilbo.co.kr/news/articleView.html?idx
 - 이번에는 재미있는 예시를 준비해 보았습니다. 아래 명령어을 입력해 주세요
 
 ```python
+cbp custom_interfaces
+cbp parking_action_server
+source install/local_setup.bash
+
 # Terminal 1
 ros2 launch src_gazebo wall_world.launch.py
 
