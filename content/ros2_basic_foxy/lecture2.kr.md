@@ -332,8 +332,8 @@ joint_state_publisher_gui = Node(
 
 robot_state_publisher = Node(
     package='robot_state_publisher',
-    node_executable='robot_state_publisher',
-    node_name='robot_state_publisher',
+    executable='robot_state_publisher',
+    name='robot_state_publisher',
     output='screen',
     parameters=[{'use_sim_time': True}],
     arguments=[urdf_file],
@@ -382,7 +382,7 @@ robot_state_publisher = Node(
 일례로, 자율 주행 시 사용되는 nav2 패키지의 lanuch file은 다음과 같은 형태를 갖습니다.
 
 ```python
-declare_namespace_cmd = DeclareLaunchArgument(
+  declare_namespace_cmd = DeclareLaunchArgument(
         'namespace',
         default_value='',
         description='Top-level namespace')
