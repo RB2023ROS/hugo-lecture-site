@@ -124,7 +124,7 @@ def main(args=None):
     rclpy.shutdown()
 ```
 
-timer를 생성하기 위해서 **crros2 run basic_topic_pkg example_node_3eate_timer** 함수가 사용됩니다.
+timer를 생성하기 위해서 **create_timer** 함수가 사용됩니다.
 
 - **timer_period_sec** : 실행 주기 (초)
 - **callback** : 해당 주기마다 실행될 함수
