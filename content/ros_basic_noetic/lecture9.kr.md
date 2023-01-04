@@ -25,6 +25,11 @@ tf 또한 tf2로 개편되면서 코드의 수정이 있었으며, 이번 강의
 ### tf broadcaster
 
 ```python
+# setup example
+catkin build py_tf2_tutorial
+source devel/setup.bash
+roscore
+
 # Terminal 1
 rosrun turtlesim turtlesim_node
 # Terminal 2
