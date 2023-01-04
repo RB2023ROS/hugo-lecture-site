@@ -1,7 +1,7 @@
 ---
 title: "Lecture3 - ROS 2 Node Programming, ROS 2 parameter"
 date: 2023-01-02T12:39:11+09:00
-draft: true
+draft: false
 ---
 
 > Python을 사용하여 Node Programming을 실습해봅시다. 강의 마지막에는 간단히 C++ 코딩에 대해서도 다뤄보겠습니다.
