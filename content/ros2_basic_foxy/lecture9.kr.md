@@ -55,7 +55,7 @@ publisher는 **create_publisher** 함수를 통해 생성할 수 있습니다.
 geometry_msgs::msg::Twist와 같이 타입이 길기 때문에 using을 사용하여 축약하곤 합니다.
 {{% /notice %}}
 
-### Topic Publish 예제 - Random Movement Turtle
+### Topic Subscribe 예제 - Turtle Pose Sub
 
 - turtlesim 상의 거북이의 위치를 Subscribe 받습니다.
 
@@ -93,9 +93,9 @@ callback의 매개변수가 1개이기에 이를 알려야 하며, **std::placeh
 
 sub_callback의 첫번째 매개변수인 데이터는 SharedPtr 타입이 사용된다는 것에 주의하며, 때문에 레퍼런스를 사용할 수 없습니다.
 
-### Topic Publish 예제 - Random Movement Turtle
-
 > Service Client와 Server의 C++코드들도 분석해봅시다.
+
+### Service Client 예제 - Turtle Spawn
 
 - Turtle Spawn 예제 - 영상과 같이 우리가 내린 명령대로 거북이가 등장한 모습을 볼 수 있습니다.
 
@@ -324,4 +324,4 @@ service callback은 request와 response 두 데이터를 매개변수로 받습�
 - **Tel : 010-8689-0259**
 - **Email : [tge1375@hanyang.ac.kr](mailto:tge1375@hanyang.ac.kr) / [mr.swimmingkim@gmail.com](mailto:mr.swimmingkim@gmail.com)**
 
-[https://ci3.googleusercontent.com/mail-sig/AIorK4zhIPutEJ2vFjpLGkkkYPMjIEWnB6PqcB454aZ3N5oecRcE1PO_egb7VAiIkA9YIDhaT4xJT_I](https://ci3.googleusercontent.com/mail-sig/AIorK4zhIPutEJ2vFjpLGkkkYPMjIEWnB6PqcB454aZ3N5oecRcE1PO_egb7VAiIkA9YIDhaT4xJT_I)
+![rb_logo.png](/kr/ros2_basic_foxy/images9/rb_logo.png?height=200px)

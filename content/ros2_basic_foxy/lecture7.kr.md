@@ -29,8 +29,7 @@ float32 height
 ---
 bool success
 
-$ ros2 interface show turtlesim/
-srv/TeleportAbsolute
+$ ros2 interface show turtlesim/srv/TeleportAbsolute
 float32 x
 float32 y
 float32 theta
