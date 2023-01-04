@@ -1,7 +1,7 @@
 ---
 title: "Lecture9 - C++ Programming Again, Outro"
 date: 2023-01-02T12:38:58+09:00
-draft: true
+draft: false
 ---
 
 ## C++ Programming Again
