@@ -23,6 +23,7 @@ source install/local_setup.bash
 # CMakeLists.txt 수정 (주석 해제)
 colcon build --packages-select src_gazebo
 
+colcon build --packages-select src_odometry
 colcon build --packages-select src_controller
 source install/local_setup.bash
 ```
@@ -68,7 +69,7 @@ image from : [docs.ros.org](https://docs.ros.org/en/foxy/Tutorials/Topics/Unders
 
 > topic을 통해 데이터가 전달되는 과정은 다음과 같습니다.
 
-- 데이터를 보내는 주체인 **publisher**는 데이터를 받는 주체, **subscriber**를 지정한 뒤, topic을 통해 원하는 정보를 전달합니다. 이것을 **topic publish**라고 부르지요.
+- 데이터를 보내는 주체인 **publisher**는 topic을 통해 원하는 정보를 **subscriber**에게 전달합니다. 이것을 **topic publish**라고 부르지요.
 - 반대로, 데이터를 받는 주체인 **subscriber** 입장에선 topic을 통해 데이터를 받게 되며 이것은 **topic subscribe**라고 불립니다.
 
 ### ROS 2 Topic msg
@@ -120,9 +121,9 @@ ROS 1과 ROS 2의 rqt는 다른 프로그램이며 ROS 1의 plugin과 ROS 2의 p
 
 ```bash
 # Terminal 1
-$ ros2 launch src_gazebo empty_world.launch.py
+ros2 launch src_gazebo empty_world.launch.py
 # Terminal 2
-$ rqt
+rqt
 ```
 
 - rqt 상단의 메뉴바에서 **Plugins ⇒ Topics ⇒ Topic Monitor**를 클릭합니다.
@@ -246,19 +247,19 @@ else:
 
 ```python
 def generate_launch_description():
-		...
+    ...
 
     # gazebo
     pkg_gazebo_ros = FindPackageShare(package='gazebo_ros').find('gazebo_ros')
     pkg_path = os.path.join(get_package_share_directory('src_gazebo'))
     world_path = os.path.join(pkg_path, 'worlds', '여러분의-world-file.world')
-		...
+    ...
 
-		# Start Gazebo server
-		start_gazebo_server_cmd = IncludeLaunchDescription(
-		    PythonLaunchDescriptionSource(os.path.join(pkg_gazebo_ros, 'launch', 'gzserver.launch.py')),
-		    launch_arguments={'world': world_path}.items()
-		)
+    # Start Gazebo server
+    start_gazebo_server_cmd = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(os.path.join(pkg_gazebo_ros, 'launch', 'gzserver.launch.py')),
+        launch_arguments={'world': world_path}.items()
+    )
 ```
 
 - package를 빌드하고, gazebo를 다시 실행해봅시다.
