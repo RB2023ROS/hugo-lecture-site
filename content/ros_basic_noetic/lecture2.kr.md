@@ -225,6 +225,17 @@ export LIBGL_ALWAYS_INDIRECT=0
 gazebo
 ```
 
+{{% notice note %}}
+Gazebo의 실행 시 그래픽 카드 인식 문제가 발생하면 아래와 같이 어두운 화면이 등장합니다.
+{{% /notice %}}
+
+
+![gazebo_black.png](/kr/ros_basic_noetic/images2/gazebo_black.png?height=300px)
+
+* 이러한 경우,  World 탭 ⇒ Scene ⇒ Shadows 옵션을 토글해주시면 됩니다.
+
+![scene.png](/kr/ros_basic_noetic/images2/scene.png?height=300px)
+
 - 마지막입니다! `~/.bashrc`를 수정합니다.
 
 ```bash
