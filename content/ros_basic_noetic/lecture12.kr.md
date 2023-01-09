@@ -291,9 +291,469 @@ ROS Master와 Node에 의해 Topic과 Service가 이루어지는 과정을 총�
 
 ### ROS Packet Analysis Demo
 
-ROS 내부의 통신이 이루어지는 과정을 배운 만큼 [WireShark](https://www.wireshark.org/)를 통해 실제 오가는 패킷을 분석해 봅시다.
+> ROS 내부의 통신이 이루어지는 과정을 배운 만큼 [WireShark](https://www.wireshark.org/)를 통해 실제 오가는 패킷을 분석해 봅시다.
+
+![demo_1.png](/kr/ros_basic_noetic/images12/demo_1.png?height=400px)
+
+- Wireshark 설치
+
+```bash
+sudo apt update
+sudo apt install wireshark
+
+sudo wireshark
+```
+
+- ROS Master는 기본적으로 **11311** 포트를 사용하도록 설정되어있습니다. 현재 IP의 11311 포트 패킷을 분석하여 roscore 실행 시 오가는 패킷들을 살펴보겠습니다.
+
+```bash
+ip.addr == <my-ip-addr> || tcp.port == 11311
+
+# Terminal 
+roscore
+```
+
+- TCP handshake가 이루어진 뒤 parameter server, logger, roslaunch, rosgraph, statistics_window_max_size를 비롯하여 다양한 서비스가 Request, Response를 통해 초기화됩니다.
+
+![demo_2.png](/kr/ros_basic_noetic/images12/demo_2.png?height=500px)
 
 
+{{% notice note %}}
+ROS Master를 종료할 시에도 실행되고 있는 모든 서비스들은 **11311**포트를 통해 종료 신호를 Request-Response 합니다.
+{{% /notice %}}
+
+
+- 이번에는 **Publisher**를 실행한 뒤, ROS Master와 오가는 패킷을 살펴봅시다.
+
+```xml
+rostopic pub /chatter std_msgs/String "hello"
+```
+
+- 패킷을 살펴보면, XMLRPC를 통해 **Topic Publisher**의 포트와 이름, Topic 이름과 Message type 정보를 확인할 수 있습니다.
+    
+
+
+
+{{< tabs >}}
+{{% tab name="Packet - 1" %}}
+
+```xml
+<methodCall>
+    <methodName>
+        registerService
+        </methodName>
+    <params>
+        <param>
+            <value>
+                <string>
+                    /rostopic_18957_1673097448137
+                    </string>
+                </value>
+            </param>
+        <param>
+            <value>
+                <string>
+                    /rostopic_18957_1673097448137/get_loggers
+                    </string>
+                </value>
+            </param>
+        <param>
+            <value>
+                <string>
+                    rosrpc://166.104.135.89:44311
+                    </string>
+                </value>
+            </param>
+        <param>
+            <value>
+                <string>
+                    http://166.104.135.89:33575/
+                    </string>
+                </value>
+            </param>
+        </params>
+    </methodCall>
+```
+
+
+{{% /tab %}}
+{{% tab name="Packet - 2" %}}
+
+```xml
+<?xml
+    version='1.0'
+    ?>
+<methodCall>
+    <methodName>
+        registerPublisher
+        </methodName>
+    <params>
+        <param>
+            <value>
+                <string>
+                    /rostopic_18957_1673097448137
+                    </string>
+                </value>
+            </param>
+        <param>
+            <value>
+                <string>
+                    /chatter
+                    </string>
+                </value>
+            </param>
+        <param>
+            <value>
+                <string>
+                    std_msgs/String
+                    </string>
+                </value>
+            </param>
+        <param>
+            <value>
+                <string>
+                    http://166.104.135.89:33575/
+                </string>
+            </value>
+        </param>
+    </params>
+</methodCall>
+```
+
+{{% /tab %}}
+{{< /tabs >}}
+
+- **Connection Header**를 실제로 확인해보겠습니다. rostopic echo를 실행한 뒤 패킷의 data field를 살펴봅니다.
+
+```xml
+$ rostopic echo /chatter
+data: "hello"
+---
+```
+
+
+![demo_3.png](/kr/ros_basic_noetic/images12/demo_3.png?height=400px)
+
+- 실제 /chatter topic의 정보를 조회해보면 **data 필드의 결과와 일치**하는 것을 확인 가능합니다.
+
+```xml
+$ rostopic info /chatter
+Type: std_msgs/String
+
+Publishers: 
+ * /rostopic_18957_1673097448137 (http://166.104.135.89:33575/)
+
+Subscribers: None
+```
+
+- **/chatter Topic Subscriber**를 실행하고, topic publisher의 포트(현재는 33575)로 오가는 패킷을 분석해보겠습니다.
+
+```xml
+ip.addr == <my-ip-addr> || tcp.port == 33575 
+(/chatter publisher의 포트가 33575였음)
+```
+
+- Topic echo를 통해 Subscriber를 실행합니다.
+
+```xml
+$ rostopic echo /chatter
+data: "hello"
+---
+```
+
+- 우선, 생성된 Subscriber 정보는 아래와 같습니다.
+
+```xml
+$ rostopic info /chatter
+Type: std_msgs/String
+
+Publishers: 
+ * /rostopic_18957_1673097448137 (http://166.104.135.89:33575/)
+
+Subscribers: 
+ * /rostopic_21890_1673098174449 (http://166.104.135.89:36479/)
+```
+
+- 패킷을 살펴보면, Subscriber에 대한 정보와 데이터 타입에 대한 정보가 XML-RPC를 통해 오고 간 것을 확인할 수 있습니다.
+
+
+
+{{< tabs >}}
+{{% tab name="Packet - 1" %}}
+
+
+```xml
+<methodCall>
+    <methodName>
+        registerPublisher
+        </methodName>
+    <params>
+        <param>
+            <value>
+                <string>
+                    /rostopic_21890_1673098174449
+                    </string>
+                </value>
+            </param>
+        <param>
+            <value>
+                <string>
+                    /rosout
+                    </string>
+                </value>
+            </param>
+        <param>
+            <value>
+                <string>
+                    rosgraph_msgs/Log
+                    </string>
+                </value>
+            </param>
+        <param>
+            <value>
+                <string>
+                http://166.104.135.89:36479/
+                </string>
+            </value>
+        </param>
+    </params>
+</methodCall>
+```
+{{% /tab %}}
+{{% tab name="Packet - 2" %}}
+
+
+```xml
+<methodResponse>
+    <params>
+        <param>
+            <value>
+                <array>
+                    <data>
+                        <value>
+                            <int>
+                                1
+                                </int>
+                            </value>
+                        <value>
+                            <string>
+                                current system state
+                                </string>
+                            </value>
+                        <value>
+                            <array>
+                                <data>
+                                    <value>
+                                        <array>
+                                            <data>
+                                                <value>
+                                                    <string>
+                                                        /rosout_agg
+                                                        </string>
+                                                    </value>
+                                                <value>
+                                                    <string>
+                                                        rosgraph_msgs/Log
+                                                        </string>
+                                                    </value>
+                                                </data>
+                                            </array>
+                                        </value>
+                                    <value>
+                                        <array>
+                                            <data>
+                                                <value>
+                                                    <string>
+                                                        /rosout
+                                                        </string>
+                                                    </value>
+                                                <value>
+                                                    <string>
+                                                        rosgraph_msgs/Log
+                                                        </string>
+                                                    </value>
+                                                </data>
+                                            </array>
+                                        </value>
+                                    <value>
+                                        <array>
+                                            <data>
+                                                <value>
+                                                    <string>
+                                                        /chatter
+                                                        </string>
+                                                    </value>
+                                                <value>
+                                                    <string>
+                                                        std_msgs/String
+                                                    </string>
+                                                </value>
+                                            </data>
+                                        </array>
+                                    </value>
+                                </data>
+                            </array>
+                        </value>
+                    </data>
+                </array>
+            </value>
+        </param>
+    </params>
+</methodResponse>
+```
+
+{{% /tab %}}
+{{< /tabs >}}
+
+
+> 다음으로, turtlesim을 통해 topic message data의 변화를 살펴보고자 합니다.
+
+- turtlesim을 실행시킨 뒤 rosnode info를 통해 각종 정보들을 조회합니다. 사용중인 통신 방법 (TCPROS), Node의 포트 번호 등 다양한 정보들이 조회됩니다.
+
+```xml
+$ rosrun turtlesim turtlesim_node
+$ rosnode info /turtlesim
+--------------------------------------------------------------------------------
+Node [/turtlesim]
+Publications: 
+ * /rosout [rosgraph_msgs/Log]
+ * /turtle1/color_sensor [turtlesim/Color]
+ * /turtle1/pose [turtlesim/Pose]
+
+Subscriptions: 
+ * /turtle1/cmd_vel [unknown type]
+
+Services: 
+ * /clear
+ * /kill
+ * /reset
+ * /spawn
+ * /turtle1/set_pen
+ * /turtle1/teleport_absolute
+ * /turtle1/teleport_relative
+ * /turtlesim/get_loggers
+ * /turtlesim/set_logger_level
+
+contacting node http://166.104.135.89:39875/ ...
+Pid: 29120
+Connections:
+ * topic: /rosout
+    * to: /rosout
+    * direction: outbound (33435 - 166.104.135.89:60856) [26]
+    * transport: TCPROS
+```
+
+- rostopic info를 통해 cmd_vel topic에 대한 정보를 조회하였습니다. 사용중인 포트 번호를 확인한 뒤 wireshark를 통해 해당 포트로 오가는 패킷을 분석합니다.
+
+```xml
+$ rostopic info /turtle1/cmd_vel
+Type: geometry_msgs/Twist
+
+Publishers: None
+
+Subscribers: 
+ * /turtlesim (http://166.104.135.89:39875/)
+```
+
+- wireshark 필터 조건문
+
+```xml
+ip.addr == <my-ip> || tcp.port == 39875
+```
+
+- teleop key를 통해 거북이의 조종을 준비하고, 해당 작업 중 발생한 패킷을 분석합니다.
+
+```xml
+rosrun turtlesim turtle_teleop_key 
+```
+
+> XML-RPC 통신들이 이루어진 뒤로, TCP 통신이 이어지는 모습을 확인할 수 있습니다.
+
+![demo_4.png](/kr/ros_basic_noetic/images12/demo_4.png?height=400px)
+
+TCP Data 필드의 내용에는 아래와 같은 데이터가 포함되어 있습니다.
+
+```xml
+callerid=/teleop_turtle
+latching=0'md5sum=acffd30cd6b6de30f120938c17c593fbjmessage_definition=##
+## Severity level constants
+##
+byte DEBUG=1 #debug level
+byte INFO=2  #general level
+byte WARN=4  #warning level
+byte ERROR=8 #error level
+byte FATAL=16 #fatal/critical level
+##
+## Fields
+##
+Header header
+byte level
+string name # name of the node
+string msg # message 
+string file # file the message came from
+string function # function the message came from
+uint32 line # line the message came from
+string[] topics # topic names that the node publishes
+
+================================================================================
+MSG: std_msgs/Header
+# Standard metadata for higher-level stamped data types.
+# This is generally used to communicate timestamped data 
+# in a particular coordinate frame.
+# 
+# sequence ID: consecutively increasing ID 
+uint32 seq
+#Two-integer timestamp that is expressed as:
+# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')
+# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')
+# time-handling sugar is provided by the client library
+time stamp
+#Frame this data is associated with
+string frame_id
+
+topic=/rosouttype=rosgraph_msgs/Log
+```
+
+```xml
+callerid=/teleop_turtle
+latching=0'md5sum=9f195f881246fdfa2798d1d3eebca84armessage_definition=# This expresses velocity in free space broken into its linear and angular parts.
+Vector3  linear
+Vector3  angular
+
+================================================================================
+MSG: geometry_msgs/Vector3
+# This represents a vector in free space. 
+# It is only meant to represent a direction. Therefore, it does not
+# make sense to apply a translation to it (e.g., when applying a 
+# generic rigid transformation to a Vector3, tf2 will only apply the
+# rotation). If you want your data to be translatable too, use the
+# geometry_msgs/Point message instead.
+
+float64 x
+float64 y
+float64 z
+topic=/turtle1/cmd_veltype=geometry_msgs/Twist
+```
+
+- teleop key에서 앞/뒤/CW/CCW와 같이 다양한 조종 신호를 publish해보고 이때의 TCP Data가 어떻게 변화하는지 확인해봅시다.
+
+
+![demo_5.png](/kr/ros_basic_noetic/images12/demo_5.png?height=150px)
+
+![demo_6.png](/kr/ros_basic_noetic/images12/demo_6.png?height=150px)
+
+![demo_7.png](/kr/ros_basic_noetic/images12/demo_7.png?height=150px)
+
+![demo_8.png](/kr/ros_basic_noetic/images12/demo_8.png?height=150px)
+
+⇒ 기본적으로 sequence / timestamp가 변화하며, 미묘하게 data가 다른 것을 알 수 있습니다.
+
+* 이렇게 topic message는 serialization이 되어 있으며, 공식 문서화 같이 MD5 sum을 사용합니다.
+
+
+![demo_9.png](/kr/ros_basic_noetic/images12/demo_9.png?height=300px)
+
+- image from : [roswiki](http://library.isr.ist.utl.pt/docs/roswiki/ROS(2f)Technical(20)Overview.html)
 
 --- 
 
