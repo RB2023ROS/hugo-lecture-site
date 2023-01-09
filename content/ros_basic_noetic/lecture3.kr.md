@@ -14,9 +14,211 @@ gazebo
 
 ![img0](/kr/ros_basic_noetic/images3/lec2_0.png?height=400px)
 
-위 사진과 같은 화면이 나오지 않았다면 설치가 제대로 되지 않은 것입니다.
 
-다음으로, ROS 설치는 잘 되었는지도 확인해봅시다.
+{{% notice tip %}}
+위 사진과 같은 화면이 나오지 않았다면 설치가 제대로 되지 않은 것입니다. (sudo apt install libgazebo11 을 통해 다시 설치해봅시다.)
+{{% /notice %}}
+
+## About Gazebo 
+
+> Gazebo의 특징과 기본적인 UI, 그리고 사용법을 짚고 넘어가고자 합니다.
+
+![gazebo_logo](/kr/ros_basic_noetic/images3/gazebo_logo.png?height=200px)
+
+
+* image from : [Open Robotics](https://www.openrobotics.org/)
+
+
+
+> Gazebo는 로봇공학을 위해 제작된 전용 물리 엔진 기반의 높은 3D 시뮬레이터입니다. 
+> 
+> ROS를 관리하는 Open Robotics에서 비롯된 시뮬레이터인만큼 ROS와 높은 호환성을 자랑합니다.
+> 
+> Gazebo는 실제 로봇을 위한 설계 검증 테스트와 시뮬레이션을 용이하게 하며, 윈도우, 맥, 리눅스에서 모두 실행되지만 대부분 리눅스 시스템에서 ROS와 함께 사용됩니다.
+
+⇒ 이후 Gazebo 사용 및 오류 발생 시 디버깅을 위해, Gazebo를 구성하는 요소들을 간단하게 짚고 넘어가겠습니다.
+
+### gzserver & gzclient
+
+> Gazebo는 Socket-Based Communication을 갖습니다. 따라서 서버와 Client를 분리하여 실행 가능하며 다른 기기에서의 실행 후 연동도 가능합니다. 
+
+- **Gazebo Server**
+
+**gzserver**는 Gazebo 동작의 대부분을 수행합니다. 시뮬레이션하려는 장면과 그 안에 있는 개체 파일을 분석하고, 그런 다음 물리 엔진과 센서 엔진을 사용하여 전체 장면을 시뮬레이션합니다.
+
+터미널에서 다음 명령을 사용하여 서버를 독립적으로 시작할 수 있습니다.
+
+```cpp
+$ gzserver
+```
+
+- **Gazebo Client**
+
+**gzclient**는 gzserver에 연결하여 대화형 도구와 함께 시뮬레이션을 렌더링하는 Graphic Client를 제공합니다.
+
+다음 명령을 사용하여 gzclient를 단독으로 실행할 수 있습니다.
+
+```cpp
+$ gzclient
+```
+
+{{% notice note %}}
+client만 실행하면, 연결되고 명령을 수신할 서버가 없기 때문에 (컴퓨팅 리소스를 소비하는 것을 제외하고) 아무 것도 하지 않습니다.
+{{% /notice %}}
+
+
+- **Combining Gazebo Server and Gazebo Client**
+
+gzserver를 먼저 실행한 다음 gzclient를 실행하는 것이 일반적이며, 렌더링하기 전에 시뮬레이션 장면, 객체 관련 파라미터를 초기화할 수 있습니다. 
+
+gazebo 명령어를 입력하면 내부적으로 server와 client가 순차적으로 실행됩니다.
+
+```cpp
+$ gazebo
+```
+
+{{% notice tip %}}
+이러한 이유로 Gazebo를 종료했다고 생각하지만 gzserver가 깔끔하게 종료되지 않는 상황이 발생합니다. ⇒ killg를 사용합시다!
+{{% /notice %}}
+
+
+### World File과 Model File
+
+![world](/kr/ros_basic_noetic/images3/world.png?height=300px)
+
+* image from : [dronecode](https://dev.px4.io/v1.11_noredirect/en/simulation/gazebo_worlds.html)
+
+- **World Files**
+
+Gazebo world file에는 로봇 모델, 환경, 조명, 센서, 다른 기타 물체들까지 시뮬레이션 환경의 모든 요소가 포함되어 있습니다. 일반적으로 확장자명 **.world**를 사용합니다. 
+
+아래 예시와 같이 Gazebo 실행 시 world 파일을 옵션으로 하여 실행이 가능합니다. 
+
+```cpp
+$ gazebo <yourworld>.world
+```
+
+- **Model Files**
+
+Gazebo의 World는 다양한 Model들로 구성됩니다. 하지만 Model만을 가지고 gazebo를 실행시킬 수는 없습니다. (gazebo <model> 이렇게는 불가합니다.)
+
+모델을 별도의 파일로 보관하는 이유는 다른 프로젝트에 재사용하기 위해서이며, 로봇의 모델 파일 또는 다른 모델을 월드 파일 내에 포함하려면 다음과 같이 <uri>태그를 통해 import 할 수 있습니다. 
+
+```xml
+<include>
+  <uri>model://model_file_name</uri>
+</include>
+```
+
+- **Environment Variables**
+
+Gazebo에 World, Model을 연동하고, gzserver와 gzclient 간 통신을 설정하기 사용하는 많은 환경 변수가 있습니다. 
+
+예를 들어, GAZEBO_MODEL_PATH는 Gazebo가 모델 파일을 검색할 시 참조하는 경로입니다.
+
+- **Plugins**
+
+Gazebo의 World, Model에 장착되는 각종 센서와 제어를 위한 다양한 플러그인이 준비되어 있으며,  이러한 플러그인은 커멘드 라인에서 로드하거나 SDF 파일 내부에 추가할 수 있습니다. (자체 Plugin을 개발할 수도 있습니다.)
+
+### **Understanding Gazebo GUI**
+
+이번에는 Gazebo의 기본 조작 방법과 내장 Tool들을 살펴보겠습니다.
+
+- 우선 Gazebo를 실행시킵니다.
+
+```xml
+$ gazebo
+```
+
+- Gazebo의 시점 변환은 마우스를 사용하여 손쉽게 조작 가능합니다.
+- 마우스 왼쪽 버튼을 누르고 드래그하면 시점을 이동할 수 있습니다.
+- 마우스 휠을 누른 상태로 이동시키면 회전 시점을 조작할 수 있습니다.
+
+![ui](/kr/ros_basic_noetic/images3/ui.png?height=300px)
+
+
+- 최상단에 위치한 **Top Toolbar**를 살펴보겠습니다.
+
+![toolbar](/kr/ros_basic_noetic/images3/toolbar.png?height=50px)
+
+> 왼쪽부터 오른쪽 순서대로 각 아이콘 별 기능을 설명해보겠습니다.  
+
+- **Select mode**
+
+Select mode는 가장 일반적으로 사용되는 커서 모드입니다. 장면을 탐색할 수 있습니다.
+
+- **Translate mode**
+
+커서 모드를 선택한 다음 이동시키길 원하는 객체를 클릭합니다.
+이후 등장하는 3축 중 적절한 축을 사용하여 개체를 원하는 위치로 끌기만 하면 됩니다.
+
+![new1](/kr/ros_basic_noetic/images3/new1.png?height=300px)
+
+- **Rotate mode**
+
+translate mode와 마찬가지로 이 커서 모드를 사용하면 주어진 모델의 방향을 변경할 수 있습니다.
+
+![new2](/kr/ros_basic_noetic/images3/new2.png?height=300px)
+
+- **Scale mode**
+
+Scale mode를 사용하면 객체의 전체 크기를 변경할 수 있습니다.
+
+![new3](/kr/ros_basic_noetic/images3/new3.png?height=300px)
+
+- **Undo/Redo**
+
+앞,뒤로 되돌리는 기능입니다.
+
+- **Simple shapes**
+
+큐브, 구체 또는 실린더와 같은 기본 3D 모델을 환경에 삽입할 수 있습니다.
+
+![new4](/kr/ros_basic_noetic/images3/new4.png?height=300px)
+
+- **Lights**
+
+스포트라이트, 포인트 라이트 또는 방향이 정해진 조명과 같은 다양한 광원을 환경에 추가합니다.
+
+![new5](/kr/ros_basic_noetic/images3/new5.png?height=300px)
+
+- **Copy/Paste**
+
+모델을 복사/붙여넣을 수 있습니다. (Ctrl+C/V를 통해서도 가능합니다.) 
+
+- **Align**
+
+이 도구를 사용하면 x y z 축 중 하나를 따라 한 모형을 다른 모델과 정렬할 수 있습니다.
+
+![new6](/kr/ros_basic_noetic/images3/new6.png?height=300px)
+
+또는 두 모델을 특정한 면 기반으로 서로 붙이는 것도 가능합니다. 
+
+![new7](/kr/ros_basic_noetic/images3/new7.png?height=300px)
+
+- **Change view**
+
+상단 뷰, 측면 뷰, 전면 뷰, 하단 뷰와 같은 다양한 관점에서 장면을 볼 수 있습니다.
+
+다음으로 **Side Panel**을 살펴보겠습니다.
+
+- **World**
+
+현재 사용중인 조명 및 모델들이 표시됩니다. 개별 모델을 클릭하여 위치 및 방향과 같은 모델의 기본 파라미터를 보거나 편집할 수 있습니다.
+또한 물리 옵션을 통해 중력 및 자기장과 같은 물성치도 변경할 수 있습니다. GUI 옵션을 사용하면 기본 카메라 뷰 각도 및 포즈에 액세스할 수 있습니다.
+
+![new8](/kr/ros_basic_noetic/images3/new8.png?height=300px)
+
+- **Insert**
+
+![new9](/kr/ros_basic_noetic/images3/new9.png?height=300px)
+
+
+추가할 모델을 찾을 수 있습니다. 환경 변수에 지정된 폴더에서 모델들을 검색한 뒤 배치하는 것이 가능하며, 환경 변수 설정 없이도 Add Path 옵션을 통해 정해진 포멧을 갖는 모델을 가져올 수 있습니다.
+
+---
+
+> 다시 본론으로 돌아와서, ROS 설치는 잘 되었는지도 확인해봅시다.
 
 ```bash
 # Terminal 1
