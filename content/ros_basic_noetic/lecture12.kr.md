@@ -755,6 +755,73 @@ topic=/turtle1/cmd_veltype=geometry_msgs/Twist
 
 - image from : [roswiki](http://library.isr.ist.utl.pt/docs/roswiki/ROS(2f)Technical(20)Overview.html)
 
+
+### ROS URI 설정
+
+* ROS에는 다양한 환경 변수들이 존재합니다. 이들 중 Master가 사용할 IP와 Port를 설정하는 환경 변수가 있으며, 이는 아래와 같이 조회 가능합니다.
+
+```bash
+$ echo $ROS_MASTER_URI
+http://192.168.0.1:11311
+```
+
+서로 다른 디바이스에서 동작하는 ROS 시스템일지라도 같은 MASTER URI를 갖도록 하면 원격 통신이 가능합니다. 이를 통해 원격 시각화와 원격 제어를 주로 실행합니다.
+
+![uri_1.png](/kr/ros_basic_noetic/images12/uri_1.png?height=300px)
+
+- image from : [turtlebot3 git](https://github.com/ROBOTIS-GIT/turtlebot3/issues/608)
+
+ROS_MASTER_URI를 사용하는 방법은 다음과 같습니다.
+
+- **ROS_MASTER_URI**=http://master-ip-addr:master-ip-port
+- **ROS_IP**=<현재 디바이스의 ip-addr>
+- **ROS_HOSTNAME**=<현재 디바이스의 hostname>
+
+
+{{% notice note %}}
+*ROS_IP*와 *ROS_HOSTNAME*는 서로 양립할 수 없고, 둘 중 하나를 사용할 수 있습니다.
+{{% /notice %}}
+
+
+- **bashrc**의 수정을 해두면, 새로운 터미널을 실행할 때마다 변경된 내용이 반영될 수 있어 편리합니다.
+
+
+![uri_2.png](/kr/ros_basic_noetic/images12/uri_2.png?height=400px)
+
+- 강의 초반, 저의 셋업을 따라오셨다면, **~/ros_menu/config.yaml**을 수정하여 손쉽게 변경하실 수 있습니다.
+
+```yaml
+Config:
+  menu_enable: true
+  ros_option: menu
+  default_ros_domain_id: 30
+Menu:
+  ROS 1 noetic:
+    option_num: 1
+    ROS_version: 1
+    distro_name: noetic
+    ros1_path: /opt/ros/noetic
+    master_ip: # set if roscore isn't on this computer
+    cmds:
+    # - source ${HOME}/catkin_ws/devel/setup.${shell}
+    # - source_plugin openvino_bashrc
+```
+
+- 같은 네트워크를 사용하는 두 PC를 사용해서 원격으로 로봇을 조종해보는 실습을 진행해봅시다.
+
+![uri_3.png](/kr/ros_basic_noetic/images12/uri_3.png?height=200px)
+
+```bash
+# PC 1 - ROS Master를 실행시키고 로봇 등장시키기
+roslaunch smb_gazebo smb_gazebo.launch
+
+# PC 2 - Master URI 변경 후 로봇 조종
+rosrun teleop_twist_keyboard teleop_twist_keyboard.py
+```
+
+
+- image from : [robots.nootrix](https://robots.nootrix.com/diy-tutos/ros-networking/)
+
 --- 
 
 **자료출처**
@@ -763,3 +830,4 @@ topic=/turtle1/cmd_veltype=geometry_msgs/Twist
 - [http://wiki.ros.org/ROS/Connection Header](http://wiki.ros.org/ROS/Connection%20Header)
 - [http://wiki.ros.org/ROS/TCPROS](http://wiki.ros.org/ROS/TCPROS)
 - [로봇 운영체제 강좌 : ROS 개념 정리 (오픈소스 소프트웨어 & 하드웨어: 로봇 기술 공유 카페 (오로카))](https://cafe.naver.com/openrt/2468)
+- [http://wiki.ros.org/ROS/EnvironmentVariables#ROS_IP.2FROS_HOSTNAME](http://wiki.ros.org/ROS/EnvironmentVariables#ROS_IP.2FROS_HOSTNAME)
