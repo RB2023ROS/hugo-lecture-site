@@ -83,7 +83,8 @@ ubuntu-drivers devices
 마지막으로, catkin build system을 사용하기 위해 아래 커멘드 명령어를 실행합니다.
 
 ```bash
-sudo apt-get install python3-catkin-tools
+sudo apt update
+sudo apt install python3-catkin-tools
 ```
 
 ### **Windows + WSL2 설정**
