@@ -103,7 +103,7 @@ if __name__ == '__main__':
     try:
         param_node()
     except rospy.ROSInterruptException:
-        pa
+        pass
 ```
 
 - 실행 결과는 다음과 같습니다.

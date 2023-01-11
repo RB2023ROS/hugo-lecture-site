@@ -32,6 +32,7 @@ draft: false
 > 수치 데이터를 그래프로 보고싶은 경우 rqt의 multiplot이 유용하게 사용됩니다.
 
 ```bash
+sudo apt install ros-noetic-rqt-multiplot
 rosrun rqt_multiplot rqt_multiplot
 ```
 
