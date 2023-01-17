@@ -232,58 +232,130 @@ Changeable이 ‘YES’ 일 경우에는, 동작하면서도 QoS 의 값이
 
 ![qos7.png](/kr/ros2_basic_foxy/images10/qos7.png?height=100px)
 
-> ROS 2에서는 자주 사용되는 QoS 조합을 묶어 제공하고 있습니다. 지금까지 우리가 queue_size만을 전달하고 있었지만, 사실은 아래 사진의 Default에서 Depth만 바꿔주고 있었던 것입니다.
+> ROS 2에서는 자주 사용되는 QoS 조합을 묶어 RMW QoS Profile이라는 이름으로 제공하고 있습니다. 지금까지 우리가 queue_size만을 전달하고 있었지만, 사실은 아래 사진의 Default에서 Depth만 바꿔주고 있었던 것입니다.
 
 ![qos8.png](/kr/ros2_basic_foxy/images10/qos8.png?height=300px)
 
 - image from : [오로카](https://cafe.naver.com/openrt/24319)
 
-ros2에서 QoS 설정하는 방법은 매우 간단합니다. Publisher, Subscriber 클래스를 생성하면서 QoS 옵션을 매개변수로 전달하면 됩니다.
+> ros2에서 QoS 설정하는 방법은 매우 간단합니다. Publisher, Subscriber 클래스를 생성하면서 QoS 옵션을 매개변수로 전달하면 됩니다.
 
-- example - History 옵션
+- python example - RMW QoS Profile 사용 시
 
-```cpp
-[RCLCPP]
-auto qos_profile = rclcpp::QoS(rclcpp::KeepLast(10)).reliable().durability_volatile();
-publisher_ = this->create_publisher<std_msgs::msg::String>(
-    "topic_name", qos_profile);
+```python
+from rclpy.qos import qos_profile_sensor_data
 
-[RCLPY]
-qos_profile = QoSProfile(history=QoSHistoryPolicy.KEEP_LAST, depth=10)
-self.sensor_publisher = self.create_publisher(
-    Int8MultiArray, 'sensor', qos_profile
-)
+self.string_publisher = self.create_publisher(String, 'qos_test_topic', qos_profile_sensor_data)
 ```
 
-- topic을 실행한 뒤, 이러한 QoS 옵션을 보고 싶다면 Topic 커멘드에 verbose 옵션을 추가하면 됩니다.
+- python example - 직접 Profile 설정 시
+
+```python
+from rclpy.qos import QoSDurabilityPolicy
+from rclpy.qos import QoSHistoryPolicy
+from rclpy.qos import QoSProfile
+from rclpy.qos import QoSReliabilityPolicy
+
+my_profile = QoSProfile(
+    reliability=QoSReliabilityPolicy.BEST_EFFORT,
+    history=QoSHistoryPolicy.KEEP_LAST,
+    depth=10,
+    durability=QoSDurabilityPolicy.VOLATILE
+)
+
+self.string_publisher = self.create_publisher(String, 'qos_test_topic', my_profile)
+```
+
+=> 참고 링크 : [rclpy/qos.py](https://github.com/ros2/rclpy/blob/4e1654eca2758c42e7c22f3d6c518d6ec26ad9de/rclpy/rclpy/qos.py#L390)
+
+- topic 통신이 이루어지고 있는 상황에서, QoS 옵션을 보고 싶다면 Topic 커멘드에 verbose 옵션을 추가하면 됩니다.
 
 ```bash
-# Terminal 1
-$ ros2 run examples_rclcpp_minimal_publisher publisher_lambda
-[INFO] [1673500641.181287635] [minimal_publisher]: Publishing: 'Hello, world! 0'
-[INFO] [1673500641.681303678] [minimal_publisher]: Publishing: 'Hello, world! 1'
-[INFO] [1673500642.181304949] [minimal_publisher]: Publishing: 'Hello, world! 2'
-
-# Terminal 2
-$ ros2 topic info /topic --verbose
+# Terminal 1 - publisher
+$ ros2 run py_topic_tutorial qos_example_publisher
+# Terminal 2 - subscriber
+$ ros2 run py_topic_tutorial qos_example_subscriber
+# Terminal 3 - topic info
+$ ros2 topic info /qos_test_topic --verbose
 Type: std_msgs/msg/String
 
 Publisher count: 1
 
-Node name: minimal_publisher
+Node name: twist_pub_node
 Node namespace: /
 Topic type: std_msgs/msg/String
 Endpoint type: PUBLISHER
-GID: a6.cc.10.01.34.e0.36.86.25.1a.b6.3b.00.00.15.03.00.00.00.00.00.00.00.00
+GID: 60.77.10.01.f3.67.78.3d.6b.0c.cc.7b.00.00.14.03.00.00.00.00.00.00.00.00
 QoS profile:
-  Reliability: RMW_QOS_POLICY_RELIABILITY_RELIABLE
+  Reliability: RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT
   Durability: RMW_QOS_POLICY_DURABILITY_VOLATILE
   Lifespan: 9223372036854775807 nanoseconds
   Deadline: 9223372036854775807 nanoseconds
   Liveliness: RMW_QOS_POLICY_LIVELINESS_AUTOMATIC
   Liveliness lease duration: 9223372036854775807 nanoseconds
 
-Subscription count: 0
+Subscription count: 1
+
+Node name: string_sub_node
+Node namespace: /
+Topic type: std_msgs/msg/String
+Endpoint type: SUBSCRIPTION
+GID: d2.03.10.01.d5.6b.69.e0.be.3f.b5.a2.00.00.14.04.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT
+  Durability: RMW_QOS_POLICY_DURABILITY_VOLATILE
+  Lifespan: 9223372036854775807 nanoseconds
+  Deadline: 9223372036854775807 nanoseconds
+  Liveliness: RMW_QOS_POLICY_LIVELINESS_AUTOMATIC
+  Liveliness lease duration: 9223372036854775807 nanoseconds
 ```
 
-> 다음 페이지에 계속됩니다.
+> DDS QoS는 **RxO - requested by offered** 특성을 갖고 있어 서로 양립할 수 없는 조합이 존재합니다. 예를 들어, Publish의 Reliability가 BEST_EFFORT일때, Subscriber의 Reliability가 RELIABLE라면, Topic 통신이 발생할 수 없습니다.
+
+- 코드를 수정하여 직접 실습해봅시다.
+
+{{< tabs >}}
+{{% tab name="qos_example_publisher.py" %}}
+
+```python
+my_profile = QoSProfile(
+    reliability=QoSReliabilityPolicy.BEST_EFFORT,
+    history=QoSHistoryPolicy.KEEP_LAST,
+    depth=10,
+    durability=QoSDurabilityPolicy.VOLATILE
+)
+...
+self.string_publisher = self.create_publisher(String, 'qos_test_topic', qos_profile_sensor_data)
+```
+
+{{% /tab %}}
+{{% tab name="qos_example_subscriber.py" %}}
+
+```python
+my_profile = QoSProfile(
+    reliability=QoSReliabilityPolicy.RELIABLE,
+    history=QoSHistoryPolicy.KEEP_LAST,
+    depth=10,
+    durability=QoSDurabilityPolicy.VOLATILE
+)
+...
+self.pose_subscriber = self.create_subscription(
+    String, 'qos_test_topic', self.sub_callback, my_profile
+)
+```
+
+{{% /tab %}}
+{{< /tabs >}}
+
+- 코드 변경 후 실행 - Warning과 함께 Subscriber가 동작하지 않음을 알 수 있습니다.
+
+```python
+$ ros2 run py_topic_tutorial qos_example_publisher
+[WARN] [1673945160.449603592] [twist_pub_node]: New subscription discovered on this topic, requesting incompatible QoS. No messages will be sent to it. Last incompatible policy: RELIABILITY_QOS_POLICY
+$ ros2 run py_topic_tutorial qos_example_subscriber
+[WARN] [1673945160.455319911] [string_sub_node]: New publisher discovered on this topic, offering incompatible QoS. No messages will be received from it. Last incompatible policy: RELIABILITY_QOS_POLICY
+```
+
+> QoS를 통해 원하는 도메인에서의 성능을 끌어올리고 안정성을 갖춘 시스템을 구축합시다.
+
+⇒ 다음 페이지에서 계속됩니다.

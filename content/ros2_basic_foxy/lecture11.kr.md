@@ -231,6 +231,110 @@ Menu:
 
 > 이러한 이유로 ROS 2 공식 문서에서는 0-101 사이의 Domain ID를 사용하기를 권장하고 있습니다.
 
+### ROS RMW와 다양한 DDS 벤더들
+
+> DDS 자체는 산업 표준이다보니 다양한 벤더들에서 제공되고 있습니다. ROS 2 설치 시 자동으로 Fast DDS가 사용되지만, 아래 표와 같이 다양한 DDS 벤더들이 존재하고 있습니다.
+
+이렇게 다양한 DDS 벤더들에 맞추기 위해 ROS 2는 **RMW**(“**R**OS **M**iddle**W**are interface”)라는 패키지들을 제공합니다. 다른 벤더의 DDS를 사용하게 되면, 이 RMW를 바꿔줘야 하는 것입니다.
+
+| Product name           | License                     | RMW implementation | Status                                                                              |
+| ---------------------- | --------------------------- | ------------------ | ----------------------------------------------------------------------------------- |
+| eProsima Fast DDS      | Apache 2                    | rmw_fastrtps_cpp   | Full support. Default RMW. Packaged with binary releases.                           |
+| Eclipse Cyclone DDS    | Eclipse Public License v2.0 | rmw_cyclonedds_cpp | Full support. Packaged with binary releases.                                        |
+| RTI Connext            | commercial, research        | rmw_connext_cpp    | Full support. Support included in binaries, but Connext installed separately.       |
+| GurumNetworks GurumDDS | commercial                  | rmw_gurumdds_cpp   | Community support. Support included in binaries, but GurumDDS installed separately. |
+
+{{% notice note %}}
+오픈소스인 Fast DDS, Cyclone DDS는 무료이지만, 더 좋은 성능을 위해서는 rti와 같은 유료 서비스를 사용하시기 바랍니다.
+{{% /notice %}}
+
+- apt를 통해 손쉽게 rmw를 설치할 수 있습니다.
+
+```cpp
+$ sudo apt install ros-foxy-rmw
+ros-foxy-rmw                              ros-foxy-rmw-fastrtps-dynamic-cpp
+ros-foxy-rmw-connext-cpp                  ros-foxy-rmw-fastrtps-dynamic-cpp-dbgsym
+ros-foxy-rmw-connext-cpp-dbgsym           ros-foxy-rmw-fastrtps-shared-cpp
+ros-foxy-rmw-connext-shared-cpp           ros-foxy-rmw-fastrtps-shared-cpp-dbgsym
+ros-foxy-rmw-connext-shared-cpp-dbgsym    ros-foxy-rmw-gurumdds-cpp
+ros-foxy-rmw-cyclonedds-cpp               ros-foxy-rmw-gurumdds-cpp-dbgsym
+ros-foxy-rmw-cyclonedds-cpp-dbgsym        ros-foxy-rmw-gurumdds-shared-cpp
+ros-foxy-rmw-dbgsym                       ros-foxy-rmw-gurumdds-shared-cpp-dbgsym
+ros-foxy-rmw-dds-common                   ros-foxy-rmw-implementation
+ros-foxy-rmw-dds-common-dbgsym            ros-foxy-rmw-implementation-cmake
+ros-foxy-rmw-fastrtps-cpp                 ros-foxy-rmw-implementation-dbgsym
+ros-foxy-rmw-fastrtps-cpp-dbgsym
+```
+
+ROS 2 시스템 상에서 사용하는 DDS 벤더를 바꾸는 것은 환경변수를 설정하는 것으로 손쉽게 진행할 수 있습니다. (해당 DDS와 RMW가 설치되어 있다는 가정 하에) 더불어, 서로 다른 벤더의 DDS를 사용하고 있더라도 DDS 표준(SPDP와 SEDP)을 따르고 있다면 상호 통신이 가능합니다.
+
+- **Example** - Fast DDS <> Cyclone DDS 상호간 Topic 통신
+
+```cpp
+$ export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+$ ros2 run demo_nodes_cpp listener
+[INFO]: I heard: [Hello World: 1]
+[INFO]: I heard: [Hello World: 2]
+[INFO]: I heard: [Hello World: 3]
+
+$ export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+$ ros2 run demo_nodes_cpp talker
+[INFO]: Publishing: 'Hello World: 1'
+[INFO]: Publishing: 'Hello World: 2'
+[INFO]: Publishing: 'Hello World: 3'
+```
+
+{{% notice tip %}}
+예시의 실행에서 지연이 발생함으로 알 수 있듯이, 실제 제품을 제작할 때는 사용하는 RMW를 통일시켜주는 것을 추천합니다.
+{{% /notice %}}
+
+- 강의 개발환경에서 제공하는 설치 튜토리얼을 따라오셨다면 **config.yaml** 파일을 수정함으로 손쉽게 DDS Vendor를 변경하실 수 있습니다.
+
+```bash
+$ gedit ~/ros_menu/config.yaml
+
+ROS 2 foxy:
+    option_num: 2
+    ROS_version: 2
+    distro_name: foxy
+    ros2_path: /opt/ros/foxy
+    domain_id: # set if you don't want to use default domain id
+    cmds:
+    # - source ${HOME}/ros2_ws/install/local_setup.${shell}
+      - source_plugin dds_bashrc 1
+    # - source_plugin openvino_bashrc
+```
+
+제공되는 기본 DDS Vendor들은 아래와 같습니다.
+
+| Number | DDS Vendor          |
+| ------ | ------------------- |
+| 0      | Show Menu           |
+| 1      | Eclipse Cyclone DDS |
+| 2      | OpenSplice          |
+| 3      | FastRTPS            |
+
+- dds_bashrc를 0으로 수정한 다음 새로운 터미널을 실행시키면, 아래와 같이 DDS를 선택하는 옵션이 등장합니다.
+
+```bash
+0) Do nothing
+1) ROS 1 noetic
+2) ROS 2 foxy
+3) ROS2/ROS1_bridge
+Please choose an option: 2
+------------------------------------------------------
+* ROS_DOMAIN_ID = 0
+------------------------------------------------------
+source /home/kimsooyoung/.ros_menu/plugins_bashrc/dds_bashrc 0
+**** Choose DDS you want to use ****
+1) Eclipse Cyclone DDS
+2) OpenSplice CE
+3) FastRTPS
+Please choose an option 1-3:
+```
+
+---
+
 **참고자료**
 
 - [MDS테크](https://blog.naver.com/neos_rtos)
