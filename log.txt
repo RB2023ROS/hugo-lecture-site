@@ -39,7 +39,7 @@ hugo new --kind chapter gitlet/_index.md
 
 hugo new Lecture1.md
 
-hugo new ros2_basic_foxy/lecture10.kr.md
+hugo new ros2_basic_foxy/lecture13.kr.md
 
 hugo new ros_basic_noetic/lecture11.kr.md
 hugo new ros_basic_noetic/lecture12.kr.md
@@ -101,3 +101,8 @@ git submodule add -b master https://github.com/RB2023ROS/RB2023ROS.github.io.git
 ![A Chapter](/en/basics/installation/images/chapter.png?classes=shadow&width=60pc)
 
 ![lec8_0.png](/kr/ros_basic_noetic/images2/lec8_0.png?height=400px)
+
+
+![fb0.png](/kr/ros2_basic_foxy/images13/fb0.png?height=400px)
+
+{{% attachments title="Example Packages" /%}}
