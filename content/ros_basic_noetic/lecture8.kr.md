@@ -390,9 +390,47 @@ def up_down_cb(self, request):
     return self.response_
 ```
 
+## Husky Move Base
+
+ROS 1에서 로봇 자율주행을 위해 사용하는 스택을 Move Base라고 지칭합니다. ROS 1 noetic에서 husky 로봇을 통해 Move Base를 실습해보겠습니다.
+
+- 예시를 위해 필요한 패키지를 다운받습니다.
+
+```xml
+sudo apt-get install ros-noetic-husky-navigation
+```
+
+- slam 예시를 실행합니다.
+
+```xml
+# Terminal 1
+export HUSKY_LMS1XX_ENABLED=1;  roslaunch husky_gazebo husky_playpen.launch
+# Terminal 2
+roslaunch husky_viz view_robot.launch
+# Terminal 3
+roslaunch husky_navigation gmapping_demo.launch
+```
+
+사진과 같은 world와 함께 husky가 등장할 것입니다.
+
+![hsk0.png](/kr/ros_basic_noetic/images7/hsk0.png?height=400px)
+
+- rviz에서 map topic을 추가합니다.
+
+![hsk1.png](/kr/ros_basic_noetic/images7/hsk1.png?height=500px)
+
+- rviz의 2D Nav Goal을 사용하면 로봇을 특정 위치로 이동시킬 수 있습니다. 해당 예시는 slam과 navigation을 동시에 실행하는 예시입니다.
+
+![gz_move_base.gif](/kr/ros_basic_noetic/images7/gz_move_base.gif?height=500px)
+
+- rqt_graph를 통해 살펴본 현 상황의 node들과 topic입니다.
+
+![rosgraph.png](/kr/ros_basic_noetic/images7/rosgraph.png?height=400px)
+
 **참고자료**
 
 - [http://wiki.ros.org/rospy/Overview/Time](http://wiki.ros.org/rospy/Overview/Time)
 - [https://github.com/RAFALAMAO/hector-quadrotor-noetic](https://github.com/RAFALAMAO/hector-quadrotor-noetic)
 - [https://docs.ros.org/en/foxy/index.html](https://docs.ros.org/en/foxy/index.html)
 - [http://wiki.ros.org/ROS/Tutorials/CreatingMsgAndSrv](http://wiki.ros.org/ROS/Tutorials/CreatingMsgAndSrv)
+- [https://www.clearpathrobotics.com/assets/guides/noetic/husky/HuskyMove.html](https://www.clearpathrobotics.com/assets/guides/noetic/husky/HuskyMove.html)
