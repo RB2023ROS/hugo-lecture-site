@@ -57,7 +57,7 @@ URDF의 link가 가질 수 있는 속성들은 다음과 같습니다.
 
 - **inertial** : 해당 link의 질량, 관성 모멘트와 같은 물성치를 포함합니다.
 - **visual** : 로봇이 겉으로 보여지는 시각적인 요소를 설정합니다. STL과 같은 3D 모델링 파일을 사용할 수 있습니다.
-- **collision** : visual은 겉으로 보여지는 모습일 뿐, 실제 해당 link가 자치하는 부피는 collision에서 지정됩니다. Visual과 collision을 일치시킬수록 좋기 때문에 3D 모델링 파일을 사용하기도 합니다. 종종 계산 단순화를 위해 간소화된 모델을 사용하기도 합니다.ros2 run demo_nodes_py listener --ros-args --enclave /talker_listener/listener
+- **collision** : visual은 겉으로 보여지는 모습일 뿐, 실제 해당 link가 자치하는 부피는 collision에서 지정됩니다. Visual과 collision을 일치시킬수록 좋기 때문에 3D 모델링 파일을 사용하기도 합니다. 종종 계산 단순화를 위해 간소화된 모델을 사용하기도 합니다.
 
 ```xml
 <link name="base_link">

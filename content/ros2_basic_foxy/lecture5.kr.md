@@ -534,7 +534,7 @@ ros2 run rqt_image_view rqt_image_view
 ```bash
 # 터미널 1
 $ cd <bag 파일 위치>
-$ ros2 bag play quadruped_train/quadruped_train.bag_0.db3
+$ ros2 bag play quadruped_train.bag_0.db3
 [INFO] [1667077909.362223100] [rosbag2_storage]: Opened database 'quadrupped_train/quadrupped_train.bag_0.db3' for READ_ONLY.
 
 # 터미널 2

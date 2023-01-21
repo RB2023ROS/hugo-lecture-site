@@ -168,6 +168,7 @@ WSL2를 사용하시는 분들께서는 터미널에서 **explorer.exe .** 를 �
 
 ```bash
 ros2 launch src_gazebo wall_world.launch.py
+ros2 run py_service_tutorial spawn_model
 ```
 
 ![spawn_srv.gif](/kr/ros2_basic_foxy/images6/spawn_srv.gif?height=300px)
