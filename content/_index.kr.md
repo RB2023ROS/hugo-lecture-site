@@ -18,6 +18,9 @@ title: "2023 Road Balance ROS Lecture Note"
 - [Lecture8. Deal with Open Source Projects, Custom Interfaces](/kr/ros_basic_noetic/lecture8)
 - [Lecture9. ROS TF and Examples](/kr/ros_basic_noetic/lecture9)
 - [Lecture10. TF2 Examples, Outro](/kr/ros_basic_noetic/lecture10)
+- [Lecture11 - ROSCPP](/kr/ros_basic_noetic/lecture11)
+- [Lecture12 - More About ROS System](/kr/ros_basic_noetic/lecture12)
+- [Lecture13 - SROS](/kr/ros_basic_noetic/lecture13)
 
 ---
 
@@ -32,3 +35,8 @@ title: "2023 Road Balance ROS Lecture Note"
 - [Lecture7. Useful ROS 2 Examples, Nav2](/kr/ros2_basic_foxy/lecture7)
 - [Lecture8. ROS 2 Action and Examples](/kr/ros2_basic_foxy/lecture8)
 - [Lecture9. C++ Programming Again, Outro](/kr/ros2_basic_foxy/lecture9)
+- [Lecture10 - About DDS](/kr/ros2_basic_foxy/lecture10)
+- [Lecture11 - About DDS (2)](/kr/ros2_basic_foxy/lecture11)
+- [Lecture12 - SROS2](/kr/ros2_basic_foxy/lecture12)
+- [Lecture13 - Gazebo and Robot(1)](/kr/ros2_basic_foxy/lecture13)
+- [Lecture14 - Gazebo and Robot(2)](/kr/ros2_basic_foxy/lecture14)

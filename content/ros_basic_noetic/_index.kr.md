@@ -18,3 +18,6 @@ pre = "<b>ROS Noetic. </b>"
 - [Lecture8. Deal with Open Source Projects, Custom Interfaces](/kr/ros_basic_noetic/lecture8)
 - [Lecture9. ROS TF and Examples](/kr/ros_basic_noetic/lecture9)
 - [Lecture10. TF2 Examples, Outro](/kr/ros_basic_noetic/lecture10)
+- [Lecture11 - ROSCPP](/kr/ros_basic_noetic/lecture11)
+- [Lecture12 - More About ROS System](/kr/ros_basic_noetic/lecture12)
+- [Lecture13 - SROS](/kr/ros_basic_noetic/lecture13)
