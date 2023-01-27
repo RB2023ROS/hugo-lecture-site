@@ -8,7 +8,7 @@ draft: false
 
 > Description 예시를 통해 URDF에 대해 습득하였다면, 이제 Gazebo에 로봇을 등장시키고, 이동, 센싱을 구현할 차례입니다. FusionBot을 통해 실습을 진행해보고, 이전 예시에서의 로봇들도 함께 분석해 보겠습니다.
 
-![gz0.png](/kr/ros2_basic_foxy/images13/gz0.png?height=300px)
+![gz0.png](/kr/ros_and_gazebo/images1/gz0.png?height=300px)
 
 강의에서는, Gazebo에서 로봇을 등장시키는 2가지 방법을 제시하고자 합니다.
 
@@ -133,7 +133,7 @@ robot_description = {'robot_description': doc.toxml()}
 ros2 launch temp_description empty_gazebo.launch.py
 ```
 
-![gz1.png](/kr/ros2_basic_foxy/images13/gz1.png?height=300px)
+![gz1.png](/kr/ros_and_gazebo/images1/gz1.png?height=300px)
 
 > 지금 등장시킨 로봇은 색도 없고 제어기, 센서도 없기 때문에 단순 질량 덩어리에 불과합니다. 이제부터 로봇에 여러 요소들을 추가하여 실제 로봇과 유사하게 변신시켜보겠습니다.
 
@@ -183,7 +183,7 @@ ros2 launch temp_description empty_gazebo.launch.py
 
 - 패키지를 빌드한 후 다시 Gazebo launch file을 실행시켜봅시다.
 
-![gz0.png](/kr/ros2_basic_foxy/images13/gz0.png?height=300px)
+![gz0.png](/kr/ros_and_gazebo/images1/gz0.png?height=300px)
 
 > 지금부터 다양한 Gazebo Plugin들을 사용하여 로봇과 ROS 사이의 실질적인 연동을 해보겠습니다. 이를 위해 xacro 파일에 새로운 link들을 추가할 예정입니다.
 
@@ -208,7 +208,7 @@ ros2 launch temp_description empty_gazebo.launch.py
 
 - urdf 폴더 안에 sensors라는 폴더를 추가한 뒤, **mono_cam.gazebo**를 추가합니다.
 
-![gz2.png](/kr/ros2_basic_foxy/images13/gz2.png?height=300px)
+![gz2.png](/kr/ros_and_gazebo/images1/gz2.png?height=300px)
 
 ```xml
 <?xml version="1.0" ?>
@@ -293,7 +293,7 @@ source install/local_setup.bash
 ros2 launch temp_description empty_gazebo.launch.py
 ```
 
-![gz3.png](/kr/ros2_basic_foxy/images13/gz3.png?height=300px)
+![gz3.png](/kr/ros_and_gazebo/images1/gz3.png?height=300px)
 
 > rviz를 통해 카메라 데이터를 확인해봅시다.
 
@@ -317,7 +317,7 @@ ros2 launch temp_description empty_gazebo.launch.py
 
 - urdf 폴더 안에 sensors라는 폴더를 추가한 뒤, **depth_cam.gazebo**를 추가합니다.
 
-![gz4.png](/kr/ros2_basic_foxy/images13/gz4.png?height=200px)
+![gz4.png](/kr/ros_and_gazebo/images1/gz4.png?height=200px)
 
 ```xml
 <?xml version="1.0" ?>
@@ -404,7 +404,7 @@ source install/local_setup.bash
 ros2 launch temp_description empty_gazebo.launch.py
 ```
 
-![gz5.png](/kr/ros2_basic_foxy/images13/gz5.png?height=300px)
+![gz5.png](/kr/ros_and_gazebo/images1/gz5.png?height=300px)
 
 ⇒ rviz를 통해 카메라 데이터를 확인해봅시다.
 
@@ -492,7 +492,7 @@ source install/local_setup.bash
 ros2 launch temp_description empty_gazebo.launch.py
 ```
 
-![gz6.png](/kr/ros2_basic_foxy/images13/gz6.png?height=300px)
+![gz6.png](/kr/ros_and_gazebo/images1/gz6.png?height=300px)
 
 ⇒ rviz를 통해 라이다 데이터를 확인해봅시다.
 
@@ -511,7 +511,7 @@ ros2 launch temp_description empty_gazebo.launch.py
 
 > 로봇 청소기와 같이 제자리 회전이 가능하며, 양쪽 바퀴 회전수 차이로 로봇을 이동시키는 타입을 DD Type이라고 부릅니다. gazebo_ros에서 제공되는 DD controller를 사용하여 Fusionbot이 이동할 수 있게 해보겠습니다.
 
-![gz7.png](/kr/ros2_basic_foxy/images13/gz7.png?height=300px)
+![gz7.png](/kr/ros_and_gazebo/images1/gz7.png?height=300px)
 
 - urdf 폴더 내부에 diff_drive.gazebo 파일을 추가한 뒤, 아래 내용을 붙여넣기 합니다.
 
@@ -554,7 +554,7 @@ ros2 launch temp_description empty_gazebo.launch.py
 
 - fusionbot.gazebo 파일을 다시 수정하고, launch 파일을 실행시키면 tf와 함께 제어되는 로봇을 확인하실 수 있습니다. (기본적으로 /cmd_vel topic을 통해 로봇을 조종할 수 있습니다.)
 
-![gz_diff.gif](/kr/ros2_basic_foxy/images13/gz_diff.gif?height=300px)
+![gz_diff.gif](/kr/ros_and_gazebo/images1/gz_diff.gif?height=300px)
 
 ---
 
@@ -694,7 +694,7 @@ source devel/setup.bash
 roslaunch fusionbot_description display.launch
 ```
 
-![ros0.png](/kr/ros2_basic_foxy/images13/ros0.png?height=300px)
+![ros0.png](/kr/ros_and_gazebo/images1/ros0.png?height=300px)
 
 - ROS 1의 launch file은 **xml** 문법을 사용했습니다.
 
@@ -914,4 +914,4 @@ rviz
 
 - 다채로운 시뮬레이션 world에서 plugin을 통해 추가했던 수많은 센서 데이터들을 rviz를 사용하여 마음껏 시각화해보시기 바랍니다. 😃
 
-![ros1.png](/kr/ros2_basic_foxy/images13/ros1.png?height=300px)
+![ros1.png](/kr/ros_and_gazebo/images1/ros1.png?height=300px)

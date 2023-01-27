@@ -8,7 +8,7 @@ draft: false
 
 > 이번 실습을 위해 모바일 로봇에서 가장 많이 사용되는 타입의 로봇, FusionBot을 준비하였습니다. FusionBot을 통해 ROS에서의 로봇 표현 방법을 익힌 뒤, 실제 CAD 파일에서 Gazebo 상의 로봇을 구현하는 실습을 진행해봅시다.
 
-![fb0.png](/kr/ros2_basic_foxy/images13/fb0.png?height=400px)
+![fb0.png](/kr/ros_and_gazebo/images1/fb0.png?height=400px)
 
 - 실습을 위한 git repo를 clone한 뒤 종속성들을 설치합시다.
 
@@ -27,7 +27,7 @@ cd du2023-gz
 - Link : 단단하게 고정된 강체(rigid-body)이며, 사람의 골격에 해당합니다.
 - Joint : link 사이를 결합해주고 이들 사이 운동을 결정짓습니다. 사람의 관절에 해당합니다.
 
-![fb1.png](/kr/ros2_basic_foxy/images13/fb1.png?height=400px)
+![fb1.png](/kr/ros_and_gazebo/images1/fb1.png?height=400px)
 
 다양한 종류의 joint들이 존재하지만, 이론적으로 이들은 결국 prismatic + revolute joint의 결합으로 설명될 수 있습니다.
 
@@ -36,7 +36,7 @@ cd du2023-gz
 
 그리고 ROS에서는 개발 상 편의를 위해 크게 6가지의 joint를 사용하고 있지요.
 
-![fb2.png](/kr/ros2_basic_foxy/images13/fb2.png?height=300px)
+![fb2.png](/kr/ros_and_gazebo/images1/fb2.png?height=300px)
 
 - **revolute** - 각도 제한을 가진 회전
 - **continuous** - 각도 제한이 없는 회전
@@ -47,7 +47,7 @@ cd du2023-gz
 
 > Link와 Joint로 결합된 로봇을 결국 **텍스트로 표현**할 수 있지 않겠냐는 기본 전제 하에, 로봇 공학자들은 **URDF - Unified Robot Description Format**라는 표준을 만들게 됩니다. 실제로 urdf만 있다면 시뮬레이터 종류에 상관 없이 동일한 로봇 외형을 등장시킬 수 있게 됩니다.
 
-![fb3.png](/kr/ros2_basic_foxy/images13/fb3.png?height=400px)
+![fb3.png](/kr/ros_and_gazebo/images1/fb3.png?height=400px)
 
 - image from : [Martin Androvich](https://www.youtube.com/watch?v=cy7ZICqaFVQ)
 
@@ -111,7 +111,7 @@ URDF의 Joint가 가질 수 있는 속성들은 다음과 같습니다.
 urdf의 joint는 절대 좌표를 기준으로 하는 extrinsic 체계를 갖습니다.
 {{% /notice %}}
 
-![fb4.png](/kr/ros2_basic_foxy/images13/fb4.png?height=200px)
+![fb4.png](/kr/ros_and_gazebo/images1/fb4.png?height=200px)
 
 기타 속성들
 
@@ -142,7 +142,7 @@ urdf의 joint는 절대 좌표를 기준으로 하는 extrinsic 체계를 갖습
 
 CMake를 통해 손쉽게 Xacro 파일들을 URDF로 자동 변환하는 작업을 실습해봅시다.
 
-![fb5.png](/kr/ros2_basic_foxy/images13/fb5.png?height=200px)
+![fb5.png](/kr/ros_and_gazebo/images1/fb5.png?height=200px)
 
 1. 해당 패키지 빌드
 
@@ -153,7 +153,7 @@ source install/setup.bash
 
 > 패키지 빌드가 발생하면 모든 관련 파일들의 symbolic link가 workspace의 **install/<repo-name>/share** 폴더에 생성됩니다. CMake는 이 share 폴더 내에 있는 symbolic link를 위주로 작업하므로 새로운 파일이 생겼다면 주기적으로 colcon build를 실행하는 것을 추천합니다.
 
-![fb6.png](/kr/ros2_basic_foxy/images13/fb6.png?height=100px)
+![fb6.png](/kr/ros_and_gazebo/images1/fb6.png?height=100px)
 
 2. CMakelists.txt 수정 - 주석되어 있는 라인을 주석 해제합니다.
 
@@ -220,7 +220,7 @@ xacro fusionbot.urdf.xacro > fusionbot.urdf
 ros2 launch fusionbot_description description.launch.py
 ```
 
-![fb7.png](/kr/ros2_basic_foxy/images13/fb7.png?height=300px)
+![fb7.png](/kr/ros_and_gazebo/images1/fb7.png?height=300px)
 
 {{% notice note %}}
 WSL2 + Windows 시스템에서는 로봇 외관이 보이지 않을 수 있습니다.
@@ -280,7 +280,7 @@ effort: []
 
 ⇒ **left_wheel_joint는** 위치 -1.4093를 갖고 있으며, 속도와 힘은 제어되고 있지 않고 있습니다.
 
-![fb8.png](/kr/ros2_basic_foxy/images13/fb8.png?height=300px)
+![fb8.png](/kr/ros_and_gazebo/images1/fb8.png?height=300px)
 
 > 이렇게 joint state publisher는 현재 로봇이 가진 움직일 수 있는 모든 **joint들을** 예의주시하고 topic으로 publish하는 node입니다.
 
@@ -288,7 +288,7 @@ effort: []
 
 > URDF의 joint는 joint state publisher가 담당했다면, robot state publisher는 모든 link와 joint 값을 지속적으로 Subscribe하여 전체 로봇의 구조를 tf 형식으로 publish합니다. 더불어, robot state publisher가 publish하는 **/robot_description** topic은 rviz에서 로봇의 시각화를 위해 사용되고, gazebo에서 로봇을 등장시키기 위해 사용됩니다.
 
-![fb9.png](/kr/ros2_basic_foxy/images13/fb9.png?height=300px)
+![fb9.png](/kr/ros_and_gazebo/images1/fb9.png?height=300px)
 
 {{% notice tip %}}
 참고로, ROS 2에서 tf tree를 얻기 위해서는 아래와 같은 커멘드 라인을 사용합니다. (몇 초간 tf listen을 거친 뒤 pdf 형태로 tf tree를 도출해줍니다.)
@@ -298,7 +298,7 @@ effort: []
 $ ros2 run tf2_tools view_frames.py
 ```
 
-![fb10.png](/kr/ros2_basic_foxy/images13/fb10.png?height=300px)
+![fb10.png](/kr/ros_and_gazebo/images1/fb10.png?height=300px)
 
 지금까지 배운 내용들을 복습해봅시다.
 
@@ -308,7 +308,7 @@ $ ros2 run tf2_tools view_frames.py
 
 > 각 Node간 연결을 rqt_graph를 통해 살펴보면 아래와 같습니다.
 
-![fb11.png](/kr/ros2_basic_foxy/images13/fb11.png?height=300px)
+![fb11.png](/kr/ros_and_gazebo/images1/fb11.png?height=300px)
 
 ### Launch file 분석
 
@@ -380,7 +380,7 @@ joint_state_publisher_gui = Node(
 
 - 로봇을 설계하기 위한 수많은 설계 프로그램들이 존재합니다.
 
-![fb12.png](/kr/ros2_basic_foxy/images13/fb12.png?height=300px)
+![fb12.png](/kr/ros_and_gazebo/images1/fb12.png?height=300px)
 
 이번 예시는 무료 사용이 가능한 [Autodesk의 Fusion 360](https://www.autodesk.co.kr/products/fusion-360/overview?term=1-YEAR&tab=subscription)을 사용하였으며, Fusion 360에 Third Party ADD_IN을 추가하여 URDF를 생성하고, 생성된 URDF파일을 사용하여 Rviz 및 Gazebo와 연동하고자 합니다.
 
@@ -396,7 +396,7 @@ joint_state_publisher_gui = Node(
 
 📂 [fusionbot_description.zip](https://drive.google.com/file/d/1vltZMsTH3wkMysQQRmKJ5kiC4adzJxH0/view?usp=sharing)
 
-![fb13.png](/kr/ros2_basic_foxy/images13/fb13.png?height=300px)
+![fb13.png](/kr/ros_and_gazebo/images1/fb13.png?height=300px)
 
 ROS 1의 경우 바로 사용이 가능하지만, ROS 2는 몇가지 추가 설정들이 필요합니다. 따라서, 이번 예시에서는 ROS 2 환경을 기준으로 설정을 변경해보면서 URDF와 ROS 연동에 대해 학습해보겠습니다.
 
@@ -413,7 +413,7 @@ ros2 pkg create --build-type ament_cmake temp_description
 
 - 새롭게 생성한 ROS 2 패키지에 fusionbot_description의 **meshes**와 **urdf** 폴더를 이동시킵니다. (meshes에는 표면 질감 등 시각화 관련 파일들이 담겨 있습니다.)
 
-![fb14.png](/kr/ros2_basic_foxy/images13/fb14.png?height=200px)
+![fb14.png](/kr/ros_and_gazebo/images1/fb14.png?height=200px)
 
 > urdf 폴더 내부의 파일들을 수정해봅시다.
 
@@ -671,7 +671,7 @@ add_custom_target(media_files ALL DEPENDS ${urdf_files})
 
 - 예시를 위해 아래와 같은 폴더 구조가 필요합니다. (launch 폴더와 rviz 폴더를 추가하였습니다.)
 
-![fb15.png](/kr/ros2_basic_foxy/images13/fb15.png?height=300px)
+![fb15.png](/kr/ros_and_gazebo/images1/fb15.png?height=300px)
 
 - launch 폴더를 생성하고, 해당 폴더 내부에 launch 파일을 작성해볼 것입니다. 필요한 Node는 아래와 같은 3개 이며, [fusionbot_description.launch.py](https://github.com/RB2023ROS/du2023-gz/blob/main/fusionbot_description/launch/fusionbot_gazebo.launch.py)를 참고하여 직접 launch file을 작성해보세요!
 
@@ -685,7 +685,7 @@ return LaunchDescription([
 
 - rviz 폴더도 생성하고 기존 fusionbot_description에서 config 파일을 가져옵니다.
 
-![fb16.png](/kr/ros2_basic_foxy/images13/fb16.png?height=200px)
+![fb16.png](/kr/ros_and_gazebo/images1/fb16.png?height=200px)
 
 - 새로운 폴더가 추가되면 항상 **CMakeLists.txt**를 수정해야 합니다.
 
@@ -705,4 +705,4 @@ source install/local_setup.bash
 ros2 launch temp_description description.launch.py
 ```
 
-![fb17.png](/kr/ros2_basic_foxy/images13/fb17.png?height=400px)
+![fb17.png](/kr/ros_and_gazebo/images1/fb17.png?height=400px)

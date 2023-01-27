@@ -22,6 +22,7 @@ start the Hugo server with drafts enabled:
 hugo server -D
 ```
 
+ros_and_gazebo/images1
 
 ```
 git submodule--helper list
@@ -40,6 +41,10 @@ hugo new --kind chapter gitlet/_index.md
 hugo new Lecture1.md
 
 hugo new ros2_basic_foxy/lecture13.kr.md
+
+hugo new ros_and_gazebo/lecture1.kr.md
+
+hugo new advanced_contents_ros2/lecture1.kr.md
 
 hugo new ros_basic_noetic/lecture11.kr.md
 hugo new ros_basic_noetic/lecture12.kr.md

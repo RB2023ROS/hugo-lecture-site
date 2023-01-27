@@ -20,5 +20,3 @@ pre = "<b>ROS 2 Foxy. </b>"
 - [Lecture10 - About DDS](/kr/ros2_basic_foxy/lecture10)
 - [Lecture11 - About DDS (2)](/kr/ros2_basic_foxy/lecture11)
 - [Lecture12 - SROS2](/kr/ros2_basic_foxy/lecture12)
-- [Lecture13 - Gazebo and Robot(1)](/kr/ros2_basic_foxy/lecture13)
-- [Lecture14 - Gazebo and Robot(2)](/kr/ros2_basic_foxy/lecture14)
