@@ -40,3 +40,28 @@ title: "2023 Road Balance ROS Lecture Note"
 - [Lecture12 - SROS2](/kr/ros2_basic_foxy/lecture12)
 - [Lecture13 - Gazebo and Robot(1)](/kr/ros2_basic_foxy/lecture13)
 - [Lecture14 - Gazebo and Robot(2)](/kr/ros2_basic_foxy/lecture14)
+
+### Advanced Contents 
+
+#### ROS 
+
+- [Lecture1 - ROSCPP](/kr/advanced_contents_ros1/lecture1)
+- [Lecture2 - More About ROS System](/kr/advanced_contents_ros1/lecture2)
+- [Lecture2 - SROS](/kr/advanced_contents_ros1/lecture3)
+
+#### ROS 2
+
+- [Lecture1 - About DDS](/kr/advanced_contents_ros2/lecture1)
+- [Lecture2 - About DDS (2)](/kr/advanced_contents_ros2/lecture2)
+- [Lecture2 - SROS2](/kr/advanced_contents_ros2/lecture3)
+
+### ROS and Simulations
+
+#### Gazebo
+
+- [Lecture1 - Gazebo and ROS](/kr/ros_and_gazebo/lecture1)
+- [Lecture2 - Gazebo and ROS (2)](/kr/ros_and_gazebo/lecture2)
+
+#### Issac Sim
+
+- Ongoing ...

@@ -12,7 +12,7 @@ draft: false
 
 - OMG의 Interface Definition Language Version 3.5에 따른 사용 가능한 키워드들은 아래와 같습니다.
 
-![idl0.png](/kr/ros2_basic_foxy/images10/idl0.png?height=300px)
+![idl0.png](/kr/advanced_contents_ros2/images1/idl0.png?height=300px)
 
 - image from : [MDS 테크](https://blog.naver.com/PostView.naver?blogId=neos_rtos&logNo=30185472655&parentCategoryNo=&categoryNo=20&viewDate=&isShowPopularPosts=false&from=postList)
 
@@ -20,7 +20,7 @@ ROS 2에서는 **interface**라는 이름으로 topic message, service srv, acti
 
 > custom interface를 빌드하게 되면, 해당 패키지 내부에 생성된 IDL들을 확인할 수 있습니다. build 폴더 내부 패키지 폴더에 진입하면 사진과 같이 다양한 언어를 지원하기 위한 설정 파일들이 위치하는 것을 확인 가능합니다.
 
-![idl1.png](/kr/ros2_basic_foxy/images10/idl1.png?height=400px)
+![idl1.png](/kr/advanced_contents_ros2/images1/idl1.png?height=400px)
 
 - rosidl_generator_py\_\_arguments.json
 
@@ -82,7 +82,7 @@ module custom_interfaces {
 
 discovery과정에서 participant는 미리 정의된 rule에 따라 address와 port를 사용합니다. SPDP에서는 multicast의 address로 **239.255.0.1** 을 사용하고 아래와 같은 port 설정 rule을 따릅니다.
 
-![pk0.png](/kr/ros2_basic_foxy/images10/pk0.png?height=300px)
+![pk0.png](/kr/advanced_contents_ros2/images1/pk0.png?height=300px)
 
 => 따라서, wireshark 실행 시 destination option을 239.255.0.1로 설정합니다.
 
@@ -90,7 +90,7 @@ discovery과정에서 participant는 미리 정의된 rule에 따라 address와 
 ip.dst == 239.255.0.1
 ```
 
-![pk1.png](/kr/ros2_basic_foxy/images10/pk1.png?height=150px)
+![pk1.png](/kr/advanced_contents_ros2/images1/pk1.png?height=150px)
 
 > Publisher와 Subscriber는 서로의 Participant와 Endpoint를 찾고, 주기적으로 HEARBEAT와 ACKNACK를 주고받습니다. 이번에는 ROS 2 Publisher와 Subscriber를 실행시켜 보고 이들 사이 데이터를 주고받는 과정에서 RTPS 프로토콜이 어떻게 동작하는지, 패킷의 분석을 진행해보겠습니다.
 
@@ -106,11 +106,11 @@ $ ros2 run examples_rclcpp_minimal_publisher publisher_member_function
 ...
 ```
 
-![pk2.png](/kr/ros2_basic_foxy/images10/pk2.png?height=500px)
+![pk2.png](/kr/advanced_contents_ros2/images1/pk2.png?height=500px)
 
 - publisher node가 일정 시간마다 multicast로 RTPS DATA(p)를 송신하는 모습을 확인할 수 있습니다.
 
-![pk3.png](/kr/ros2_basic_foxy/images10/pk3.png?height=600px)
+![pk3.png](/kr/advanced_contents_ros2/images1/pk3.png?height=600px)
 
 Publish하는 DATA(p)에는 DEFAULT_UNITCAST_LOCATOR, DEFAULT_MULTICAST_LOCATOR, METATRAFFIC_UNICAST_LOCATER, METATRAFFIC_MUTICAST_LOCATOR정보 등 particiapnt에 대한 정보가 담겨 있습니다.
 
@@ -130,11 +130,11 @@ $ ros2 run examples_rclcpp_minimal_subscriber subscriber_member_function
 
 - 패킷 초반부 publisher node와 subscriber node는 사이의 정보 교환(PDP)을 확인할 수 있습니다. subscribe node의 등록과, reader/writer Entity 사이 PDP가 교환되며, Data(w)는 publisher의 정보, Data(r)은 subscriber의 정보를 담고 있습니다.
 
-![pk4.png](/kr/ros2_basic_foxy/images10/pk4.png?height=250px)
+![pk4.png](/kr/advanced_contents_ros2/images1/pk4.png?height=250px)
 
 - PDP 이후 EDP는 데이터 타입 등 Topic에 대한 정보, QoS Profile등 많은 정보를 담고 있기 때문에 수차례 패킷 전송이 오고갑니다.
 
-![pk5.png](/kr/ros2_basic_foxy/images10/pk5.png?height=500px)
+![pk5.png](/kr/advanced_contents_ros2/images1/pk5.png?height=500px)
 
 {{% notice note %}}
 topic info verbose option을 사용하여 topic에 대한 정보와 패킷 정보를 비교해봅시다.
@@ -165,7 +165,7 @@ QoS profile:
   - publisher의 DATA와 HEARTBEAT 패킷
   - subscriber의 HEARTBEAT 수신 및 ACKNACK 송신 패킷
 
-![pk6.png](/kr/ros2_basic_foxy/images10/pk6.png?height=500px)
+![pk6.png](/kr/advanced_contents_ros2/images1/pk6.png?height=500px)
 
 ### ROS 2 Domain ID
 
@@ -218,11 +218,11 @@ Menu:
 
 - DDS는 Domain ID를 사용하여 Participant들이 사용할 UDP Port를 지정합니다. Port가 계산되는 방법은 아래와 같으며, 링크를 참고합니다. - [추가 링크](https://community.rti.com/content/forum-topic/statically-configure-firewall-let-omg-dds-traffic-through)
 
-![domain0.png](/kr/ros2_basic_foxy/images10/domain0.png?height=200px)
+![domain0.png](/kr/advanced_contents_ros2/images1/domain0.png?height=200px)
 
 - ROS 2 공식 문서에서는 Domain ID와 Participant 순서에 따라 사용되는 포트 번호를 계산해주는 계산기를 제공하고 있습니다. 이를 통해 최대 가질 수 있는 Domain ID와 Participant 수를 확인해 보겠습니다. - [공식 문서 링크](https://docs.ros.org/en/foxy/Concepts/About-Domain-ID.html)
 
-![domain1.png](/kr/ros2_basic_foxy/images10/domain1.png?height=300px)
+![domain1.png](/kr/advanced_contents_ros2/images1/domain1.png?height=300px)
 
 **Domain ID 설정 시 고려해야 할 요소들은 다음과 같습니다.**
 

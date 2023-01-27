@@ -170,11 +170,11 @@ ros2 run demo_nodes_cpp talker
 ros2 run demo_nodes_cpp listener
 ```
 
-![sros0.png](/kr/ros2_basic_foxy/images12/sros0.png?height=300px)
+![sros0.png](/kr/advanced_contents_ros2/images2/sros0.png?height=300px)
 
 ⇒ RTPS Heartbeat 패킷을 살펴보면, Hello World 라는 데이터가 고스란히 노출되어 있는 모습을 확인 가능합니다.
 
-![sros1.png](/kr/ros2_basic_foxy/images12/sros1.png?height=500px)
+![sros1.png](/kr/advanced_contents_ros2/images2/sros1.png?height=500px)
 
 - 이제 보안 옵션을 적용해보겠으며, sros2에서는 다양한 환경 변수를 통해 보완 관련 옵션을 변경할 수 있도록 하고 있습니다. security를 enable 시켜보겠습니다.
 
@@ -237,15 +237,15 @@ $ ros2 run demo_nodes_cpp listener --ros-args --enclave /talker_listener/listene
 
 - 현 상황에서 다시금 wireshark를 실행하여 패킷을 수집해보겠습니다.
 
-![sros2.png](/kr/ros2_basic_foxy/images12/sros2.png?height=300px)
+![sros2.png](/kr/advanced_contents_ros2/images2/sros2.png?height=300px)
 
 - 사진과 같이 이제는 RTPS가 아닌, TLSv1.2 프로토콜을 사용하여 데이터가 오가게 됩니다. 해당 패킷을 열어보면 아래와 같이 암호화가 되어있습니다.
 
-![sros3.png](/kr/ros2_basic_foxy/images12/sros3.png?height=500px)
+![sros3.png](/kr/advanced_contents_ros2/images2/sros3.png?height=500px)
 
 - 더불어, RTPS 프로토콜 패킷을 살펴보면, enclave 옵션이 적용된 것도 확인 가능합니다.
 
-![sros4.png](/kr/ros2_basic_foxy/images12/sros4.png?height=500px)
+![sros4.png](/kr/advanced_contents_ros2/images2/sros4.png?height=500px)
 
 {{% notice note %}}
 만약, 서로 다른 머신끼리 통신을 하고 싶다면, `demo_keystore`를 두 머신 모두 동일하게 소유하고 있어야 합니다. 옆자리에 다른 PC가 있다면 직접 실습해보세요

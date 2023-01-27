@@ -17,6 +17,3 @@ pre = "<b>ROS 2 Foxy. </b>"
 - [Lecture7. Useful ROS 2 Examples, Nav2](/kr/ros2_basic_foxy/lecture7)
 - [Lecture8. ROS 2 Action and Examples](/kr/ros2_basic_foxy/lecture8)
 - [Lecture9. C++ Programming Again, Outro](/kr/ros2_basic_foxy/lecture9)
-- [Lecture10 - About DDS](/kr/ros2_basic_foxy/lecture10)
-- [Lecture11 - About DDS (2)](/kr/ros2_basic_foxy/lecture11)
-- [Lecture12 - SROS2](/kr/ros2_basic_foxy/lecture12)

@@ -1,5 +1,5 @@
 ---
-title: "Lecture1 - Gazebo and Robot(1)"
+title: "Lecture1 - Gazebo and Robot"
 date: 2022-01-19T04:41:42+09:00
 draft: false
 ---
