@@ -1,5 +1,5 @@
 ---
-title: "Lecture13 - SROS"
+title: "Lecture3 - SROS"
 date: 2022-12-21T03:02:41+09:00
 draft: false
 ---
@@ -10,7 +10,7 @@ draft: false
 sros는 마지막 commit 2018년 이후 개발이 사실상  멈춘 프로젝트입니다. ROS 개발자들이 보안을 위해 어떠한 노력을 들였는지 정도만 살펴보고, 데모와 자세한 내용은 ROS 2 강의에서 이어나가도록 하겠습니다.
 {{% /notice %}}
 
-![sros.png](/kr/ros_basic_noetic/images13/sros.png?height=200px)
+![sros.png](/kr/advanced_contents_ros1/images3/sros.png?height=200px)
 
 * UDPROS가 roscpp만 지원했던 것처럼, sros도 rospy와 사용할 시 제한이 있습니다.
 
@@ -52,7 +52,7 @@ SROS는 TLS를 활용하여 ROS 관련 트래픽을 보호합니다. 이를 통�
 
 SROS가 TLS를 적용한 방법은, 네트워크 스택과 ROS 클라이언트 라이브러리 사이에 TLS를 끼워 넣는 것입니다. 이를 통해 SROS는 모든 Socket 수준의 ROS 통신을 Wrapping할 수 있으며, 사용자는 기존 ROS 프로그램 코드를 수정하지 않고도 SROS의 모든 이점을 적용할 수 있습니다.
 
-![tls.png](/kr/ros_basic_noetic/images13/tls.png?height=300px)
+![tls.png](/kr/advanced_contents_ros1/images3/tls.png?height=300px)
 
 * image from : [hpbn.co](https://hpbn.co/transport-layer-security-tls/)
 #### SROS Keyserver
@@ -61,7 +61,7 @@ SROS가 TLS를 적용한 방법은, 네트워크 스택과 ROS 클라이언트 �
 
 SROS는 기본적으로 보안에 익숙치 않고, TLS 시스템을 구축하는 개념에 서투른 사용자를 대상으로 만들어졌습니다.
 
-![ca.png](/kr/ros_basic_noetic/images13/ca.png?height=350px)
+![ca.png](/kr/advanced_contents_ros1/images3/ca.png?height=350px)
 
 {{% notice note %}}
 Keyserver를 통한 Node configuration과 실행은 아래 링크를 참고합니다. **[How is a Keyserver used in SROS](http://wiki.ros.org/SROS/Tutorials/KeyserverAndSROS)**
@@ -151,7 +151,7 @@ Access Control의 실제 구현 방식에 있어 SROS에서 제안하는 두가�
 > AppArmor(애플리케이션 Armor)는 프로그램 프로파일로 프로그램의 기능을 제한할 수 있도록 하는 리눅스 커널 보안 모듈입니다. SROS 튜토리얼에서는 AppArmor의 ROS 호환 프로파일 예시를 제공하고 있습니다.
 
 
-![apparmor.png](/kr/ros_basic_noetic/images13/ca.png?height=300px)
+![apparmor.png](/kr/advanced_contents_ros1/images3/ca.png?height=300px)
 
 - image from : [https://wiki.apparmor.net/](https://wiki.apparmor.net/)
 

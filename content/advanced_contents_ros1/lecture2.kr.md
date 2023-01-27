@@ -1,5 +1,5 @@
 ---
-title: "Lecture12 - More About ROS System"
+title: "Lecture2 - More About ROS System"
 date: 2022-12-22T03:02:12+09:00
 draft: false
 ---
@@ -8,20 +8,20 @@ draft: false
 > 
 > 개념 정리와 예시, 그리고 데모를 통해 ROS의 통신 시스템에 대해 배워봅시다.
 
-![lec12_1.png](/kr/ros_basic_noetic/images12/lec12_1.png?height=400px)
+![lec12_1.png](/kr/advanced_contents_ros1/images2/lec12_1.png?height=400px)
 
 ### XMLRPC
 
 - **Extensible Markup Language - XML**이란, 웹 서비스에서 데이터를 표현하기 위해 사용하는 마크업 언어입니다. (such as HTML), 모든 데이터를 구조화해서 transport하기 때문에 검색과 재사용에 유리합니다.
 - ROS에서 사용하는 launch file도 xml을 사용하고 있으므로 ROS 개발자들에게는 익숙한 문법일 것입니다.
 
-![lec12_2.png](/kr/ros_basic_noetic/images12/lec12_2.png?height=300px)
+![lec12_2.png](/kr/advanced_contents_ros1/images2/lec12_2.png?height=300px)
 
 * image from : [xml 파일의 비밀](https://m.blog.naver.com/550sn/222020875886)
 
 **RPC - remote procedure call** 란, 분산 네트워크 환경에서의 프로그래밍을 용이하게 하기 위해 등장한 기술로, 원격에 정의된 함수를 로컬에서 호출하는 식으로 사용이 가능합니다.
 
-![lec12_3.png](/kr/ros_basic_noetic/images12/lec12_3.png?height=400px)
+![lec12_3.png](/kr/advanced_contents_ros1/images2/lec12_3.png?height=400px)
 
 
 * image from : [RPC란?](https://www.notion.so/6abae6ab8ab64383a327a52f0c36c70b)
@@ -168,7 +168,7 @@ b0 00 00 00
 
 사용되는 모든 필드에 대한 데이터는 링크로 대체하겠습니다.
 
-![lec12_4.png](/kr/ros_basic_noetic/images12/lec12_4.png?height=300px)
+![lec12_4.png](/kr/advanced_contents_ros1/images2/lec12_4.png?height=300px)
 
 - 참고링크 : [http://wiki.ros.org/ROS/Connection Header](http://wiki.ros.org/ROS/Connection%20Header)
 
@@ -247,45 +247,45 @@ UDPROS header format은 아래와 같으며 TCPROS에 비해 훨씬 간단합니
 
 ROS Master와 Node에 의해 Topic과 Service가 이루어지는 과정을 총정리해봅시다. 
 
-![conn_1.png](/kr/ros_basic_noetic/images12/conn_1.png?height=400px)
+![conn_1.png](/kr/advanced_contents_ros1/images2/conn_1.png?height=400px)
 
 - **roscore** 명령어를 통해 Node간 접속을 주관하고 URI 주소/포트를 등록받는 ROS Master를 구동시킵니다.
 
-![conn_2.png](/kr/ros_basic_noetic/images12/conn_2.png?height=300px)
+![conn_2.png](/kr/advanced_contents_ros1/images2/conn_2.png?height=300px)
 
 - rosrun 혹은 roslaunch에 의해 Node가 실행됩니다. Subscriber Node가 구동되는 과정에서, Node 자신의 이름, Topic 이름, Message Type, URI 주소와 포트가 주고 받아집니다.
 
-![conn_3.png](/kr/ros_basic_noetic/images12/conn_3.png?height=300px)
+![conn_3.png](/kr/advanced_contents_ros1/images2/conn_3.png?height=300px)
 
 - 다음으로, Publisher Node가 구동되며 Subscriber와 마찬가지로 Topic 등록을 위해 Master와 각종 데이터를 주고 받습니다.
 
-![conn_4.png](/kr/ros_basic_noetic/images12/conn_4.png?height=300px)
+![conn_4.png](/kr/advanced_contents_ros1/images2/conn_4.png?height=300px)
 
 - ROS Master가 Subscriber Node에게 Publisher의 정보를 전달하고, 이때, XML-RPC를 이용하여 통신합니다.
 
-![conn_5.png](/kr/ros_basic_noetic/images12/conn_5.png?height=300px)
+![conn_5.png](/kr/advanced_contents_ros1/images2/conn_5.png?height=300px)
 
 - Subscriber Node는 ROS Master로부터 Publisher의 정보를 받아 해당 Node에게 직접 접속 요청을 합니다. Node 이름, Topic 이름, 방식(TCPROS 또는 UDPROS)과 같은 정보를  XMLRPC 를 이용하여 통신하게 됩니다.
 
-![conn_6.png](/kr/ros_basic_noetic/images12/conn_6.png?height=300px)
+![conn_6.png](/kr/advanced_contents_ros1/images2/conn_6.png?height=300px)
 
 - Publisher Node는 Subscriber Node에게 접속 응답을 하게 되고, 자신의 TCP 서버의 정보인 URI주소와 포트를 XMLRPC 를 이용하여 전달하게 됩니다.
 
 
-![conn_7.png](/kr/ros_basic_noetic/images12/conn_7.png?height=300px)
+![conn_7.png](/kr/advanced_contents_ros1/images2/conn_7.png?height=300px)
 
 - Subscriber Node는 TCPROS를 통해 클라이언트를 만들고, Publisher Node와 직접 연결합니다.
 
-![conn_8.png](/kr/ros_basic_noetic/images12/conn_8.png?height=300px)
+![conn_8.png](/kr/advanced_contents_ros1/images2/conn_8.png?height=300px)
 
 
 - 이제부터, Publisher Node는 Subscriber Node에게 정해진 메시지를 전송하게 됩니다.
 
-![conn_9.png](/kr/ros_basic_noetic/images12/conn_9.png?height=300px)
+![conn_9.png](/kr/advanced_contents_ros1/images2/conn_9.png?height=300px)
 
 - Service의 경우 Topic과 달리 1회성 연결이기 때문에, 접속, 서비스 요청, 서비스 응답이 수행되고 서로간의 접속을 끊게 됩니다. 이후 Service 통신을 다시 진행해야 하는 경우 처음부터 다시 진행해야 합니다.
 
-![conn_10.png](/kr/ros_basic_noetic/images12/conn_10.png?height=300px)
+![conn_10.png](/kr/advanced_contents_ros1/images2/conn_10.png?height=300px)
 
 - Topic 접속의 종료 시, Node의 종료 시에도 각 Node들은 ROS Master에게 XML-RPC를 통해 종료 Message를 주고받습니다.
 
@@ -293,7 +293,7 @@ ROS Master와 Node에 의해 Topic과 Service가 이루어지는 과정을 총�
 
 > ROS 내부의 통신이 이루어지는 과정을 배운 만큼 [WireShark](https://www.wireshark.org/)를 통해 실제 오가는 패킷을 분석해 봅시다.
 
-![demo_1.png](/kr/ros_basic_noetic/images12/demo_1.png?height=400px)
+![demo_1.png](/kr/advanced_contents_ros1/images2/demo_1.png?height=400px)
 
 - Wireshark 설치
 
@@ -315,7 +315,7 @@ roscore
 
 - TCP handshake가 이루어진 뒤 parameter server, logger, roslaunch, rosgraph, statistics_window_max_size를 비롯하여 다양한 서비스가 Request, Response를 통해 초기화됩니다.
 
-![demo_2.png](/kr/ros_basic_noetic/images12/demo_2.png?height=500px)
+![demo_2.png](/kr/advanced_contents_ros1/images2/demo_2.png?height=500px)
 
 
 {{% notice note %}}
@@ -432,7 +432,7 @@ data: "hello"
 ```
 
 
-![demo_3.png](/kr/ros_basic_noetic/images12/demo_3.png?height=400px)
+![demo_3.png](/kr/advanced_contents_ros1/images2/demo_3.png?height=400px)
 
 - 실제 /chatter topic의 정보를 조회해보면 **data 필드의 결과와 일치**하는 것을 확인 가능합니다.
 
@@ -669,7 +669,7 @@ rosrun turtlesim turtle_teleop_key
 
 > XML-RPC 통신들이 이루어진 뒤로, TCP 통신이 이어지는 모습을 확인할 수 있습니다.
 
-![demo_4.png](/kr/ros_basic_noetic/images12/demo_4.png?height=400px)
+![demo_4.png](/kr/advanced_contents_ros1/images2/demo_4.png?height=400px)
 
 TCP Data 필드의 내용에는 아래와 같은 데이터가 포함되어 있습니다.
 
@@ -738,20 +738,20 @@ topic=/turtle1/cmd_veltype=geometry_msgs/Twist
 - teleop key에서 앞/뒤/CW/CCW와 같이 다양한 조종 신호를 publish해보고 이때의 TCP Data가 어떻게 변화하는지 확인해봅시다.
 
 
-![demo_5.png](/kr/ros_basic_noetic/images12/demo_5.png?height=150px)
+![demo_5.png](/kr/advanced_contents_ros1/images2/demo_5.png?height=150px)
 
-![demo_6.png](/kr/ros_basic_noetic/images12/demo_6.png?height=150px)
+![demo_6.png](/kr/advanced_contents_ros1/images2/demo_6.png?height=150px)
 
-![demo_7.png](/kr/ros_basic_noetic/images12/demo_7.png?height=150px)
+![demo_7.png](/kr/advanced_contents_ros1/images2/demo_7.png?height=150px)
 
-![demo_8.png](/kr/ros_basic_noetic/images12/demo_8.png?height=150px)
+![demo_8.png](/kr/advanced_contents_ros1/images2/demo_8.png?height=150px)
 
 ⇒ 기본적으로 sequence / timestamp가 변화하며, 미묘하게 data가 다른 것을 알 수 있습니다.
 
 * 이렇게 topic message는 serialization이 되어 있으며, 공식 문서화 같이 MD5 sum을 사용합니다.
 
 
-![demo_9.png](/kr/ros_basic_noetic/images12/demo_9.png?height=300px)
+![demo_9.png](/kr/advanced_contents_ros1/images2/demo_9.png?height=300px)
 
 - image from : [roswiki](http://library.isr.ist.utl.pt/docs/roswiki/ROS(2f)Technical(20)Overview.html)
 
@@ -767,7 +767,7 @@ http://192.168.0.1:11311
 
 서로 다른 디바이스에서 동작하는 ROS 시스템일지라도 같은 MASTER URI를 갖도록 하면 원격 통신이 가능합니다. 이를 통해 원격 시각화와 원격 제어를 주로 실행합니다.
 
-![uri_1.png](/kr/ros_basic_noetic/images12/uri_1.png?height=300px)
+![uri_1.png](/kr/advanced_contents_ros1/images2/uri_1.png?height=300px)
 
 - image from : [turtlebot3 git](https://github.com/ROBOTIS-GIT/turtlebot3/issues/608)
 
@@ -786,7 +786,7 @@ ROS_MASTER_URI를 사용하는 방법은 다음과 같습니다.
 - **bashrc**의 수정을 해두면, 새로운 터미널을 실행할 때마다 변경된 내용이 반영될 수 있어 편리합니다.
 
 
-![uri_2.png](/kr/ros_basic_noetic/images12/uri_2.png?height=400px)
+![uri_2.png](/kr/advanced_contents_ros1/images2/uri_2.png?height=400px)
 
 - 강의 초반, 저의 셋업을 따라오셨다면, **~/ros_menu/config.yaml**을 수정하여 손쉽게 변경하실 수 있습니다.
 
@@ -809,7 +809,7 @@ Menu:
 
 - 같은 네트워크를 사용하는 두 PC를 사용해서 원격으로 로봇을 조종해보는 실습을 진행해봅시다.
 
-![uri_3.png](/kr/ros_basic_noetic/images12/uri_3.png?height=200px)
+![uri_3.png](/kr/advanced_contents_ros1/images2/uri_3.png?height=200px)
 
 ```bash
 # PC 1 - ROS Master를 실행시키고 로봇 등장시키기
