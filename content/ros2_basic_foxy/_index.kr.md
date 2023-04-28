@@ -3,7 +3,7 @@ title = "ROS 2 Basics"
 date = 2022-11-25T12:26:00+09:00
 weight = 5
 chapter = false
-pre = "<b>ROS 2 Foxy. </b>"
+pre = "<b>[Old]ROS 2 Foxy. </b>"
 +++
 
 ![lec1_0.png](/kr/ros_basic_noetic/images1/lec1_0.png?height=100px)

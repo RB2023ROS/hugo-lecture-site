@@ -24,7 +24,11 @@ title: "2023 Road Balance ROS Lecture Note"
 
 ---
 
-### ROS 2 Foxy Lecture
+### [New Version] ROS 2 Foxy Lecture
+
+---
+
+### [Old Version] ROS 2 Foxy Lecture
 
 - [Lecture1. Lecture1 - Introduction to ROS 2](/kr/ros2_basic_foxy/lecture1)
 - [Lecture2. ROS 2 Node, Package](/kr/ros2_basic_foxy/lecture2)
@@ -41,9 +45,9 @@ title: "2023 Road Balance ROS Lecture Note"
 - [Lecture13 - Gazebo and Robot(1)](/kr/ros2_basic_foxy/lecture13)
 - [Lecture14 - Gazebo and Robot(2)](/kr/ros2_basic_foxy/lecture14)
 
-### Advanced Contents 
+### Advanced Contents
 
-#### ROS 
+#### ROS
 
 - [Lecture1 - ROSCPP](/kr/advanced_contents_ros1/lecture1)
 - [Lecture2 - More About ROS System](/kr/advanced_contents_ros1/lecture2)

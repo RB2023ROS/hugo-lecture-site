@@ -52,6 +52,10 @@ hugo new ros_basic_noetic/lecture12.kr.md
 hugo new basics/first-content.md
 hugo new basics/second-content/_index.md
 
+hugo new ros2_foxy/lecture20.kr.md &&
+hugo new ros2_foxy/lecture19.kr.md
+
+
 {{% notice tip %}}
 
 {{% /notice %}}
