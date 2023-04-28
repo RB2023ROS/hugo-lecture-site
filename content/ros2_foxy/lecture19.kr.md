@@ -1,6 +1,5 @@
 ---
 title: "Lecture19"
 date: 2023-04-28T10:40:29+09:00
-draft: true
+draft: false
 ---
-
