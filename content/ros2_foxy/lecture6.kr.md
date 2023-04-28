@@ -1,5 +1,5 @@
 ---
-title: "Lecture6"
+title: "Lecture6. ROS 2 Tools"
 date: 2023-04-28T10:51:28+09:00
 draft: false
 ---
