@@ -148,7 +148,7 @@ sudo apt install ros-noetic-gazebo-ros-pkgs -y
 wsl --install
 ```
 
-![Untitled6.png](/kr/ros2_foxy/images2/Untitled6.png?height=300px)
+![Untitled6.png](/kr/ros2_foxy/images2/Untitled6.png?height=350px)
 
 - 다음으로 동일 터미널에서 아래의 두 커멘드 라인을 입력합니다.
 
