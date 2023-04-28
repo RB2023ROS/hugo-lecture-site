@@ -55,7 +55,7 @@ hugo new basics/second-content/_index.md
 hugo new ros2_foxy/lecture20.kr.md &&
 hugo new ros2_foxy/lecture19.kr.md
 
-![Untitled.png](/kr/ros2_foxy/images8/Untitled.png?height=300px)
+![Untitled.png](/kr/ros2_foxy/images9/Untitled.png?height=300px)
 
 ![lec1_3.png](/kr/ros2_basic_foxy/images1/lec1_3.png?height=300px)
 
