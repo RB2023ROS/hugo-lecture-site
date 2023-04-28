@@ -6,21 +6,21 @@ draft: false
 
 ## ROS 2 Service
 
-ROS 2 Service의 개념을 다시 복습해봅시다.
+> ROS 2 Service의 개념을 다시 복습해봅시다.
 
-![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/d297a106-65b6-4d10-9ed3-aff85c05791a/service1.gif](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/d297a106-65b6-4d10-9ed3-aff85c05791a/service1.gif)
+![service1.gif](/kr/ros2_foxy/images8/service1.gif?height=300px)
 
 image from : [docs.ros.org](https://docs.ros.org/en/foxy/Tutorials/Services/Understanding-ROS2-Services.html)
 
-Service 개념 정리
+**Service 개념 정리**
 
 - Service를 요청하는 주체를 **Service Client**라고 하며, Service 요청 자체를 **Request(혹은 Call)**라고 합니다.
 - Service를 요청받는 주체를 **Service Server**라고 하며, Service Server는 Request에 대한 응답, 즉 Service **Response**를 다시 Service Client에게 회답합니다.
 - Request와 Response를 위해 사용되는 데이터 타입은 **srv**라고 하며 Request와 Response로 나뉩니다.
 
-Service의 중요한 특징 한 가지 추가하자면, 하나의 Service Server에 여러 Client가 request 할 수 있지만, **Server는 동시에 여러 request를 처리하지 못합니다.**
+> Service의 중요한 특징 한 가지 추가하자면, 하나의 Service Server에 여러 Client가 request 할 수 있지만, **Server는 동시에 여러 request를 처리하지 못합니다.**
 
-![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/40d5add4-7b6a-4bd5-a5ea-a357222d7e6b/service2.gif](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/40d5add4-7b6a-4bd5-a5ea-a357222d7e6b/service2.gif)
+![service2.gif](/kr/ros2_foxy/images8/service2.gif?height=300px)
 
 image from : [docs.ros.org](https://docs.ros.org/en/foxy/Tutorials/Services/Understanding-ROS2-Services.html)
 
@@ -42,7 +42,9 @@ bool success                      # Return true if spawned successfully.
 string status_message             # Comments if available.
 ```
 
+{{% notice note %}}
 서비스 타입 중간에 보이는 **- - -** 부분은 request와 response의 **구분자**라고 생각하시면 됩니다.
+{{% /notice %}}
 
 - 이번 시간의 실습을 위해, 새로운 Gazebo 환경을 소개하고자 합니다. 해당 환경의 실행을 위해 아래와 같은 작업을 함께해주세요!
 
@@ -64,11 +66,11 @@ ros2 launch rgbd_world depth_world.launch.py
 
 ⇒ 카메라와 벽이 포함된 간단한 환경을 구성하였습니다. 참고로 PC 성능에 따라 Rviz2 화면이 매우 느릴 수 있으니 불편하시다면 point cloud 시각화는 제거해주세요!!
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/893b6d8e-3d90-4abc-9d47-2a71e8895f55/Untitled.png)
+![Untitled.png](/kr/ros2_foxy/images8/Untitled.png?height=400px)
 
-## ROS 2 Service Programming - Python
+### ROS 2 Service Programming - Python
 
-### example 1 - Service Client Example (Spawn Entity)
+#### example 1 - Service Client Example (Spawn Entity)
 
 - 이번 예시의 데모를 먼저 보여드리겠습니다.
 
@@ -99,11 +101,11 @@ Enter Model name Among Below List
         [Type your choice]:
 ```
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/e5a7e834-8b6f-4418-9609-1f3793f5efcd/Untitled.png)
+![Untitled1.png](/kr/ros2_foxy/images8/Untitled1.png?height=300px)
 
 ## 예시 설명
 
-- Gazebo는 개발 초기부터 ROS의 사용을 고려한 시스템입니다. Gazebo와 ROS 사이의 인터페이스는 gazebo_ros_pkg가 담당하고 있습니다.
+> Gazebo는 개발 초기부터 ROS의 사용을 고려한 시스템입니다. Gazebo와 ROS 사이의 인터페이스는 gazebo_ros_pkg가 담당하고 있습니다.
 
 ⇒ [https://github.com/ros-simulation/gazebo_ros_pkgs](https://github.com/ros-simulation/gazebo_ros_pkgs)
 
@@ -131,7 +133,7 @@ ros2 service type /spawn
 ros2 interface show <sth>
 ```
 
-## 코드 분석
+### 코드 분석
 
 - 첫 번째로 분석할 코드는 spawn_object.py 입니다. 사용할 srv를 import하고 있습니다.
 
@@ -220,7 +222,7 @@ def send_req(self):
     return self.future
 ```
 
-### Service Client 관련 메소드들을 정리해봅시다.
+#### Service Client 관련 메소드들을 정리해봅시다.
 
 | Code                                        | Description                                    |
 | ------------------------------------------- | ---------------------------------------------- |
@@ -240,9 +242,9 @@ rclpy.spin_until_future_complete(robot_spawn_node, pause_future)
 future_pending_logic("Pause",robot_spawn_node, pause_future)
 ```
 
-## example 2 - Service Server Example (Snapshot)
+### example 2 - Service Server Example (Snapshot)
 
-이번에 보여드릴 ROS 2 service 예시는 Gazebo상의 카메라를 통해 사진을 찍는 Service Server입니다.
+> 이번에 보여드릴 ROS 2 service 예시는 Gazebo상의 카메라를 통해 사진을 찍는 Service Server입니다.
 
 - 예시 실행 - rqt를 통해 service call이 성공하면 현재 시간에 해당하는 파일이름으로 카메라가 바라보는 시야 이미지가 저장됩니다.
 
@@ -261,16 +263,18 @@ rqt
 
 ⇒ data 필드에 True를 전달하면 사진을 찍어 workspace에 저장해줍니다.
 
-![picture_srv.gif](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/7af0c0d2-4e50-4b4a-9f75-ae755a97da24/picture_srv.gif)
+![picture_srv.gif](/kr/ros2_foxy/images8/picture_srv.gif?height=300px)
 
-## 코드 분석
+### 코드 분석
 
 코드를 살펴보기 전에, 이를 어떻게 구현할 수 있을지 같이 생각해봅시다.
 
 1. 사진 촬영 신호를 받아 수행하는 Service Server
 2. 카메라 image data Subscriber
 
-   항상 사진을 찍는 것이 아니라 Service Call이 오는 그 순간에만 사진을 저장해야 합니다.
+{{% notice note %}}
+항상 사진을 찍는 것이 아니라 Service Call이 오는 그 순간에만 사진을 저장해야 합니다.
+{{% /notice %}}
 
 ⇒ 위 조건에 따라 작성한 Node의 생성자는 다음과 같습니다.
 
@@ -346,9 +350,9 @@ def sub_callback(self, data):
         self.is_request = False
 ```
 
-## ROS 2 Service Programming - C++
+### ROS 2 Service Programming - C++
 
-### example 1 - Service Client Example (Spawn Entity)
+#### example 1 - Service Client Example (Spawn Entity)
 
 - 이번에는 동일한 코드를 C++로 구현해 봅시다. 일전 예시와 기능은 동일하므로 실행만 해보겠습니다.
 
@@ -360,7 +364,7 @@ ros2 launch rgbd_world depth_world.launch.py
 ros2 run py_service_tutorial spawn_object_wo_gravity
 ```
 
-## 코드 분석
+### 코드 분석
 
 - 이번에 분석할 코드는 spawn_object_wo_gravity.cpp \*\*\*\*입니다. include시 snake case를 사용한다는 점에 유의합니다. (저는 copilot을 통해 손쉽게 개발하고 있습니다.)
 
@@ -472,12 +476,12 @@ auto send_spawn_request(const std::string &model_name){
   }
 ```
 
-<aside>
-💡 service call의 동기, 비동기 실행에 대해서는 이후 Advanced 강의에서 좀 더 자세하게 다루어 볼 예정입니다.
+{{% notice note %}}
 
-</aside>
+service call의 동기, 비동기 실행에 대해서는 이후 Advanced 강의에서 좀 더 자세하게 다루어 볼 예정입니다.
+{{% /notice %}}
 
-### Service Client 관련 메소드들을 정리해봅시다.
+#### Service Client 관련 메소드들을 정리해봅시다.
 
 | Code                                                 | Description                                    |
 | ---------------------------------------------------- | ---------------------------------------------- |
@@ -486,7 +490,7 @@ auto send_spawn_request(const std::string &model_name){
 | rclcpp::FutureReturnCode                             | Future의 상태를 담고 있는 enum type            |
 | async_send_request(<std::make_sharedSpawn::Request>) | 비동기 service call                            |
 
-## example 2 - Service Server Example (Snapshot)
+### example 2 - Service Server Example (Snapshot)
 
 - python 때와 마찬가지로 예시를 실행해봅시다.
 
@@ -503,7 +507,7 @@ rqt
 
 - Service Caller의 사용법과 결과는 다음과 같습니다.
 
-![picture_srv.gif](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/7af0c0d2-4e50-4b4a-9f75-ae755a97da24/picture_srv.gif)
+![picture_srv.gif](/kr/ros2_foxy/images8/picture_srv.gif?height=300px)
 
 ## 코드 분석
 
@@ -512,7 +516,7 @@ rqt
 1. 사진 촬영 신호를 받아 수행하는 Service Server
 2. 카메라 image data Subscriber
 
-   복습을 해볼 겸, 이 부분을 직접 코딩해보는 것도 좋은 학습이 될 것입니다.
+복습을 해볼 겸, 이 부분을 직접 코딩해보는 것도 좋은 학습이 될 것입니다.
 
 - Node의 생성자는 다음과 같습니다.
 
@@ -535,7 +539,7 @@ public:
     );
 ```
 
-⇒ client service 먼저 살펴보겠습니다.
+> client service 먼저 살펴보겠습니다.
 
 - Service Server의 생성은 create_service를 사용하며 필요한 매개변수들은 아래와 같습니다.
 
