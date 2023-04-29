@@ -39,7 +39,30 @@ draft: false
 ⇒ link가 하나 추가되면 필연적으로 joint도 추가됩니다. 이를 기본 로봇 xacro에 반영합니다.
 
 ```xml
-
+  <link name="camera_rgb_frame" />
+  <joint name="camera_rgb_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0.022 0" />
+    <parent link="camera_link" />
+    <child link="camera_rgb_frame" />
+  </joint>
+  <link name="camera_rgb_optical_frame" />
+  <joint name="camera_rgb_optical_joint" type="fixed">
+    <origin rpy="-1.57079632679 0 -1.57079632679" xyz="0 0 0" />
+    <parent link="camera_rgb_frame" />
+    <child link="camera_rgb_optical_frame" />
+  </joint>
+  <link name="camera_depth_frame" />
+  <joint name="camera_depth_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0.049 0" />
+    <parent link="camera_link" />
+    <child link="camera_depth_frame" />
+  </joint>
+  <link name="camera_depth_optical_frame" />
+  <joint name="camera_depth_optical_joint" type="fixed">
+    <origin rpy="-1.57079632679 0 -1.57079632679" xyz="0 0 0" />
+    <parent link="camera_depth_frame" />
+    <child link="camera_depth_optical_frame" />
+  </joint>
 ```
 
 2. 기본 plugin xml 연동
