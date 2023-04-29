@@ -70,7 +70,9 @@ return LaunchDescription(
     )
 ```
 
-⇒ LaunchDescription에 객체들을 넣어줄 때 순서에 주의합니다.
+{{% notice tip %}}
+LaunchDescription에 객체들을 넣어줄 때 순서에 주의합니다.
+{{% /notice %}}
 
 - LogInfo 결과를 직접 확인해봅시다.
 
@@ -101,9 +103,9 @@ def generate_launch_description():
     log_level = LaunchConfiguration('log_level')
 ```
 
-## Timer Action
+### Timer Action
 
-- 대규모 gazebo 파일을 불러오거나, urdf에 수많은 mesh가 결합되어 있는 경우, 프로세스 로딩에 상당한 시간이 소요될 수 있습니다. Timer Action은 일정 시간동안 대기 이벤트를 걸 수 있어 이러한 상황을 다루기 용이합니다.
+> 대규모 gazebo 파일을 불러오거나, urdf에 수많은 mesh가 결합되어 있는 경우, 프로세스 로딩에 상당한 시간이 소요될 수 있습니다. Timer Action은 일정 시간동안 대기 이벤트를 걸 수 있어 이러한 상황을 다루기 용이합니다.
 
 ```python
 from launch.actions import TimerAction
@@ -126,9 +128,9 @@ return LaunchDescription([
 
 ⇒ urdf 로딩이 끝난 뒤 rviz2를 실행하도록 해둔 예시입니다.
 
-## OnProcessExit
+### OnProcessExit
 
-- node 실행 시 순서를 지켜야 하는 경우 ex) model spawn 후 센서 데이터 처리 등 RegisterEventHandler와 OnProcessExit를 통해 실행 순서 로직을 구현할 수 있습니다.
+> node 실행 시 순서를 지켜야 하는 경우 ex - model spawn 후 센서 데이터 처리 등 **RegisterEventHandler**와 **OnProcessExit**를 통해 실행 순서 로직을 구현할 수 있습니다.
 
 ```python
 from launch.actions import RegisterEventHandler
@@ -160,7 +162,7 @@ from launch.event_handlers import OnProcessExit
 | target_action | 먼저 완료되어야 하는 Node                  |
 | on_exit       | target_action 종료 후 실행되어야 하는 Node |
 
-## IncludeLaunchDescription
+### IncludeLaunchDescription
 
 - launch file은 매우 유연한 구현이 가능하도록 지원되며, 하나의 launch file에서 다른 launch file을 추가하는 것도 가능합니다.
 
@@ -189,7 +191,7 @@ def generate_launch_description():
     ])
 ```
 
-## IfCondition, UnlessCondition
+### IfCondition, UnlessCondition
 
 - 조건문에 따라 정해진 Node가 실행되도록 할 수도 있습니다. 이를 위해 IfCondition과 UnlessCondition을 사용합니다.
 
@@ -234,7 +236,7 @@ $ ros2 launch advanced_tutorial ifcondition.launch.py execute:=false
 [INFO] [launch]: Default logging verbosity is set to INFO
 ```
 
-## GroupAction
+### GroupAction
 
 - 관련된 Node, launch file들을 한데 묶어 공통된 속성을 부여할 시 GroupAction을 사용하며, 주로 namespace를 지정할 때 많이 사용됩니다.
 
@@ -259,7 +261,7 @@ $ ros2 topic list
 /turtle1/pose
 ```
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/345a1abd-e232-42f6-a2c1-66a68d80ac35/Untitled.png)
+![Untitled.png](/kr/ros2_foxy/images15/Untitled.png?height=300px)
 
 ⇒ 별도 namespace 지정이 없으면 위와 같은 rqt_graph를 확인할 수 있습니다.
 
@@ -276,20 +278,21 @@ $ ros2 topic list
 /rosout
 ```
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/2378413f-a183-4eca-9d00-5c1e0da12b05/Untitled.png)
+![Untitled1.png](/kr/ros2_foxy/images15/Untitled1.png?height=300px)
 
-⇒ /my_turtle namespace가 적용된 모습을 확인할 수 있습니다. 👍
+{{% notice note %}}
+/my_turtle namespace가 적용된 모습을 확인할 수 있습니다. 👍
+{{% /notice %}}
 
-## Executor and CallbackGroup
+### Executor and CallbackGroup
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/94e2c676-171d-4733-b73b-7dc9f6f29af9/Untitled.png)
+![Untitled2.png](/kr/ros2_foxy/images15/Untitled2.png?height=250px)
 
-- 실제 센서, 제어기를 개발 하다보면 기존 코드와 ROS 2 코드를 연동해야 할 일이 많습니다. 기존 코드가 병렬 연산 형태로 개발되었다면 ROS 2의 Spin과 맞물려 Dead Lock이 발생할 수 있습니다. 이러한 경우를 다루기 위해 ROS 2의 Executor와 CallbackGroup에 대해 알아봅시다.
+> 실제 센서, 제어기를 개발 하다보면 기존 코드와 ROS 2 코드를 연동해야 할 일이 많습니다. 기존 코드가 병렬 연산 형태로 개발되었다면 ROS 2의 Spin과 맞물려 Dead Lock이 발생할 수 있습니다. 이러한 경우를 다루기 위해 ROS 2의 Executor와 CallbackGroup에 대해 알아봅시다.
 
-<aside>
-💡 이번 튜토리얼은 모두 c++로 진행됩니다.
-
-</aside>
+{{% notice note %}}
+이번 튜토리얼은 모두 c++로 진행됩니다.
+{{% /notice %}}
 
 - 예시 package를 build하고 sourcing 합시다.
 
@@ -297,7 +300,7 @@ $ ros2 topic list
 cbp cpp_multiproc_tutorial && source install/local_setup.bash
 ```
 
-## Dead Lock Example
+### Dead Lock Example
 
 - 예시를 실행해보면서 발생할 수 있는 문제상황을 고려해봅시다.
 
@@ -361,11 +364,11 @@ int main(int argc, char **argv){
 }
 ```
 
-## MultiThreadedExecutor
+### MultiThreadedExecutor
 
 - rclcpp의 Executor는 그림과 같이 크게 3종류를 제공합니다. 지금까지는 기본인 SingleThreaded를 사용하였지만, MultThreaded도 사용해보겠습니다. 과연 문제를 해결해 줄 수 있을까요?
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/10d67b28-9f99-4498-bd26-dcf1c6f7ce4d/Untitled.png)
+![Untitled3.png](/kr/ros2_foxy/images15/Untitled3.png?height=200px)
 
 - main 문을 수정하고 다시 컴파일 => 실행해봅시다.
 
@@ -404,13 +407,16 @@ Max CPU Core : 8
 
 ⇒ 여전히 timer_cb_1이 시스템을 독식하고 있습니다.
 
-## 이렇게 되는 이유가 무엇일까요??
+{{% notice note %}}
+이렇게 되는 이유가 무엇일까요??
+
+{{% /notice %}}
 
 - 현재 상황을 그림으로 표현해보면 다음과 같습니다. 비록 multi-threaded executor가 실행되어 작업자가 3명이 있더라도 작업 라인이 1개밖에 없어 효율적이지 못한 것이지요.
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/d122dac7-297e-43b1-b2ec-ae209c567e4e/Untitled.png)
+![Untitled4.png](/kr/ros2_foxy/images15/Untitled4.png?height=200px)
 
-## Callback Group
+### Callback Group
 
 - 이를 해결하는 방법은 각각의 timer 마다 독립적인 작업 라인을 구축하는 것입니다. 그리고 이를 위해 rclcpp에서는 Callback Group이라는 API를 제공하고 있습니다.
 
@@ -473,13 +479,13 @@ Max CPU Core : 8
 
 - 지금 상황을 아까의 그림에 다시 비유해봅시다. Task들이 독자적인 Callback Group에서 실행되고, 각 Callback Group을 담당하는 Process가 있기 때문에 Delay 없이 모든 작업이 수월하게 실행됩니다.
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/eb254d21-88c7-4453-89c7-b2bc38f8178d/Untitled.png)
+![Untitled5.png](/kr/ros2_foxy/images15/Untitled5.png?height=300px)
 
-## **ReentrantCallbackGroup**
+### ReentrantCallbackGroup
 
-- rclcpp에서 제공하는 또다른 Callback Group Option, Reentrant가 있습니다. 이를 사용해봅시다.
+> rclcpp에서 제공하는 또다른 Callback Group Option, Reentrant가 있습니다. 이를 사용해봅시다.
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/0e4db548-7f69-4d02-8f11-1a835ddf9725/Untitled.png)
+![Untitled6.png](/kr/ros2_foxy/images15/Untitled6.png?height=200px)
 
 reference : [https://docs.ros2.org/eloquent/api/rclcpp/namespacerclcpp_1_1callback\_\_group.html](https://docs.ros2.org/eloquent/api/rclcpp/namespacerclcpp_1_1callback__group.html)
 
@@ -581,9 +587,9 @@ Max CPU Core : 8
 
 ## Intra-process communication and Node Composition
 
-ROS 2 개발을 일반적으로 Node의 결합으로 이루어집니다.이를 통해 모듈화, 코드 재사용이 가능하지만 성능 저하가 초래되는 경우가 많습니다. ROS 1에서는 Nodelet이라는 것으로 이를 해결하고자 하였는데, 이는 기본적으로 하나의 프로세스에서 다수의 Node를 구현하고자 하는 작업입니다.
+> ROS 2 개발을 일반적으로 Node의 결합으로 이루어집니다.이를 통해 모듈화, 코드 재사용이 가능하지만 성능 저하가 초래되는 경우가 많습니다. ROS 1에서는 Nodelet이라는 것으로 이를 해결하고자 하였는데, 이는 기본적으로 하나의 프로세스에서 다수의 Node를 구현하고자 하는 작업입니다.
 
-이러한 작업을 통해 메모리 최적화와 동적 Node load / unload가 가능한 것이지요. 그리고 이를 이어받은 ROS 2에서는 Node Composition이라는 이름으로 같은 기능을 제공하고 있습니다.
+> 이러한 작업을 통해 메모리 최적화와 동적 Node load / unload가 가능한 것이지요. 그리고 이를 이어받은 ROS 2에서는 Node Composition이라는 이름으로 같은 기능을 제공하고 있습니다.
 
 - 예시를 통해 Node Composition이 왜 필요한지 살펴봅시다.
 
@@ -591,13 +597,15 @@ ROS 2 개발을 일반적으로 Node의 결합으로 이루어집니다.이를 �
 ros2 run composition_tutorial image_pipeline_all_in_one
 ```
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/a12d9d01-8c08-4920-adf5-e75864bbf796/Untitled.png)
+![Untitled7.png](/kr/ros2_foxy/images15/Untitled7.png?height=400px)
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/0ac3b203-6662-4c3a-9082-1ab0a352d66d/Untitled.png)
+![Untitled8.png](/kr/ros2_foxy/images15/Untitled8.png?height=200px)
 
 ⇒ 현재 3개의 Node가 실행중에 있습니다. 각각의 Node로 Image data가 전송되고 있지요.
 
+{{% notice note %}}
 ⇒ 이미지에 찍힌 데이터 주소에 주목합시다.
+{{% /notice %}}
 
 - 이번에는 다른 상황을 실행해보겠습니다.
 
@@ -605,9 +613,11 @@ ros2 run composition_tutorial image_pipeline_all_in_one
 ros2 launch composition_tutorial image_pipeline_extra.launch.py
 ```
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/14855c01-f8aa-46aa-8b0e-48a42aed9496/Untitled.png)
+![Untitled9.png](/kr/ros2_foxy/images15/Untitled9.png?height=400px)
 
-⇒ Node를 거치면서 메모리 생성, 복사가 반복되기 때문에 주소가 모두 다른 것을 확인할 수 있습니다.
+{{% notice note %}}
+Node를 거치면서 메모리 생성, 복사가 반복되기 때문에 주소가 모두 다른 것을 확인할 수 있습니다.
+{{% /notice %}}
 
 - 실제 top을 통해 메모리 효율을 비교해보겠습니다.
 
@@ -628,11 +638,13 @@ PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
 4032 kimsooy+  20   0  811272  74320  55924 S   4.6   0.5   0:01.21 watermark_node
 ```
 
-⇒ 이 둘의 차이는 Intra-process communication의 사용 유무입니다. Node ⇒ Node로 메모리가 전달되면서 불필요한 복사가 반복되면 메모리 효율이 저하됩니다.
+{{% notice tip %}}
+이 둘의 차이는 Intra-process communication의 사용 유무입니다. Node ⇒ Node로 메모리가 전달되면서 불필요한 복사가 반복되면 메모리 효율이 저하됩니다.
+{{% /notice %}}
 
-## Intra-process communication Programming
+### Intra-process communication Programming
 
-image_pipeline_all_in_one 코드를 통해 이를 어떻게 구현할 수 있는지 확인해봅시다.
+> image_pipeline_all_in_one 코드와 예시를 통해 이를 어떻게 구현할 수 있는지 확인해봅시다.
 
 - 생성자 Option에서 use_intra_process_comms을 사용하였습니다.
 
@@ -670,9 +682,11 @@ sub_ = this->create_subscription<sensor_msgs::msg::Image>(
   input, rclcpp::SensorDataQoS(),[node_name, watermark](const sensor_msgs::msg::Image::SharedPtr msg) {
 ```
 
-⇒ 메모리 복사가 아닌 소유권 이전으로 최적화를 구현한 것입니다.
+{{% notice note %}}
+메모리 복사가 아닌 소유권 이전으로 최적화를 구현한 것입니다.
+{{% /notice %}}
 
-- 이번 예시에서는 SingleThreadedExecutor를 사용하여 Executor에 3개의 Node를 직접 추가하였습니다.
+- 이번 예시에서는 **SingleThreadedExecutor**를 사용하여 Executor에 3개의 Node를 직접 추가하였습니다.
 
 ```cpp
 int main(int argc, char * argv[]){
@@ -687,13 +701,11 @@ int main(int argc, char * argv[]){
   executor.spin();
 ```
 
-⇒ Intra-comm이 필요한 이유는 모두 이해하셨으리라 생각합니다.
-
-⇒ 비록 이러한 구현이 가능은 하지만, ROS 개발자들은 이를 좀 더 쉽고 동적으로 할 수는 없을지 고민하였습니다.
+> 지금 시점에서 Intra-comm이 필요한 이유는 모두 이해하셨으리라 생각합니다. 비록 이러한 구현이 가능은 하지만, ROS 개발자들은 이를 좀 더 쉽고 동적으로 할 수는 없을지 고민하였습니다.
 
 ## ROS 2 Node Composition
 
-Node Composition의 기본 개념은 각 Node를 런타임에 로드되는 공유 라이브러리인 "Composition"로 작성한다는 것입니다. 이러한 방식으로, 다음과 같은 것이 가능합니다
+> Node Composition의 기본 개념은 각 Node를 런타임에 로드되는 공유 라이브러리인 "Composition"로 작성한다는 것입니다. 이러한 방식으로, 다음과 같은 것이 가능합니다
 
 1. 각각의 Composition을 개별 프로세스에서 실행
 2. 단일 프로세스에서 여러 노드를 실행하여 오버헤드를 낮추고 통신 효율성을 높이기
@@ -776,9 +788,9 @@ ros2 component list
 ros2 component unload /ComponentManager <id>
 ```
 
-## Composition Programming
+### Composition Programming
 
-Composition은 내용이 까다롭고 디버깅도 쉽지 않습니다. 때문에 절차를 나누어 차근차근 작은 부분부터 함께 프로그래밍 실습을 해보도록 하겠습니다.
+> Composition은 내용이 까다롭고 디버깅도 쉽지 않습니다. 때문에 절차를 나누어 차근차근 작은 부분부터 함께 프로그래밍 실습을 해보도록 하겠습니다.
 
 1. 기본 구조와 Export
 2. Data Forwarding
@@ -911,7 +923,7 @@ $ ros2 component load /ComponentManager composition_tutorial composition_tutoria
 
 ⇒ 실제 제품 개발 시 보안이 적용되어야 하는 부분이라면 Node코드 대신 Component를 제공하는 방법도 있습니다.
 
-## **Compile-time composition**
+### Compile-time composition
 
 component로 동적 load / unload가 가능하지만 시스템 통합을 위해 manual 통합 코드를 작성하거나, launch file을 사용할 수 있습니다.
 
@@ -940,7 +952,7 @@ int main(int argc, char * argv[])
   executor.add_node(image_view_node);
 ```
 
-## **Composition using launch actions**
+### Composition using launch actions
 
 - composition container와 실행될 component들을 명시하는 launch action도 사용할 수 있습니다.
 
@@ -995,19 +1007,18 @@ ros2 component load /ComponentManager composition composition::Talker -e use_int
 
 구현과 사용에 대해서는 이정도 설명하고, 추가 자료는 링크로 남기겠습니다.
 
-- Component를 shared library로 export하고 다른 package에서 import하여 사용하기
+{{% notice tip %}}
+Component를 shared library로 export하고 다른 package에서 import하여 사용하기 - [Ament best practice for sharing libraries](https://discourse.ros.org/t/ament-best-practice-for-sharing-libraries/3602)
 
-[Ament best practice for sharing libraries](https://discourse.ros.org/t/ament-best-practice-for-sharing-libraries/3602)
+{{% /notice %}}
 
 ## 실 사용 사례 - ZED ros2 composition
 
 composition의 중요성과 사용에 대해 좀 더 확실히 알 수 있는 예시를 가져와 보았습니다.
 
-Stereo Labs의 ZED Camera는 Composition을 사용하여 보다 효율적인 rgb convert, format conversion을 제공하고 있습니다. 코드를 통해 함께 살펴봅시다.
+> Stereo Labs의 ZED Camera는 Composition을 사용하여 보다 효율적인 rgb convert, format conversion을 제공하고 있습니다. 코드를 통해 함께 살펴봅시다.⇒ 출처 : [https://www.stereolabs.com/docs/ros2/ros2-composition/](https://www.stereolabs.com/docs/ros2/ros2-composition/)
 
-⇒ 출처 : [https://www.stereolabs.com/docs/ros2/ros2-composition/](https://www.stereolabs.com/docs/ros2/ros2-composition/)
-
-- zed_rgb_convert_component.hpp - composition인 \*\*\*\*ZedRgbCvtComponent가 구현되어 있습니다.
+- zed_rgb_convert_component.hpp - composition인 ZedRgbCvtComponent가 구현되어 있습니다.
 
 ```cpp
 namespace stereolabs
@@ -1086,7 +1097,9 @@ void ZedRgbCvtComponent::camera_callback(
 }
 ```
 
-⇒ camera_callback의 목표는 cv::cvtColor를 통해 BGRA (CV_8UC4)을 BGR (CV_8UC4) 타입으로 변환하는 것입니다.
+{{% notice note %}}
+camera_callback의 목표는 cv::cvtColor를 통해 BGRA (CV_8UC4)을 BGR (CV_8UC4) 타입으로 변환하는 것입니다.
+{{% /notice %}}
 
 - ZedCamera Composition과 ZedRgbCvtComponent Composition을 함께 사용하는 별도 Executor를 만들어 제공하고 있습니다.
 
@@ -1118,4 +1131,6 @@ int main(int argc, char * argv[]){
 }
 ```
 
-⇒ 이는 물론 launch file로도 가능합니다.
+{{% notice note %}}
+이는 물론 launch file로도 가능할 것입니다. 😁
+{{% /notice %}}
