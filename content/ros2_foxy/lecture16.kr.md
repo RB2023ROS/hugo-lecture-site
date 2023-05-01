@@ -94,7 +94,7 @@ Source Eclipse Cyclone DDS successfully!
 
 - ROS1의 Node들끼리 데이터를 주고받기 위해서는 어떤 노드가 존재하는지, id는 몇번인지 등의 정보가 공유되어야 합니다. 아래 그림의 **ROS Master**가 이를 관리해주는 것이라고 이해하시면 되며, ROS 2는 DDS가 이를 알아서 해주기 때문에 편하게 사용할 수 있는 것입니다.
 
-![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/e488dba5-fd6b-443e-bfc8-35c60734da5f/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/e488dba5-fd6b-443e-bfc8-35c60734da5f/Untitled.png)
+![Untitled2.png](/kr/ros2_foxy/images16/Untitled2.png?height=300px)
 
 image from : [clearpathrobotics](http://www.clearpathrobotics.com/assets/guides/kinetic/ros/Intro%20to%20the%20Robot%20Operating%20System.html)
 
@@ -114,44 +114,38 @@ ros2 run teleop_twist_keyboard teleop_twist_keyboard
 
 - ROS 2로 설정된 터미널에서 ROS 1으로 구동되고 있는 로봇을 조종할 수 있습니다.
 
-![ros_bridge.gif](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/1e71b35c-9186-4678-a954-1a2209d1b01d/ros_bridge.gif)
+![ros_bridge.gif](/kr/ros2_foxy/images16/ros_bridge.gif?height=400px)
 
-<aside>
-💡 ros bridge가 있으니 ROS 2 개발을 굳이 하지 않아도 된다고 생각할 수 있습니다. 하지만 보안, 지연과 같은 ROS 1의 고질적인 문제들은 여전히 남아있게 되므로 프로젝트를 시작하는 단계라면, 처음부터 ROS 2로 모든 개발을 진행하시길 추천드립니다.
+{{% notice note %}}
+ros bridge가 있으니 ROS 2 개발을 굳이 하지 않아도 된다고 생각할 수 있습니다. 하지만 보안, 지연과 같은 ROS 1의 고질적인 문제들은 여전히 남아있게 되므로 프로젝트를 시작하는 단계라면, 처음부터 ROS 2로 모든 개발을 진행하시길 추천드립니다.
 
-</aside>
+{{% /notice %}}
 
-<aside>
-💡 참고로, `/opt/ros/<ros-version>/setup.bash`는 ROS 시스템을 사용하기 위해서 필요한 설정이 담긴 파일입니다. 혹여나 galactic, humble과 같이 최신 버전을 사용하고 싶을 때 참고하시기 바랍니다.
-
-</aside>
+{{% notice note %}}
+참고로, `/opt/ros/<ros-version>/setup.bash`는 ROS 시스템을 사용하기 위해서 필요한 설정이 담긴 파일입니다. 혹여나 galactic, humble과 같이 최신 버전을 사용하고 싶을 때 참고하시기 바랍니다.
+{{% /notice %}}
 
 # About DDS
 
-ROS 1과 대두되는 가장 큰 차이점으로, ROS 2는 DDS를 미들웨어로 기반하여 개편되었습니다. 따라서 DDS에 대한 개요와 기능을 이해하는 것은 ROS 2의 성질을 파악하는 데 많은 도움이 됩니다.
+> ROS 1과 대두되는 가장 큰 차이점으로, ROS 2는 DDS를 미들웨어로 기반하여 개편되었습니다. 따라서 DDS에 대한 개요와 기능을 이해하는 것은 ROS 2의 성질을 파악하는 데 많은 도움이 됩니다.
 
 ### What is DDS?
 
-**DDS(Data Distribution Service)**는 OMG에서 정의한 Publish-Subscribe 방식의 실시간 데이터 분배 서비스 표준입니다. Pub-Sub이라는 용어는 ROS 개발자에게 무척 익숙한 단어이지요? DDS의 기본 통신 개념은 ROS의 Topic과 매우 유사합니다. 이러한 결론을 머리속에 잘 담아두고 계속해서 진행해 보겠습니다.
+**DDS - Data Distribution Service**는 OMG에서 정의한 Publish-Subscribe 방식의 실시간 데이터 분배 서비스 표준입니다. Pub-Sub이라는 용어는 ROS 개발자에게 무척 익숙한 단어이지요? DDS의 기본 통신 개념은 ROS의 Topic과 매우 유사합니다. 이러한 결론을 머리속에 잘 담아두고 계속해서 진행해 보겠습니다.
 
-<aside>
-💡
-
-</aside>
-
+{{% notice tip %}}
 OMG(Object Management Group)는 분산 객체 컴퓨팅(Distributed Object Computing) 영역의 표준을 제정하는 국제 비영리 컨소시엄으로 영향력 있는 각종 세계 표준을 정의하고 있습니다.
+{{% /notice %}}
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/e058b769-913b-44ab-b557-74a485bd82c1/Untitled.png)
+![Untitled3.png](/kr/ros2_foxy/images16/Untitled3.png?height=300px)
 
 image from : [분산이동컴퓨팅 연구실](http://strauss.cnu.ac.kr/research_echodds.php)
 
-OMG DDS는 통신 프로토콜이 아닌 기능적 표준으로, 위 그림과 같이 TCP/UDP 같은 통신 프로토콜 위에서 정의되는 객체입니다.
+> OMG DDS는 통신 프로토콜이 아닌 기능적 표준으로, 위 그림과 같이 TCP/UDP 같은 통신 프로토콜 위에서 정의되는 객체입니다. 그림의 아래에서부터 OMG DDS의 구조를 간단히 살펴보겠습니다.
 
-그림의 아래에서부터 OMG DDS의 구조를 간단히 살펴보겠습니다.
+### RTPS(Real-Time Publish-Subscribe Wire Protocol) Layer
 
-### **RTPS(Real-Time Publish-Subscribe Wire Protocol) Layer**
-
-RTPS Layer는 네트워크 내, 참여자 정보를 유지하고, 네트워크 참여자에 대한 정보를 기반으로 자동 검색을 해줍니다. (같은 네트워크를 사용하는 ROS 2 시스템은 서로 통신이 가능합니다.) 더불어, 참여자의 동적 추가와 이탈에 대응하는 기능을 합니다.
+> RTPS Layer는 네트워크 내, 참여자 정보를 유지하고, 네트워크 참여자에 대한 정보를 기반으로 자동 검색을 해줍니다. (같은 네트워크를 사용하는 ROS 2 시스템은 서로 통신이 가능합니다.) 더불어, 참여자의 동적 추가와 이탈에 대응하는 기능을 합니다.
 
 **RTPS**는 OMG에 의해 표준화된, 데이터 분산 시스템을 위한 프로토콜로써 Pub-Sub 구조의 통신 모델을 지원합니다. UDP와 같이 신뢰성 없는 계층 위에서도 동작 가능하도록 설계되었으며, 4가지 모듈로 구성되어 있습니다.
 
@@ -162,7 +156,7 @@ RTPS Layer는 네트워크 내, 참여자 정보를 유지하고, 네트워크 �
    1. PDP(Participant Discovery Protocol) : 서로 다른 네트워크 상에서의 Participant탐색을 위한 프로토콜
    2. EDP(Endpoint Discovery Protocol) : Writer, Reader와 같이 서로 다른 종단점 간의 탐색 정보 교환에 사용되는 프로토콜
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/cbda0f44-af1c-4319-ba1d-6a80330bc46c/Untitled.png)
+![Untitled4.png](/kr/ros2_foxy/images16/Untitled4.png?height=300px)
 
 image from : [OMG DDS(Data Distrubution Service) 기술 개요](https://blog.naver.com/neos_rtos/30173805276)
 
@@ -170,69 +164,63 @@ image from : [OMG DDS(Data Distrubution Service) 기술 개요](https://blog.nav
 
 ROS 2를 사용하는 두 디바이스는 같은 네트워크를 사용하고 있다면 자동으로 서로를 인식할 수 있습니다. 어떻게 이러한 동작이 가능하며, 이를 위한 필요조건은 무엇인지 살펴보겠습니다.
 
-**Discovery를 위해 필요한 정보들** - \*\*\*\*DDS 미들웨어 통신을 위해 아래 4가지 정보를 사전에 교환해야 합니다.
+**Discovery를 위해 필요한 정보들** - DDS 미들웨어 통신을 위해 아래 4가지 정보를 사전에 교환해야 합니다.
 
 - **Who** : Topic Publish 혹은 Subscribe 대상
 - **Where** : DDS 표준에서 생성한 Locator 정보
 - **What** : Publish하거나 Subscribe하려는 Topic
 - **How** : Topic Publisher인지 Subscriber인지에 대한 정보
 
-<aside>
-💡
-
-</aside>
-
+{{% notice note %}}
 DDS RTPS도 결국 UDP나 TCP 네트워크 레이어를 사용하며, 이를 위해서 실질적으로 IP와 PORT등의 정보가 필요합니다. 하지만, DDS는 사용자가 주소를 지정하지 않아도 “Topic”만으로 통신이 가능합니다. 이를 가능하게 해주는 것이 **Locator**이며, 이는 Middle Ware단에서 능동적으로 통신에 필요한 정보를 포함하는 새로운 개념을 별도로 생성하는 것입니다.
+{{% /notice %}}
 
-DDS 표준에서는 Discovery를 수행하는 절차를 **PDP** 와 **EDP**로 구분하고 있습니다.
+> DDS 표준에서는 Discovery를 수행하는 절차를 **PDP** 와 **EDP**로 구분하고 있습니다.
 
-- **PDP(Participant Discovery Protocol)** : 같은 도메인에 존재하는 서로 다른 Participant를 검색하는 절차로, Participant에 포함되어 있는 endpoint 의 정보를 검색합니다.
-- **EDP(Endpoint Discovery Protocol)** : PDP를 통해 Participant가 서로를 탐지하고 나면, EDP가 수행됩니다. 표준에서는 각 프로토콜이 지원해야할 최소한의 기능을 만족하는 SPDP와 SEDP에 대해 설명하고 있습니다.
+- **PDP - Participant Discovery Protocol** : 같은 도메인에 존재하는 서로 다른 Participant를 검색하는 절차로, Participant에 포함되어 있는 endpoint 의 정보를 검색합니다.
+- **EDP - Endpoint Discovery Protocol** : PDP를 통해 Participant가 서로를 탐지하고 나면, EDP가 수행됩니다. 표준에서는 각 프로토콜이 지원해야할 최소한의 기능을 만족하는 SPDP와 SEDP에 대해 설명하고 있습니다.
 
-<aside>
-💡
-
-</aside>
-
+{{% notice note %}}
 vendor에 따라 다양한 PDP와 EDP를 지원할 수 있지만, 호환성을 위해 모든 RTPS는 SPDP(Simple Participant Discovery Protocol)와 SEDP(Simple Endpoint Discovery Protocol)를 필수로 지원해야합니다. 서로 다른 vendor를 가진 머신 사이에 통신이 가능한 이유이기도 합니다.
+{{% /notice %}}
 
-그림을 통해 SPDP와 SEDP를 활용한 Discovery 절차에 대해 알아봅시다.
+> 그림을 통해 SPDP와 SEDP를 활용한 Discovery 절차에 대해 알아봅시다.
 
 같은 Domain을 사용하는 Participant는 생성 시, Discovery를 수행하는 3쌍의 builtin Writer와 builtin Reader, 그리고 pre-defined topic를 포함하게 됩니다. DDS가 구동되면, Participant는 Multicast로 PDP(Participant Discovery Protocol) 메시지를 주기적으로 전송하기 시작합니다.
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/1d988b6e-ddf2-4893-8d90-a283a66b13db/Untitled.png)
+![Untitled5.png](/kr/ros2_foxy/images16/Untitled5.png?height=300px)
 
 각 Participant의 builtinParticipantWriter와 builtinPariticpantReader 사이 SPDP 교환이 이루어집니다. 전달되는 정보에는 Participant에 포함된 builtinPublicationWriter와 builtinPublicationReader의 Locator 정보가 담겨 있습니다.
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/45ec15ea-7cff-4142-8975-aa9b4b451bc7/Untitled.png)
+![Untitled6.png](/kr/ros2_foxy/images16/Untitled6.png?height=300px)
 
 SPDP 교환 이후, 상대방 Participant의 정보를 통해 양측 Participant들은 서로 연결됩니다.
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/5a8de8ac-956d-4be8-87ae-c4817f0f0241/Untitled.png)
+![Untitled7.png](/kr/ros2_foxy/images16/Untitled7.png?height=300px)
 
 이후, Topic 수행을 위해 각 Participant에 Endpoint에 해당하는 Publisher와 Datawriter가 하나씩 생성됩니다.
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/e5a70f9e-0784-49cd-a9d3-1ce9b7d9b3e7/Untitled.png)
+![Untitled8.png](/kr/ros2_foxy/images16/Untitled8.png?height=300px)
 
 SPDP에서 교환했던 Locator정보를 바탕으로 builtinPublicationWriter는 builtiinPublicationReader에게, builtinSubscriptionWriter는 SubscriptionReader에게 Unicast를 통해 정보를 전달합니다.(SEDP를 교환하는 것입니다.) 전달되는 정보에는 topic, data type, Qos등의 정보가 포함되어 있습니다.
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/f9b6b8cc-3792-411f-b808-c69401f8ec55/Untitled.png)
+![Untitled9.png](/kr/ros2_foxy/images16/Untitled9.png?height=300px)
 
 SEDP의 결과로 Participant에 포함된 Endpoint들이 연결되고, 연결된 두 Endpoint는 동일 Topic으로 통신을 시작합니다.
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/102dc576-07e1-4fe9-8ef6-834fd435ccfe/Untitled.png)
+![Untitled10.png](/kr/ros2_foxy/images16/Untitled10.png?height=300px)
 
-Discovery 과정을 한번에 정리한 그림입니다. 다시 한 번 의미를 이해하면서 과정을 복기해봅시다.
+> Discovery 과정을 한번에 정리한 그림입니다. 다시 한 번 의미를 이해하면서 과정을 복기해봅시다.
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/279da3c7-eb9c-4719-9497-62cffe5db7ce/Untitled.png)
+![Untitled11.png](/kr/ros2_foxy/images16/Untitled11.png?height=300px)
 
 ### **DCPS(Data-Centric Publish-Subscribe) Layer**
 
-DCPS Layer는 RTPS Layer와 Application 사이의 인터페이스 역할을 합니다. 이후 다뤄지는 Participant, Domain, Topic 등을 정의하고, Publish-Subscribe를 수행합니다. 더불어, DDS의 중요한 기능 중 하나인 QoS(Quality of Service)도 담당하고 있습니다.
+> DCPS Layer는 RTPS Layer와 Application 사이의 인터페이스 역할을 합니다. 이후 다뤄지는 Participant, Domain, Topic 등을 정의하고, Publish-Subscribe를 수행합니다. 더불어, DDS의 중요한 기능 중 하나인 QoS(Quality of Service)도 담당하고 있습니다.
 
 구현 측면에서, DCPS는 Data read/write API를 제공함으로 응용 프로그램들 사이 데이터를 교환할 상대에 대한 인지 없이 원하는 데이터의 송수신이 가능하게 합니다.
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/8529bb5c-6bc6-4833-b2b7-831b97925dc5/Untitled.png)
+![Untitled12.png](/kr/ros2_foxy/images16/Untitled12.png?height=300px)
 
 image from : [OMG DDS(Data Distrubution Service) 기술 개요](https://blog.naver.com/neos_rtos/30173805276)
 
@@ -250,7 +238,7 @@ DataWriter는 송신자, DataReader는 수신자의 역할을 합니다. DataWri
 
 ### **DDS Pub-Sub의 기본 구성 요소**
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/d5ef5103-224b-4649-9f11-2165bbf3b9e1/Untitled.png)
+![Untitled13.png](/kr/ros2_foxy/images16/Untitled13.png?height=300px)
 
 image from : [MDS 테크](https://blog.naver.com/PostView.naver?blogId=neos_rtos&logNo=220346180839&parentCategoryNo=&categoryNo=20&viewDate=&isShowPopularPosts=false&from=postList)
 
@@ -258,18 +246,15 @@ image from : [MDS 테크](https://blog.naver.com/PostView.naver?blogId=neos_rtos
 
 Topic은 Publish-Subscribe의 관계를 정의하는 Key입니다. topic은 데이터 타입과 해당 데이터의 **QoS**에 대한 정보를 담고 있습니다. QoS를 Topic 데이터에 추가하고, Topic과 연관된 DataWriter, Datawriter에 연관된 QoS를 설정하는 식으로 제어됩니다. (Subscriber 측도 동일합니다.)
 
-<aside>
-💡
-
-</aside>
-
+{{% notice tip %}}
 Topic의 이름은 Domain 내에서 유일해야 합니다.
+{{% /notice %}}
 
 - **Participant**
 
 Participant는 DDS Publisher와 Subscriber를 담게 되는 객체입니다. ROS 2의 Node안에 다수의 Publisher와 Subscriber와 공존할 수 있는 것처럼, Participant도 다수의 DataWriter와 DataReader를 가질 수 있습니다.
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/07966e2d-d27d-4ae8-b955-14d2178ec77a/Untitled.png)
+![Untitled14.png](/kr/ros2_foxy/images16/Untitled14.png?height=300px)
 
 - **Domain**
 
@@ -298,7 +283,7 @@ TCPROS/UDPROS라는 자체 프로토콜을 사용했던 기존 ROS 1과는 달�
 
 상황에 따라 데이터의 신뢰성이 중요할 수도 있고, 버퍼의 크기를 크게 하여 Topic의 안정성을 높여야 할 수도 있습니다. 이러한 통신의 품질을 옵션화하기 위해서, DDS에서는 아래와 같은 22가지의 QoS를 정의하고 있습니다.
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/bf263c9c-8710-4765-a27e-bed3f0d8cbc3/Untitled.png)
+![Untitled15.png](/kr/ros2_foxy/images16/Untitled15.png?height=300px)
 
 각각의 QoS 옵션은 연관된 조합으로 Topic, DataWriter, DataReader, Publisher, Subscriber, Domain, Participant에 적용되며, 본 세션에서는 주로 사용되는 QoS를 위주로 살펴보고자 합니다.
 
@@ -306,38 +291,30 @@ TCPROS/UDPROS라는 자체 프로토콜을 사용했던 기존 ROS 1과는 달�
   - **RELIABLE** : DataWriter History에 있는 모든 샘플들이 DataReader에 전달되는 것을 보장합니다.
   - **BEST_EFFORT** : 통신 시 손실된 데이터 샘플을 재전송 하지 않고, 전달된 데이터의 순서는 유지 합니다.
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/9a8218ab-9694-4d2c-842e-e304930c4033/Untitled.png)
+![Untitled16.png](/kr/ros2_foxy/images16/Untitled16.png?height=100px)
 
-<aside>
-💡
+{{% notice note %}}
+알파벳은 다음과 같은 의미를 갖습니다. T : TOPIC, DR : DataReader, DW : DataWriter, P : Publisher, S:Subscriber
 
-</aside>
+{{% /notice %}}
 
-알파벳은 다음과 같은 의미를 갖습니다. \*\*\*\*T : TOPIC, DR : DataReader, DW : DataWriter, P : Publisher, S:Subscriber
-
-<aside>
-💡
-
-</aside>
-
+{{% notice note %}}
 RxO는 Requested/Offered의 약자로 QoS가 적용되는 대상을 Publisher(발간/송신) 측과 Subscriber(구독/수신) 측으로 구분해서 서로의 상관관계를 표현하는 방법입니다.
+{{% /notice %}}
 
 - **‘YES’** : Publisher 측과 Subscriber 측 모두 QoS가 적용되어야 하고, 설정된 QoS 값이 호환되어야 한다.
 - **‘NO’** : Publisher 측과 Subscriber 측 모두 QoS 가 적용되어야 하지만, 설정된 QoS 값은 서로 독립적이다.
 - **‘N/A’** : Publisher 측과 Subscriber 측 중 한 측에만 적용되어야 한다.
 
-<aside>
-💡
-
-</aside>
-
+{{% notice note %}}
 Changeable이 ‘YES’ 일 경우에는, 동작하면서도 QoS 의 값이 변경될 수 있지만, ‘NO’일 경우에는 처음 생성된 이후에는 변경할 수 없습니다.
+{{% /notice %}}
 
 - **HISTORY** : 데이터의 재전송을 위해 HistoryCache내 데이터 보관 방법을 결정하며 두 가지 속성을 설정 할 수 있습니다.
   - **KEEP_LAST** : Depth(History Cache안에 유지하고 있을 데이터 개수) 크기 만큼 최신 데이터를 유지 합니다.
   - **KEEP_ALL** : DataReader에게 인스턴스의 모든 값들을 유지하고 전송 합니다.
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/995a4f0d-cdce-461b-a41f-ba2c7ddb8139/Untitled.png)
+![Untitled17.png](/kr/ros2_foxy/images16/Untitled17.png?height=100px)
 
 - **DURABILITY** : 나중에 참여한 DataReader에게 이전 데이터를 전송할지 여부를 결정 하며 네 가지 속성을 설정 할 수 있습니다.
   - **VOLATILE** : 연결이 설정 된 이후의 데이터만 제공 합니다.
@@ -345,44 +322,42 @@ Changeable이 ‘YES’ 일 경우에는, 동작하면서도 QoS 의 값이
   - **TRANSIENT** : DataReader에 과거 데이터를 제공 합니다.
   - **PERSISTENT** : Permanent-Storage에 과거 데이터를 저장하며, 데이터의 유효성은 System 보다 오래 지속 됩니다.
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/2a52d484-4161-4ed9-9838-70e77f380345/Untitled.png)
+![Untitled18.png](/kr/ros2_foxy/images16/Untitled18.png?height=100px)
 
 - **OWNERSHIP** : 다수의 DataWriter가 동일한 인스턴스를 갱신하게 허용할지를 결정합니다.
   - **SHARED** : 다수의 DataWriter들이 동일한 데이터 인스턴스 업데이트가 가능합니다.
   - **EXCLUSIVE** : 데이터 객체의 각 인스턴스는 하나의 DataWriter에 의해서만 수정 가능합니다.
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/c939df63-3c83-49ac-903a-57904f972aa0/Untitled.png)
+![Untitled19.png](/kr/ros2_foxy/images16/Untitled19.png?height=100px)
 
 - **PARTITION** : Domain 내부에서 Node들을 분리하는 방법을 결정 합니다. (Domain 내에서 별도의 논리적인 통신 채널 형성) - Partition Name이 같은 DataWriter/DataReader간 데이터 배포 가 가능합니다.
-    <aside>
-    💡
-    
-    </aside>
-    
-    Partition과 Domain의 차이 - 다른 Domain들에 속하는 개체들은 완전히 서로 독립 된 상태입니다. Entity는 다수의 Partition에 있을 수 있지만 하나의 Domain에만 속할 수 있습니다.
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/4303fa54-68d0-43f4-89a5-f056b15a925b/Untitled.png)
+{{% notice note %}}
+Partition과 Domain의 차이 - 다른 Domain들에 속하는 개체들은 완전히 서로 독립 된 상태입니다. Entity는 다수의 Partition에 있을 수 있지만 하나의 Domain에만 속할 수 있습니다.
+{{% /notice %}}
+
+![Untitled20.png](/kr/ros2_foxy/images16/Untitled20.png?height=100px)
 
 - **DEADLINE** : 데이터 샘플 사이의 최대 도착 시간을 정의할 수 있습니다.
   - **DataWriter**는 DEADLINE(period:Duration_t)이 설정된 시간 안에 적어도 한번 이상의 데이터를 전송합니다.
   - **DataReader**는 DEADLINE(period:Duration_t) 시간 안에 DataWriter로부터 데이터를 받지 못하면 DDS로부터 위반 통보를 받습니다.
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/48c5fe94-67af-4824-9b86-d017f5947f51/Untitled.png)
+![Untitled21.png](/kr/ros2_foxy/images16/Untitled21.png?height=100px)
 
 - **TIME_BASED_FILTER** : DataReader 가 데이터를 필터링 하는 시간을 결정 합니다.
   - Minimum_separation: Duation_t 값을 설정하여 DataReader는 이 값 이내에 수신한 데이터는 삭제 합니다.
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/9cb308d6-533e-4d04-afe0-666e4f67006b/Untitled.png)
+![Untitled22.png](/kr/ros2_foxy/images16/Untitled22.png?height=100px)
 
 ROS 2에서는 자주 사용되는 QoS 조합을 묶어 RMW QoS Profile이라는 이름으로 제공하고 있습니다. 지금까지 우리가 queue_size만을 전달하고 있었지만, 사실은 아래 사진의 Default에서 Depth만 바꿔주고 있었던 것입니다.
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/9b0b91e3-3aa2-4b33-9a98-07bf834e6f10/Untitled.png)
+![Untitled23.png](/kr/ros2_foxy/images16/Untitled23.png?height=300px)
 
 image from : [오로카](https://cafe.naver.com/openrt/24319)
 
 ## QoS Programming
 
-ros2 프로그래밍에서 QoS를 설정하는 방법은 매우 간단합니다. Publisher, Subscriber 클래스를 생성하면서 QoS 옵션을 매개변수로 전달하면 됩니다.
+> ros2 프로그래밍에서 QoS를 설정하는 방법은 매우 간단합니다. Publisher, Subscriber 클래스를 생성하면서 QoS 옵션을 매개변수로 전달하면 됩니다.
 
 - python example - RMW QoS Profile 사용 시
 
@@ -456,12 +431,9 @@ QoS profile:
   Liveliness lease duration: 9223372036854775807 nanoseconds
 ```
 
-<aside>
-💡
-
-</aside>
-
+{{% notice tip %}}
 DDS QoS는 RxO (requested by offered) 특성을 갖고 있어 서로 양립할 수 없는 조합이 존재합니다. 예를 들어, Publish의 Reliability가 BEST_EFFORT일때, Subscriber의 Reliability가 RELIABLE라면, Topic 통신이 발생할 수 없습니다.
+{{% /notice %}}
 
 - 코드를 수정하여 직접 실습해봅시다.
 
@@ -498,7 +470,7 @@ $ ros2 run py_topic_tutorial qos_example_subscriber
 [WARN] [1673945160.455319911] [string_sub_node]: New publisher discovered on this topic, offering incompatible QoS. No messages will be received from it. Last incompatible policy: RELIABILITY_QOS_POLICY
 ```
 
-⇒ C++에서는 아래와 같이 프로그래밍 합니다.
+> C++에서는 아래와 같이 프로그래밍 합니다.
 
 - cpp example - RMW QoS Profile 사용 시
 
@@ -542,7 +514,7 @@ IDL(Interface Description Language 또는 Interface Definition Language)는 어�
 
 OMG의 Interface Definition Language Version 3.5에 따른 사용 가능한 키워드들은 아래와 같습니다.
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/7b80f796-b8b9-43ce-8750-a9ab0506bd67/Untitled.png)
+![Untitled24.png](/kr/ros2_foxy/images16/Untitled24.png?height=300px)
 
 image from : [MDS 테크](https://blog.naver.com/PostView.naver?blogId=neos_rtos&logNo=30185472655&parentCategoryNo=&categoryNo=20&viewDate=&isShowPopularPosts=false&from=postList)
 
@@ -550,7 +522,7 @@ ROS 2에서는 interface라는 이름으로 topic message, service srv, action a
 
 custom interface를 빌드하게 되면, 해당 패키지 내부에 생성된 IDL들을 확인할 수 있습니다. build 폴더 내부 패키지 폴더에 진입하면 사진과 같이 다양한 언어를 지원하기 위한 설정 파일들이 위치하는 것을 확인 가능합니다.
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/a62293cc-d7aa-4de1-866c-41cfb6cadf02/Untitled.png)
+![Untitled25.png](/kr/ros2_foxy/images16/Untitled25.png?height=300px)
 
 - rosidl_generator_py\_\_arguments.json
 
@@ -576,7 +548,9 @@ custom interface를 빌드하게 되면, 해당 패키지 내부에 생성된 ID
 ...
 ```
 
+{{% notice tip %}}
 생성된 IDL 파일 내부를 함께 살펴봅시다. custom_interfaces ⇒ rosidl_adapter ⇒ custom_interfaces ⇒ action 폴더 내부에 위치한 Parking.idl은 아래와 같은 IDL 형태를 띄고 있습니다.
+{{% /notice %}}
 
 - Parking.idl
 
@@ -608,7 +582,7 @@ module custom_interfaces {
 
 ## ROS 2 Domain ID
 
-DDS 시간 살펴본 바와 같이 각 DDS Participant들은 특정 Domain에 속하게 됩니다. 기본적으로 ROS 2에서는 Domain ID 0을 사용하고 있으며, 같은 Domain ID를 사용하는 Participant들 사이에서만 Discovery와 통신이 가능합니다.
+> DDS 시간 살펴본 바와 같이 각 DDS Participant들은 특정 Domain에 속하게 됩니다. 기본적으로 ROS 2에서는 Domain ID 0을 사용하고 있으며, 같은 Domain ID를 사용하는 Participant들 사이에서만 Discovery와 통신이 가능합니다.
 
 이번 시간에는 ROS 2의 Domain ID를 수정해보고, Domain ID를 설정할 시 주의해야 할 점들에 대해서도 알아보겠습니다.
 
@@ -657,15 +631,198 @@ Menu:
 
 - DDS는 Domain ID를 사용하여 Participant들이 사용할 UDP Port를 지정합니다. Port가 계산되는 방법은 아래와 같으며, 링크를 참고합니다. - [추가 링크](https://community.rti.com/content/forum-topic/statically-configure-firewall-let-omg-dds-traffic-through)
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/bcc87359-779c-4ec4-b939-978a43843730/Untitled.png)
+![Untitled26.png](/kr/ros2_foxy/images16/Untitled26.png?height=300px)
 
 - ROS 2 공식 문서에서는 Domain ID와 Participant 순서에 따라 사용되는 포트 번호를 계산해주는 계산기를 제공하고 있습니다. 이를 통해 최대 가질 수 있는 Domain ID와 Participant 수를 확인해 보겠습니다. - [공식 문서 링크](https://docs.ros.org/en/foxy/Concepts/About-Domain-ID.html)
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/68ba2e06-59b3-4e5d-aa08-2b89d7c5a96e/Untitled.png)
+![Untitled27.png](/kr/ros2_foxy/images16/Untitled27.png?height=300px)
 
-Domain ID 설정 시 고려해야 할 요소들은 다음과 같습니다.
+> Domain ID 설정 시 고려해야 할 요소들은 다음과 같습니다.
 
 1. 각 OS 별로 침범하면 안되는 포트 영역이 있습니다. (Linux - 32768-60999 / Windows & macOS - 49152-65535)
 2. 각 Participant당 2개의 Unicast Port를 사용합니다. 따라서, 하나의 Domain ID에서 사용할 수 있는 최대 Participant의 수는 120개 입니다. (ROS 2는 하나의 프로세스에서 여러 Node를 실행할 수 있기 때문에 Node를 120개까지 사용할 수 있는 것은 아닙니다.)
 
-⇒ 이러한 이유로 ROS 2 공식 문서에서는 0-101 사이의 Domain ID를 사용하기를 권장하고 있습니다.
+{{% notice tip %}}
+이러한 이유로 ROS 2 공식 문서에서는 0-101 사이의 Domain ID를 사용하기를 권장하고 있습니다.
+{{% /notice %}}
+
+## ament_general (C++ & Python)
+
+> ROS 2 개발 시 C++와 Python을 모두 사용할 수 있다는 것은 큰 장점이지만, 패키지 생성 시 사용할 언어를 정해야 하기 때문에 불편한 상황들도 많이 있습니다. 이번 시간에는 하나의 패키지에서 C++와 파이썬을 동시에 사용할 수 있는 방법에 대해서 알아봅시다.
+
+{{% notice note %}}
+이번 예시는 직접 패키지를 생성해보면서 따라와보시기를 권장합니다!
+{{% /notice %}}
+
+- C++와 python 모두를 사용하는 의미에서 ament_general이라는 패키지를 생성하였습니다.
+
+```bash
+ros2 pkg create --build-type ament_cmake ament_general
+```
+
+> 일반적인 C++ 패키지였다면 다음과 같은 작업들이 이어졌을 것입니다.
+
+- header 파일 추가 - ament_general/include/ament_general/my_node.hpp
+
+```cpp
+#ifndef AMENT_GENERAL__MY_NODE_HPP_
+#define AMENT_GENERAL__MY_NODE_HPP_
+
+#include "rclcpp/rclcpp.hpp"
+
+using namespace std::chrono_literals;
+
+class MyNode: public rclcpp::Node {
+private:
+  size_t count;
+  rclcpp::TimerBase::SharedPtr timer;
+
+public:
+  MyNode();
+  void timer_callback();
+};
+
+#endif
+```
+
+- header에 대한 구현을 포함하는 cpp 파일 추가 - ament_general/src/my_node.hpp
+
+```cpp
+#include "ament_general/my_node.hpp"
+
+MyNode::MyNode() : Node("example_node") {
+  timer = this->create_wall_timer(
+    200ms, std::bind(&MyNode::timer_callback, this)
+  );
+}
+
+void MyNode::timer_callback() {
+  RCLCPP_INFO(this->get_logger(), "==== Hello ROS 2 : %d ====", count);
+  count++;
+}
+```
+
+- rclcpp main 함수가 포함된 main.cpp 추가
+
+```cpp
+#include "ament_general/my_node.hpp"
+
+int main(int argc, char **argv) {
+  rclcpp::init(argc, argv);
+
+  auto node = std::make_shared<MyNode>();
+  rclcpp::spin(node);
+
+  rclcpp::shutdown();
+  return 0;
+}
+```
+
+- CMakeLists.txt 수정
+
+```bash
+include_directories(include)
+
+add_executable(my_node src/main.cpp src/my_node.cpp)
+ament_target_dependencies(my_node rclcpp)
+
+install(
+  TARGETS
+    my_node
+  DESTINATION
+    lib/${PROJECT_NAME}
+)
+```
+
+- 빌드 후 실행
+
+```bash
+# package build
+cbp ament_general && source install/local_setup.bash
+
+# package run
+ros2 run ament_general my_node
+[INFO] [1682942433.465392502] [example_node]: ==== Hello ROS 2 : 0 ====
+[INFO] [1682942433.665303331] [example_node]: ==== Hello ROS 2 : 1 ====
+[INFO] [1682942433.865330372] [example_node]: ==== Hello ROS 2 : 2 ====
+...
+```
+
+이제 ament_general에 파이썬 코드를 추가하고, ros2 run을 통해 파이썬 코드도 실행할 수 있도록 작업을 진행해봅시다.
+
+## Add Python node
+
+- 우리의 궁극적인 목표는 아래와 같은 파일 구조를 생성하는 것입니다.
+
+![Untitled28.png](/kr/ros2_foxy/images16/Untitled28.png?height=300px)
+
+제시되는 과정을 함께 따라와주세요!
+
+1. ament_general 폴더 생성
+2. ament_general 내부 init.py 생성 ( 이 파일은 빈 파일입니다.)
+3. ament_general 내부에 module이 되는 [helper.py](http://helper.py) 파일을 생성
+4. main 함수를 포함하는 rclpy code 생성
+
+{{% notice note %}}
+주의할 점이 있습니다. main rclpy 코드는 반드시 Shebang line을 포함해야 합니다!
+{{% /notice %}}
+
+- my_py_node.py
+
+```python
+#!/usr/bin/env python3
+
+import rclpy
+from rclpy.node import Node
+from ament_general.helper import *
+```
+
+- package.xml에 ament_python에 대한 종속성을 포함합니다.
+
+```xml
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>ament_general</name>
+  <version>0.0.0</version>
+  <description>TODO: Package description</description>
+  <maintainer email="tge1375@naver.com">kimsooyoung</maintainer>
+  <license>TODO: License declaration</license>
+
+  <!-- python part -->
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
+  <depend>rclpy</depend>
+  <!-- python part -->
+  ...
+```
+
+- CMakeLists.txt에 아래와 같은 라인을 추가합니다. (python 코드 이름은 여러분의 것으로 변경해야 합니다.)
+
+```python
+###### Python Part #####
+# Install Python modules
+ament_python_install_package(${PROJECT_NAME})
+# Install Python executables
+install(PROGRAMS
+  ament_general/my_py_node.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+```
+
+- 기존 파이썬 코드들은 수정 후 별도 빌드가 없어도 실행 시 해당 내용이 반영되었지요? 이러한 symlink install 동작을 위해선 파이썬 파일에 권한을 추가해주어야 합니다.
+
+```python
+chmod +x my_py_node.py
+```
+
+{{% notice note %}}
+새로운 사용자가 코드를 clone하면 매번 이 작업을 반복해야 합니다. 따라서 실제 개발에 이러한 방법이 자주 사용되지는 않습니다.
+
+{{% /notice %}}
+
+- 최종 build와 실행입니다.
+
+```python
+cbp ament_general && source install/local_setup.bash
+ros2 run ament_general my_py_node.py
+```
