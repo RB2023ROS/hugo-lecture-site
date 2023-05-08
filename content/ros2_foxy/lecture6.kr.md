@@ -111,9 +111,15 @@ rqt
 - rviz2 예시를 위해 좀 더 갖춰진 gazebo 환경을 실행해보겠습니다.
 
 ```python
+# install requirements
+cd du2023-ros2
+./setup_scripts.sh
+
 # package build
 cd ~/ros2_ws
-cbp src_gazebo
+cbp src_controller && source install/local_setup.bash
+cbp src_gazebo && source install/local_setup.bash
+cbp src_odometry && source install/local_setup.bash
 
 # demo env launch
 ros2 launch src_gazebo racecourse.launch.py
@@ -291,9 +297,20 @@ ros2 launch lidar_world lidar_world.launch.py
 
 ![lidar_world_gz.gif](/kr/ros2_foxy/images6/lidar_world_gz.gif?height=400px)
 
-⇒ 매우 복잡한 형상의 환경과 동적 물체들이 등장합니다. 아마 고사양의 PC가 아닌 이상 이번 예제는 실행되지 않을 것입니다.
+{{% notice note %}}
+해당 예시는 GPU Sensor를 사용하므로 일반 랩탑에서 실행 시 오류가 발생할 수 있습니다. 랩탑에서의 실행을 원하신다면 **lidar_world/urdf/sensor_stick.urdf.xacro** 파일에서 CPU 버전으로 토글합니다.
+{{% /notice %}}
 
-⇒ 더불어 이런 여러 기능을 가진 시뮬레이션은 매우 느리게 동작하기 때문에 정확한 알고리즘의 검증이 불가능합니다.
+```xml
+<?xml version="1.0"?>
+<robot name="sensor_stick" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  ...
+  <!--Import gazebo elements-->
+  <!-- <xacro:include filename="$(find lidar_world)/urdf/sensor_stick.gazebo.xacro" /> -->
+  <!-- <xacro:include filename="$(find lidar_world)/urdf/sensor_stick_gpu.gazebo.xacro" /> -->
+```
+
+> 이런 여러 기능을 가진 시뮬레이션은 매우 느리게 동작하기 때문에 정확한 알고리즘의 검증이 불가능합니다.
 
 - ROS 개발자들은 이러한 이유로 **rosbag2**를 통해 환경에서의 데이터셋을 제작합니다. 실제로 컴퓨터 비전 학회나 로봇 학회에서도 본인의 테스트베드를 rosbag으로 저장한 뒤 publish하는 경우가 많습니다.
 

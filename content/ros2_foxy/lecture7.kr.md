@@ -540,8 +540,10 @@ ament_target_dependencies(cpp_parking_node rclcpp sensor_msgs geometry_msgs)
 
 - 몇가지를 함께 조회해 봅시다.
 
-```python
-ros2 interface show msg / srv / action
+```bash
+ros2 interface show sensor_msgs/msg/PointCloud2
+ros2 interface show geometry_msgs/msg/Quaternion
+ros2 interface show nav_msgs/srv/GetPlan
 ```
 
 이렇게 미리 제공되는 데이터 타입들은 common interfaces라는 이름으로 제공되고 있습니다.
