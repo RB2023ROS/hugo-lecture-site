@@ -41,6 +41,7 @@ image from : [기호일보](https://www.kihoilbo.co.kr/news/articleView.html?idx
 ros2 launch src_gazebo wall_world.launch.py
 
 # Terminal 2
+cbp py_action_tutorial && source install/local_setup.bash
 ros2 run py_action_tutorial parking_action_server
 
 # Terminal 3

@@ -231,6 +231,7 @@ ros2 run tf2_tools view_frame.py
 ros2 launch tf2_world tf2_world.launch.py
 
 # Terminal2 - tf2 broadcaster
+cbp py_tf2_tutorial && source install/local_setup.bash
 ros2 run py_tf2_tutorial tf2_broadcaster
 ```
 

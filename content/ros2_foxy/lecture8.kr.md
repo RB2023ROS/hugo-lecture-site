@@ -75,10 +75,9 @@ ros2 launch rgbd_world depth_world.launch.py
 - 이번 예시의 데모를 먼저 보여드리겠습니다.
 
 ```python
-# Demo package build again for confirmation
+# Demo package build
 cd ~/ros2_ws/src
-git clone https://github.com/RB2023ROS/gz_ros2_examples.git
-cbp rgbd_world
+cbp py_service_tutorial
 source install/local_setup.bash
 
 # Terminal 1 - gazebo env launch
@@ -361,7 +360,7 @@ def sub_callback(self, data):
 ros2 launch rgbd_world depth_world.launch.py
 
 # Terminal 2 - Execute Service Client
-ros2 run py_service_tutorial spawn_object_wo_gravity
+ros2 run cpp_service_tutorial spawn_object_wo_gravity
 ```
 
 ### 코드 분석
