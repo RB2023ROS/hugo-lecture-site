@@ -138,7 +138,7 @@ ros2 launch tf2_world tf2_world.launch.py
 - 현 상황에서 tf2 tree를 조회해봅시다.
 
 ```bash
-ros2 run tf2_tools view_frame.py
+ros2 run tf2_tools view_frames.py
 ```
 
 ![Untitled7.png](/kr/ros2_foxy/images10/Untitled7.png?height=200px)
@@ -193,7 +193,7 @@ tf2 데이터는 아무것도 없지요? 이번 시간의 목표는 우리가 �
 - 다시 한 번 tf2 tree를 살펴봅시다
 
 ```python
-ros2 run tf2_tools view_frame.py
+ros2 run tf2_tools view_frames.py
 ```
 
 ![Untitled10.png](/kr/ros2_foxy/images10/Untitled10.png?height=300px)
