@@ -493,3 +493,243 @@ $ ros2 topic list
 ```
 
 - 이러한 topic들을 사용하고 싶다면, gazebo world file에 libgazebo_ros_state plugin을 추가하면 됩니다.
+
+## Multi Object Spawning
+
+> 여러대의 로봇, 여러개의 동일한 센서를 시뮬레이션하고 싶은 경우를 다뤄봅시다.
+
+- 준비된 예시의 역분석을 통해 학습해보고자 합니다. 우선 예시를 실행해봅시다.
+
+```xml
+ros2 launch chess_world chess_world.launch.py
+```
+
+![Untitled6.png](/kr/ros2_foxy/images12/Untitled6.png?height=350px)
+
+> 체스보드 양쪽으로 동일한 realsense camera가 등장한 것을 볼 수 있습니다.
+
+- 이 예시를 역으르 해석해가면서 multi object 상황에 대한 gazebo환경에 대해 학습해보겠습니다.
+
+1. launch file 분석
+2. urdf 분석
+3. gazebo plugin 분석
+
+- launch file 분석 - chess_world.launch.py
+
+```python
+cam1_spawn = robot_spawn_nodes(0, "camera_left.urdf.xacro", pkg_path)
+cam2_spawn = robot_spawn_nodes(1, "camera_right.urdf.xacro", pkg_path)
+
+return LaunchDescription(
+    [
+        arg_show_rviz,
+        start_gazebo_server_cmd,
+        start_gazebo_client_cmd,
+        static_transform_publisher,
+        *cam1_spawn,
+        *cam2_spawn,
+        rviz_node,
+    ]
+)
+```
+
+⇒ 하나의 object 시뮬레이션을 위해 필요한 node들을 묶어 함수화하고, 이를 통해 cam1_spawn, cam2_spawn을 만들었습니다.
+
+- 다시 robot_spawn_nodes 함수를 살펴봅시다.
+
+```python
+return [
+    robot_state_publisher,
+    spawn_entity,
+]
+```
+
+{{% notice note %}}
+서로 다른 urdf file을 사용하기 때문에 robot_state_publisher가, 로봇을 등장시키는 과정이 반복되어야 하기 때문에 spawn_entity가 포함되어 있습니다.
+{{% /notice %}}
+
+- 사용할 xacro file과 spawn 위치를 매개변수로 받아 실행되는 구조입니다. 더욱이, 여기서 주목해야 할 점은 **namespace**를 사용하였다는 점입니다.
+
+```python
+def robot_spawn_nodes(id, xacro_name, pkg_path):
+    # Get URDF via xacro
+    robot_description_content = Command(
+        [
+            PathJoinSubstitution([FindExecutable(name="xacro")]),
+            " ",
+            PathJoinSubstitution(
+                [FindPackageShare("chess_world"), "urdf", xacro_name]
+            ),
+        ]
+    )
+
+    robot_description = {"robot_description": robot_description_content}
+    ...
+    # Spawn Robot
+    spawn_entity = Node(
+        package='gazebo_ros',
+        executable='spawn_entity.py',
+        namespace=f'camera_{id}',
+        arguments=[
+            '-topic', 'robot_description',
+            '-entity', f'd435_camera_{id}',
+            '-x', str(0),
+            '-y', str(0.0),
+            '-Y', str(0.0),
+        ],
+        output='screen'
+    )
+```
+
+- **camera_right.urdf.xacro & camera_left.urdf.xacro**
+
+⇒ 링크를 통해 이 둘을 비교해봅시다. ⇒ **[camera_right.urdf.xacro](https://github.com/RB2023ROS/gz_ros2_examples/blob/main/chess_world/urdf/camera_right.urdf.xacro) / [camera_left.urdf.xacro](https://github.com/RB2023ROS/gz_ros2_examples/blob/main/chess_world/urdf/camera_left.urdf.xacro)**
+
+⇒ xacro의 사용이 아주 빛나는 상황입니다.
+
+```xml
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="camera_<>">
+
+  <xacro:include filename="$(find chess_world)/urdf/sensors/_d415.urdf.xacro"/>
+  <xacro:include filename="$(find chess_world)/urdf/sensors/cam_holder.urdf.xacro"/>
+
+  <link name="chess_frame" />
+
+  <!-- sets camera frame w.r.t. to chess frame-->
+  <!-- set only the color camera and a slow frame rate - an image each 5 seconds)-->
+  <xacro:sensor_d415 name="camera_<>" parent="chess_frame" flag_color="1" flag_ir="0" flag_depth="0" updaterate="10">
+    <origin xyz="? ? ?" rpy="? ? ?" />
+  </xacro:sensor_d415>
+  <!-- result from calib -->
+
+  <!-- sets cam holder w.r.t to camera-->
+  <xacro:cam_holder name="camera_<>_holder" parent="camera_<>_link">
+    <origin xyz="0.0 -0.020 0.0115" rpy="0 -1.161379 0" />
+  </xacro:cam_holder>
+</robot>
+```
+
+- 각각의 xacro file내에는 변화하는 부분을 변수로 두어 상위 xacro에서 매개변수를 전달하기만 하면 언제든 독립된 모델을 만들 수 있도록 설계되었습니다.
+
+```xml
+<?xml version="1.0"?>
+<robot name="cam_holder" xmlns:xacro="http://ros.org/wiki/xacro">
+<xacro:macro name="cam_holder" params="name parent *origin">
+
+...
+
+<robot name="sensor_d415" xmlns:xacro="http://ros.org/wiki/xacro">
+<xacro:macro name="sensor_d415" params="name parent flag_color flag_ir flag_depth updaterate *origin">
+```
+
+⇒ 이러한 이유에서 xacro의 사용이 권장됩니다.
+
+- 실제 에시를 실행하여 topic list를 조회해보아도 겹치는 이름 없이 잘 실행되는 모습을 확인 가능합니다.
+
+```xml
+$ ros2 topic list
+/camera_0/joint_states
+/camera_0/robot_description
+/camera_1/joint_states
+/camera_1/robot_description
+/camera_left/color/camera_info
+/camera_left/color/image_raw
+/camera_right/color/camera_info
+/camera_right/color/image_raw
+/clicked_point
+/clock
+/goal_pose
+/initialpose
+/parameter_events
+/performance_metrics
+/rosout
+/tf
+/tf_static
+```
+
+- 더욱이 tf2 tree도 완벽하게 구성되어 rviz2에서의 시각화도 문제없습니다.
+
+![Untitled7.png](/kr/ros2_foxy/images12/Untitled7.png?height=350px)
+
+## 다른 World 가져와서 써보기
+
+> 이번에는, 오픈소스 프로젝트를 활용하여 나만의 world를 만드는 방법에 대해 학습해보겠습니다.
+
+- 예시 실행
+
+```xml
+$ ros2 launch lidar_world lidar_world.launch.py
+```
+
+⇒ 해당 world는 제가 youtube 검색을 통해 괜찮다고 생각되어 직접 수정해본 것입니다. (물론 라이센스는 지켜야 합니다.) [youtube link](https://www.youtube.com/watch?v=NNR9RUNz5Pg&t=3s)
+
+- 우선 해당 프로젝트를 분석해봅시다.
+
+![Untitled8.png](/kr/ros2_foxy/images12/Untitled8.png?height=250px)
+
+⇒ 사용된 패키지는 총 5개 입니다. 이들 중 gazebo와 관련이 깊을 것 같은 robot_gazebo 패키지에서 launch file을 분석합니다.
+
+- robot_sim.launch.py
+
+```python
+return LaunchDescription([
+    IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_gazebo_ros, 'launch', 'gzserver.launch.py')
+        ),
+        launch_arguments={'world': world}.items(),
+    ),
+
+    IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_gazebo_ros, 'launch', 'gzclient.launch.py')
+        ),
+    ),
+
+    IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_cart_pole_control, 'launch', 'robot_control.launch.py')
+        ),
+    ),
+
+    IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([launch_file_dir, '/robot_state_publisher.launch.py']),
+        launch_arguments={'use_sim_time': use_sim_time}.items(),
+    ),
+
+    Node(
+    package = "joy",
+    executable = "joy_node"
+    ),
+])
+```
+
+- 우리가 관심있는 것은 world file의 위치이며, 이렇게 찾은 lio_world.model을 gazebo_ros가 아닌 일반 Gazebo로 로컬 실행시켜봅니다.
+
+```python
+gazebo lio_world.model
+```
+
+⇒ 아마 실행되지 않을 것입니다. lio_world.model에서는 gazebo 기본 model이 아닌 커스텀 모델들이 사용되고 있는데, 이들을 Gazebo 환경변수에 추가해주어야 하기 때문입니다.
+
+![Untitled9.png](/kr/ros2_foxy/images12/Untitled9.png?height=250px)
+
+- 따라서 나만의 패키지를 구성하고, 이 world를 다시 실행시켜봅니다.
+
+1. 패키지 생성
+2. launch file 생성, world file, models file 복사
+3. CMakeLists.txt 수정
+4. 패키지 빌드 후, 실행
+
+![Untitled10.png](/kr/ros2_foxy/images12/Untitled10.png?height=350px)
+
+{{% notice note %}}
+이전에 배운 sensor plugin, urdf, sensor stick, moving stick을 모두 활용해서 여러분만의 camera & lidar world를 만들어 보세요!! - **과제입니다.**
+{{% /notice %}}
+
+⇒ 제가 만든 World를 참고하셔도 좋지만 직접 해보시기를 권장드립니다.
+
+⇒ object animation은 다음 링크를 참고합니다. [link](https://classic.gazebosim.org/tutorials?tut=actor&cat=build_robot)
+
+![lidar_world_gz.gif](/kr/ros2_foxy/images12/lidar_world_gz.gif?height=350px)
