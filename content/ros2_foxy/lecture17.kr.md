@@ -1873,3 +1873,262 @@ std::shared_ptr<ob::DeviceInfo> device_info_;
 {{% /notice %}}
 
 > orbbec astra plus model의 ROS 2 패키지 분석을 끝으로 모든 예시 분석을 마쳤습니다. 실제 ROS 2 package 개발에 대한 안목이 생기셨으리라 생각합니다.
+
+## orbbec gemini 2 ROS 2 패키지 분석
+
+> 이번에는 Orbbec의 또다른 rgbd camera인 Gemini 2를 ROS 2 연동해보겠습니다.
+
+{{% notice note %}}
+일전 Astra Plus를 분석하며 종속성 설치 등 많은 부분을 이미 해두었으므로 중복되는 설정은 제외하였습니다.
+{{% /notice %}}
+
+![Untitled22.png](/kr/ros2_foxy/images17/Untitled22.png?height=400px)
+
+- Astra Plus package와 Gemini 2 package의 이름이 동일합니다! 따라서 새로운 Workspace를 생성한 뒤 별도 빌드를 해주겠습니다.
+
+```cpp
+cd ~/
+mkdir -p gemini_ws/src
+cd ~/gemini_ws
+colon build
+```
+
+{{% notice note %}}
+만약 두 package를 같은 workspace에서 사용하고 싶다면 소스코드에서 패키지 이름을 모조리 찾아내 변경하면 됩니다.
+{{% /notice %}}
+
+- Gemini2의 인식을 위해 udev-rules를 다시 수정해야 합니다. udev-rules에 대한 설명은 [링크](https://chhanz.github.io/linux/2022/09/19/udev-rule/)로 대체하겠으며, 여러분들께서는 하단 터미널 명령어를 따라하시기만 하면 됩니다.
+
+```cpp
+cd /etc/udev/rules.d
+sudo rm -rf 99-obsensor-libusb.rules
+```
+
+- 이제 새로운 udev-rules를 추가해야 합니다. 하지만 Orbbec에서 제공하는 rule이 적절치 않아 이번 예시를 위해 일부 제가 수정하였습니다. ⇒ `OrbbecSDK_ROS2/orbbec_camera/scripts99-obsensor-libusb.rules` 수정
+
+```xml
+# UVC Modules
+...
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="2bc5", ATTRS{idProduct}=="0670", MODE:="0666",  OWNER:="root", GROUP:="video", SYMLINK+="orbbec_gemini_2"
+```
+
+- 새로운 rule을 로컬 환경에 적용합시다.
+
+```xml
+cd <your-ws>/OrbbecSDK_ROS2/orbbec_camera/scripts
+sudo bash install.sh
+sudo udevadm control --reload-rules && sudo udevadm trigger
+```
+
+- 이제 Gemini2를 연결하면 아래와 같이 인식되는 모습을 볼 수 있습니다.
+
+```cpp
+cd /dev
+ls | grep gem
+
+>> result
+orbbec_gemini_2
+```
+
+- 예시 실행 전, color point cloud를 보고 싶다면 `gemini2.launch.xml` 파일의 parameter를 아래와 같이 수정해야 합니다.
+
+```xml
+<launch>
+    <!-- unique camera name-->
+    <arg name="camera_name" default="camera"/>
+    <!-- Hardware depth registration -->
+    <arg name="depth_registration" default="false"/>
+    <arg name="serial_number" default=""/>
+    <arg name="device_num" default="1"/>
+    <arg name="vendor_id" default="0x2bc5"/>
+    <arg name="product_id" default=""/>
+    <arg name="enable_point_cloud" default="true"/>
+    <!-- from -->
+    <!-- <arg name="enable_colored_point_cloud" default="false"/> -->
+    <!-- to -->
+    <arg name="enable_colored_point_cloud" default="True"/>
+    <arg name="point_cloud_qos" default="default"/>
+```
+
+- 패키지를 빌드하고 소싱합시다.
+
+```cpp
+colcon build --event-handlers  console_direct+  --cmake-args  -DCMAKE_BUILD_TYPE=Release
+source install/local_setup.bash
+```
+
+- gemini2 launch를 실행하고, rviz2로 시각화해봅시다.
+
+```xml
+# Terminal 1
+ros2 launch orbbec_camera gemini2.launch.xml
+
+# Terminal 2
+rviz2
+```
+
+> 여러분들이 직접 rviz2 구성을 해보셔도 좋고, 제가 제공드리는 파일을 사용하셔도 됩니다!
+
+📁[gemini2.rviz](https://drive.google.com/file/d/1XA9re1yk86zNvH3NNx1boL68eAVhVWom/view?usp=share_link)
+
+![Untitled23.png](/kr/ros2_foxy/images17/Untitled23.png?height=400px)
+
+{{% notice note %}}
+노트북, Edge Device 사용 시, color point cloud 시각화를 실행하면 급격히 성능이 저하될 수 있습니다. (우측 하단 frame rate를 확인해보세요!)
+{{% /notice %}}
+
+![Untitled24.png](/kr/ros2_foxy/images17/Untitled24.png?height=500px)
+
+- 예제 실행 시 동작하는 topic list, tf2 tree는 다음과 같습니다.
+
+```cpp
+$ ros2 topic list
+/color/camera_info
+/color/image_raw
+/depth/camera_info
+/depth/color/points
+/depth/image_raw
+/depth/points
+/ir/camera_info
+/ir/image_raw
+/parameter_events
+/rosout
+/tf
+/tf_static
+```
+
+![Untitled25.png](/kr/ros2_foxy/images17/Untitled25.png?height=300px)
+
+{{% notice note %}}
+IMU에 대한 tf2와 topic이 없는 점은 많이 아쉽습니다.
+{{% /notice %}}
+
+- 혹시나 parameter로 IMU on/off를 제어하는가 싶었지만 param list 결과 없었습니다.
+
+```cpp
+$ ros2 param list
+/camera:
+  camera_link_frame_id
+  color_camera_info_qos
+  color_format
+  color_fps
+  color_frame_id
+  color_height
+  color_info_url
+  color_optical_frame_id
+  color_qos
+  color_width
+  depth_camera_info_qos
+  depth_format
+  depth_fps
+  depth_frame_id
+  depth_height
+  depth_optical_frame_id
+  depth_qos
+  depth_registration
+  depth_width
+  device_num
+  enable_color
+  enable_colored_point_cloud
+  enable_depth
+  enable_ir
+  enable_point_cloud
+  enable_publish_extrinsic
+  ir_camera_info_qos
+  ir_format
+  ir_fps
+  ir_frame_id
+  ir_height
+  ir_info_url
+  ir_optical_frame_id
+  ir_qos
+  ir_width
+  log_level
+  point_cloud_qos
+  publish_tf
+  serial_number
+  tf_publish_rate
+  use_sim_time
+```
+
+### 코드 분석
+
+> 코드 분석에 앞서, launch file을 먼저 언급하자면, 일전 astra plus package와 두드러진 차이를 보이고 있습니다. 이러한 xml 문법은 ROS 1 시절 사용되었던 문법으로 사실 자주 사용되지는 않습니다.
+
+```xml
+<launch>
+    <!-- unique camera name-->
+    <arg name="camera_name" default="camera"/>
+    ...
+    <group>
+        <node name="camera" pkg="orbbec_camera" exec="orbbec_camera_node" output="screen">
+            <param name="camera_name" value="$(var camera_name)"/>
+            ...
+            <remap from="/$(var camera_name)/depth/color/points" to="/$(var camera_name)/depth_registered/points"/>
+        </node>
+    </group>
+</launch>
+```
+
+{{% notice note %}}
+더불어 한눈에 보아도 parameter들이 지저분하게 나열되어 있는 모습이 확인됩니다. 저라면 **yaml file**로 분리했을 것 같습니다!
+{{% /notice %}}
+
+> 대부분의 코드들은 이미 분석하였기 때문에 이번에는 새롭게 추가되거나 변경된 내용을 위주로 분석해보겠습니다.
+
+- 각 File별 기능은 다음과 같습니다.
+
+| Code                       | Description                                                                                                                            |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| list_devices_node.cpp      | 실행중인 모든 디바이스들을 조회합니다. multi camera를 위한 디버깅 툴로 유추됩니다.                                                     |
+| main.cpp                   | 일반적인 Node / Spin 구조의 main문으로 사실 ob_camera_node_factory를 통해 Composition으로 구현해두었기 때문에 불필요하다고 생각합니다. |
+| ob_cleanup_shm.cpp         | Astra에서 Node / SDK 사이 프로세싱을 thread로 처리한 것과 달리 Gemini에서는 세마포어를 사용합니다. 이에 따른 유틸리티 코드입니다.      |
+| ob_camera_node.cpp         | 실질적인 topic publish, service server들이 구현되어 있던 코드입니다. 기능은 동일하지만 구조에서 차이가 발생하였습니다.                 |
+| ob_camera_node_factory.cpp | 세마포어를 사용함에 따른 구현상의 작은 변화가 발생하였습니다.                                                                          |
+
+{{% notice note %}}
+list_devices_node.cpp의 빌드 결과물인 list_devices_node의 실행 결과입니다.
+{{% /notice %}}
+
+```xml
+ros2 run orbbec_camera list_devices_node
+...
+[I20230510 19:48:22.675072 28664 DeviceManager.cpp:375] Orbbec Gemini 2 Depth Camera
+[I20230510 19:48:22.675125 28664 DeviceManager.cpp:375] Orbbec Gemini 2 IR Camera
+[I20230510 19:48:22.675169 28664 DeviceManager.cpp:375] Orbbec Gemini 2 RGB Camera
+[I20230510 19:48:22.675212 28664 DeviceManager.cpp:375] Orbbec Gemini Data Channel
+[I20230510 19:48:22.675287 28664 DeviceManager.cpp:375] Orbbec Gemini 2 IMU
+```
+
+> ob_camera_node.cpp의 구조를 분석해보겠습니다. 대부분의 구조는 동일하며 이름의 변경과 구현상의 차이만 있을 뿐 Astra plus와 일맥상통합니다.
+
+- OBCameraNode
+
+  - setupDefaultImageFormat
+  - setupTopics
+    - getParameters (몇가지 parameter가 추가되었습니다.)
+    - setupDevices
+    - setupProfiles
+    - ~~setupDefaultStreamCalibData~~
+    - setupCameraCtrlServices
+    - setupPublishers
+    - publishStaticTransforms
+  - ~~startPipeline~~ ⇒ startStreams
+    - setupPipelineConfig
+    - onNewFrameSetCallback
+      - color_frame
+      - depth_frame
+      - ir_frame
+      - publishPointCloud
+
+- onNewFrameSetCallback에서 구현상 변경이 발생하였으며, Orbbec SDK와 ROS 2 Topic을 연동하는 onNewFrameCallback 매핑이 이루어졌습니다.
+
+```cpp
+auto color_frame = std::dynamic_pointer_cast<ob::Frame>(frame_set->colorFrame());
+auto depth_frame = std::dynamic_pointer_cast<ob::Frame>(frame_set->depthFrame());
+auto ir_frame = std::dynamic_pointer_cast<ob::Frame>(frame_set->irFrame());
+onNewFrameCallback(color_frame, COLOR);
+onNewFrameCallback(depth_frame, DEPTH);
+onNewFrameCallback(ir_frame, INFRA0);
+publishPointCloud(frame_set);
+```
