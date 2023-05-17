@@ -145,7 +145,7 @@ ros2 launch basic_stick sensor_stick.launch.py
 
 위 과정은 반복되므로, 센서 plugin 예시와 매개변수들을 위주로 살펴보겠습니다.
 
-- Depth Camera
+### Depth Camera
 
 ⇒ Depth Camera 사용 시 주의해야 할 점이 있습니다. Depth Camera의 좌표계가 ROS 2 좌표계와 일치하지 않아 해당 joint angle을 통해 offset해야 합니다.
 
@@ -196,15 +196,17 @@ ros2 launch basic_stick sensor_stick.launch.py
 
 - xacro 파일 변경 후 Gazebo 예제 실행
 
+`sensor_stick.xacro`의 line 13을 보면 다른 plugin들을 사용하는 추가 xacro file들을 나눠둔 것을 확인할 수 있습니다. *sensor_stick_mono ⇒ sensor_stick_depth*로 토글링한 뒤 다시 launch 해봅시다.
+
 ```xml
 ros2 launch basic_stick sensor_stick.launch.py
 ```
 
 ![Untitled2.png](/kr/ros2_foxy/images12/Untitled2.png?height=350px)
 
-> 다음으로 2D/3D 라이다 데이터를 연동해봅시다.
+> 다음으로 2D/3D 라이다 데이터를 연동해봅시다. 라이다는 바퀴를 가진 fusionbot으로 실습해 보겠습니다.
 
-- 2D lidar plugin
+### 2D lidar plugin
 
 ```xml
 <gazebo reference="lidar">
@@ -262,7 +264,7 @@ ros2 launch fusionbot_description sensor_gz.launch.py
 
 ![Untitled3.png](/kr/ros2_foxy/images12/Untitled3.png?height=350px)
 
-- 3D Lidar plugin
+### 3D Lidar plugin
 
 ⇒ 2D lidar와 plugin은 같지만, vertical이라는 속성이 추가됩니다.
 
@@ -350,7 +352,7 @@ ros2 launch fusionbot_description sensor_gz.launch.py
 
 ![https://rb2023ros.github.io/kr/ros_and_gazebo/images1/gz7.png?height=300px](https://rb2023ros.github.io/kr/ros_and_gazebo/images1/gz7.png?height=300px)
 
-- 예시 실행 전 plugin 적용을 위해 fusionbot.gazebo include line 주석을 해제합니다.
+- 예시 실행 전 plugin 적용을 위해 fusionbot_description/urdf/fusionbot.urdf.xacro 파일에서 line 5, include line 주석을 해제합니다.
 
 ```xml
 <?xml version="1.0"?>
@@ -360,7 +362,7 @@ ros2 launch fusionbot_description sensor_gz.launch.py
   <xacro:include filename="$(find fusionbot_description)/urdf/fusionbot.gazebo" />
 ```
 
-- 예시 실행
+- 수정, 저장 후 예시를 다시 실행해봅시다.
 
 ```xml
 ros2 launch fusionbot_description gz.launch.py
@@ -585,7 +587,7 @@ def robot_spawn_nodes(id, xacro_name, pkg_path):
 
 ⇒ 링크를 통해 이 둘을 비교해봅시다. ⇒ **[camera_right.urdf.xacro](https://github.com/RB2023ROS/gz_ros2_examples/blob/main/chess_world/urdf/camera_right.urdf.xacro) / [camera_left.urdf.xacro](https://github.com/RB2023ROS/gz_ros2_examples/blob/main/chess_world/urdf/camera_left.urdf.xacro)**
 
-⇒ xacro의 사용이 아주 빛나는 상황입니다.
+⇒ 반복되는 구문을 함수화하고, 기능상의 on/off를 변수화하여 별도 관리하고 있습니다. xacro의 사용이 아주 빛나는 상황입니다.
 
 ```xml
 <?xml version="1.0"?>
@@ -664,7 +666,7 @@ $ ros2 launch lidar_world lidar_world.launch.py
 
 ⇒ 해당 world는 제가 youtube 검색을 통해 괜찮다고 생각되어 직접 수정해본 것입니다. (물론 라이센스는 지켜야 합니다.) [youtube link](https://www.youtube.com/watch?v=NNR9RUNz5Pg&t=3s)
 
-- 우선 해당 프로젝트를 분석해봅시다.
+- youtube link를 통해 접근할 수 있는 해당 프로젝트 코드를 분석해봅시다.
 
 ![Untitled8.png](/kr/ros2_foxy/images12/Untitled8.png?height=250px)
 

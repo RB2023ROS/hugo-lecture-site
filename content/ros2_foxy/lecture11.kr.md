@@ -896,6 +896,12 @@ start_gazebo_client_cmd = IncludeLaunchDescription(
 
 - 새로운 파일이 추가되었으니, package를 빌드하고, launch file을 다시 실행해봅시다.
 
+1. my_world package에 worlds 폴더 추가
+2. worlds 폴더 안에 여러분의 world 파일을 위치시킵니다.
+3. 새로운 folder가 추가되었으니 CMakeLists.txt를 수정하고 빌드합니다.
+4. launch file 수정 (직접 작성하셔도 좋고, 제가 제공드리는 template을 사용하셔도 됩니다.)
+5. ros2 launch를 통해 gazebo_ros에서 여러분의 world를 불러와봅시다!
+
 ```python
 colcon build --packages-select src_gazebo
 source install/local_setup.bash

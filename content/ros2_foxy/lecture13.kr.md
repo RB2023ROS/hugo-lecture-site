@@ -33,7 +33,7 @@ from sensor_msgs.msg import Image # Image is the message type
 from cv_bridge import CvBridge # Package to convert between ROS and OpenCV Images
 import cv2 # OpenCV library
 
-VIDEO_FILE_ROOT = "/home/kimsooyoung/djhrd_ws/rosbag/img_pub_test.mp4"
+VIDEO_FILE_ROOT = "/home/kimsooyoung/ros2_ws/rosbag2/img_pub_test.mp4"
 ```
 
 - 패키지를 빌드한 뒤, 예시를 실행합니다.
@@ -41,7 +41,7 @@ VIDEO_FILE_ROOT = "/home/kimsooyoung/djhrd_ws/rosbag/img_pub_test.mp4"
 ```python
 # Terminal 1 - pkg build and run
 cbp py_cv_tutorial && source install/local_setup.bash
-ros2 run py_cv_tutorial img_sub
+ros2 run py_cv_tutorial img_pub
 
 # Terminal 2 - rqt_image_view
 ros2 run rqt_image_view rqt_image_view
@@ -153,7 +153,7 @@ class ImageSubscriber(Node):
         edge_frame = self.hough_transform(current_frame)
 ```
 
-- imgmsg_to_cv2를 통해 CV::Mat으로 변환된 이미지 데이터를 OpenCV의 다양한 기능들과 함께 사용할 수 있습니다. 코드의 imshow 부분을 바꿔서 이미지 처리를 적용해 봅시다. 예시를 위해 직선검출 알고리즘을 사용해 보았습니다.
+- imgmsg_to_cv2를 통해 CV::Mat으로 변환된 이미지 데이터를 OpenCV의 다양한 기능들과 함께 사용할 수 있습니다. 코드의 imshow 부분을 위와 같이 주석 토글하여 이미지 처리를 적용해 봅시다. 예시를 위해 직선검출 알고리즘을 사용해 보았습니다.
 
 ![Untitled4.png](/kr/ros2_foxy/images13/Untitled4.png?height=300px)
 
@@ -169,11 +169,13 @@ class ImageSubscriber(Node):
 
 ```bash
 $ ros2 run py_cv_tutorial rosbag2_to_timedimg
-/home/kimsooyoung/djhrd_ws/quadrupped_train/quadrupped_train.bag_0.db3
+/home/kimsooyoung/ros2_ws/rosbag2/quadrupped_train/quadrupped_train.bag_0.db3
 saved: color_1666796292992515592.png
 saved: color_1666796293035428479.png
 saved: color_1666796293079139778.png
 saved: color_1666796293120768031.png
+saved: color_1666796293161406687.png
+...
 ```
 
 - 예제 실행 전 main 함수에서 bag 파일의 위치를 여러분의 것으로 수정해야 합니다.
@@ -182,12 +184,12 @@ saved: color_1666796293120768031.png
 def main(args=None):
 
     # Change below roots to your ros2 bag locations
-    ROOT_DIR = "/home/kimsooyoung/djhrd_ws/quadrupped_train"
+    ROOT_DIR = "/home/kimsooyoung/ros2_ws/rosbag2/quadrupped_train"
     FILENAME = "/quadrupped_train.bag_0.db3"
     DESCRIPTION = "color_"
 ```
 
-- 예제 실행 후 사진과 같이 생성된 이미지들이 보인다면 성공입니다.
+- 예제 실행 후 사진과 같이 생성된 이미지들이 보인다면 성공입니다. wsl을 사용중이신 분들은 아래와 같이 파일 탐색기를 사용하세요
 
 ![Untitled5.png](/kr/ros2_foxy/images13/Untitled5.png?height=400px)
 
@@ -480,6 +482,13 @@ Type "help", "copyright", "credits" or "license" for more information.
 #### PCL IO
 
 - pcd 포멧의 point cloud 데이터를 읽고, 저장하고, 시각화하는 방법은 아래와 같습니다.
+
+```
+cd py_pcl_tutorial/exercise
+python3 example1_load_and_view.py
+```
+
+- example1_load_and_view.py
 
 ```python
 import pcl
@@ -792,7 +801,7 @@ ros2 run py_pcl_tutorial pcl_cluster_pub
 ![Untitled24.png](/kr/ros2_foxy/images13/Untitled24.png?height=400px)
 
 {{% notice note %}}
-사진과 같이 물체별로 다른 색상이 적용된 새로운 pointcloud topic을 확인할 수 있습니다.
+rviz2를 통해 /cluster topic을 subscribe 하면, 사진과 같이 물체별로 다른 색상이 적용된 새로운 pointcloud topic을 확인할 수 있습니다.
 {{% /notice %}}
 
 > 코드를 분석하기 전, 전체 시스템을 요약해보았습니다.
