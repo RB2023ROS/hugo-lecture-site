@@ -269,6 +269,8 @@ ros2 run rqt_image_view rqt_image_view
 ros2 launch chess_world chess_world.launch.py
 ```
 
+![chess_world.png](/kr/ros2_foxy/images13/chess_world.png?height=400px)
+
 - 사용하고 싶은 topic 이름을 img_sub.cpp에 반영한 뒤 예시를 실행합니다.
 
 ```cpp

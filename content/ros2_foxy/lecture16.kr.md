@@ -10,7 +10,7 @@ draft: false
 
 ⇒ 그런 의미에서 이번 시간에는 코드 작업이 전혀 없어도 ROS와 ROS 2를 연동시킬 수 있는 ROS bridge라는 것을 실습해 보겠습니다.
 
-![Untitled.png](/kr/ros2_foxy/images16/Untitled.png?height=300px)
+![Untitled.png](/kr/ros2_foxy/images16/Untitled.png?height=250px)
 
 image from : [swri.org](https://www.swri.org/industry/industrial-robotics-automation/blog/the-ros-1-vs-ros-2-transition)
 

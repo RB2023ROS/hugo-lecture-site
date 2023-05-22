@@ -32,10 +32,11 @@ $ ros2 launch basic_stick moving_stick.launch.py
 > gazebo world 내에 table등 원하는 물체를 추가합니다.
 
 # Terminal 2
-ros2 topic pub /forward_position_controller/commands std_msgs/msg/Float64MultiArray "data:
-- 0.1"
-> 마지막 data value를 바꿔가면서 원하는 기울기로 조정해보세요!
+ros2 topic pub --once /forward_position_controller/commands std_msgs/msg/Float64MultiArray "data:
+- -0.1"
 ```
+
+> 마지막 data value를 바꿔가면서 원하는 기울기로 조정해보세요!
 
 ![Untitled1.png](/kr/ros2_foxy/images14/Untitled1.png?height=300px)
 
