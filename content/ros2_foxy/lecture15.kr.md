@@ -954,7 +954,11 @@ int main(int argc, char * argv[])
 
 ### Composition using launch actions
 
-- composition container와 실행될 component들을 명시하는 launch action도 사용할 수 있습니다.
+- composition container와 실행될 component들을 명시하는 launch action도 사용할 수 있습니다. (talker와 listener, Component Manager를 함께 실행하는 launch file을 작성해보았습니다.)
+
+```python
+ros2 launch composition_tutorial talk_listen.launch.py
+```
 
 ```cpp
 import launch
@@ -983,6 +987,10 @@ def generate_launch_description():
 
     return launch.LaunchDescription([container])
 ```
+
+- Component Manager는 rqt_graph를 통해 구별하기 쉽지 않습니다. 따라서 적절한 이름을 부여하는 것이 디버깅에 용이합니다.
+
+![rqt_graph.png](/kr/ros2_foxy/images15/rqt_graph.png?height=300px)
 
 - 기본 Container 이름은 /ComponentManager 이지만, remapping을 통해 namespace를 지정하거나 이 이름을 바꿀 수 있습니다.
 

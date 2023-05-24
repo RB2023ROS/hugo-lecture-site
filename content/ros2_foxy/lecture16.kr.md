@@ -37,11 +37,20 @@ image from : [swri.org](https://www.swri.org/industry/industrial-robotics-automa
 ```python
 sudo apt-get install ros-noetic-husky-desktop -y
 sudo apt-get install ros-noetic-husky-simulator -y
+sudo apt-get install ros-noetic-husky-gazebo -y
 
-# Terminal 1
-roslaunch husky_gazebo husky_empty_world.launch
+# 새로운 터미널을 실행시킨 뒤 1번을 선택하여 ROS 1 noetic 터미널로 전환합니다.
+0) Do nothing
+1) ROS 1 noetic
+2) ROS 2 foxy
+3) ROS 2 galactic
+4) ROS2/ROS1_bridge
+h) Help
+Please choose an option: 1
+# 동일 터미널에서 아래 명령어를 입력합니다.
+roslaunch husky_gazebo empty_world.launch
 
-# Terminal 2
+# 두번째 터미널도 ROS 1 noetic 터미널로 전환합니다.
 $ rostopic list
 ```
 
@@ -68,7 +77,7 @@ $ rostopic list
 우리의 목표는 지금 보이는 cmd_vel에게 topic publish를 하여 ROS 2가 아닌, ROS 상의 로봇을 제어해보는 것입니다.
 {{% /notice %}}
 
-- 새로운 터미널을 열고, 초기 옵션 선택 시 3번을 선택하면 ros1 bridge가 실행됩니다. (아마 실행 시 오류가 등장할 것입니다.)
+- husky_gazebo를 종료한 뒤, 새로운 터미널을 열고 초기 옵션 선택에서 (ROS2/ROS1_bridge)를 선택하면 ros1 bridge가 실행됩니다. (아마 실행 시 오류가 등장할 것입니다.)
 
 ```python
 ******************************************************
@@ -94,6 +103,10 @@ Source Eclipse Cyclone DDS successfully!
 
 - ROS1의 Node들끼리 데이터를 주고받기 위해서는 어떤 노드가 존재하는지, id는 몇번인지 등의 정보가 공유되어야 합니다. 아래 그림의 **ROS Master**가 이를 관리해주는 것이라고 이해하시면 되며, ROS 2는 DDS가 이를 알아서 해주기 때문에 편하게 사용할 수 있는 것입니다.
 
+{{% notice note %}}
+참고로 roslaunch를 사용하면 기본적으로 roscore도 함께 실행됩니다.
+{{% /notice %}}
+
 ![Untitled2.png](/kr/ros2_foxy/images16/Untitled2.png?height=300px)
 
 image from : [clearpathrobotics](http://www.clearpathrobotics.com/assets/guides/kinetic/ros/Intro%20to%20the%20Robot%20Operating%20System.html)
@@ -101,20 +114,22 @@ image from : [clearpathrobotics](http://www.clearpathrobotics.com/assets/guides/
 - 다시 한 번, rosmaster를 실행시킨 뒤, cmd_vel 제어를 해봅시다.
 
 ```bash
-# Terminal 1 - rosmaster => 1번 선택
-roscore
+# Terminal 1 => ROS 1 noetic 선택 후
+roslaunch husky_gazebo empty_world.launch
 
-# Terminal 2 - ros bridge => 3번 선택
-created 1to2 bridge for topic '/rosout_agg' with ROS 1 type 'rosgraph_msgs/Log' and ROS 2 type 'rcl_interfaces/msg/Log'
-created 2to1 bridge for topic '/rosout' with ROS 2 type 'rcl_interfaces/msg/Log' and ROS 1 type 'rosgraph_msgs/Log'
+# Terminal 2 - ros bridge 선택
+Created 2 to 1 bridge for service /ekf_localization/enable
+Created 2 to 1 bridge for service /gazebo/clear_body_wrenches
+Created 2 to 1 bridge for service /gazebo/clear_joint_forces
+...
 
-# Terminal 3 - ros2 cmd_vel control => 2번 선택 후 제어
+# Terminal 3 - ROS 2 Foxy 선택 후 cmd_vel control
 ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```
 
 - ROS 2로 설정된 터미널에서 ROS 1으로 구동되고 있는 로봇을 조종할 수 있습니다.
 
-![ros_bridge.gif](/kr/ros2_foxy/images16/ros_bridge.gif?height=400px)
+![ros_bridge.png](/kr/ros2_foxy/images16/ros_bridge.png?height=450px)
 
 {{% notice note %}}
 ros bridge가 있으니 ROS 2 개발을 굳이 하지 않아도 된다고 생각할 수 있습니다. 하지만 보안, 지연과 같은 ROS 1의 고질적인 문제들은 여전히 남아있게 되므로 프로젝트를 시작하는 단계라면, 처음부터 ROS 2로 모든 개발을 진행하시길 추천드립니다.
@@ -435,7 +450,7 @@ QoS profile:
 DDS QoS는 RxO (requested by offered) 특성을 갖고 있어 서로 양립할 수 없는 조합이 존재합니다. 예를 들어, Publish의 Reliability가 BEST_EFFORT일때, Subscriber의 Reliability가 RELIABLE라면, Topic 통신이 발생할 수 없습니다.
 {{% /notice %}}
 
-- 코드를 수정하여 직접 실습해봅시다.
+- 코드 수정을 통해 서로 다른 QoS 통신이 가능한지 직접 실습해봅시다. 코드 내 `qos_profile_sensor_data` / `my_profile`을 변경한 뒤 실행해보고 topic 통신이 잘 이루어지는지 확인해보세요!
 
 ```python
 # qos_example_publisher.py
@@ -461,7 +476,7 @@ self.pose_subscriber = self.create_subscription(
 )
 ```
 
-- 코드 변경 후 실행 - Warning과 함께 Subscriber가 동작하지 않음을 알 수 있습니다.
+- 코드 변경 후 실행
 
 ```python
 $ ros2 run py_topic_tutorial qos_example_publisher
@@ -469,6 +484,10 @@ $ ros2 run py_topic_tutorial qos_example_publisher
 $ ros2 run py_topic_tutorial qos_example_subscriber
 [WARN] [1673945160.455319911] [string_sub_node]: New publisher discovered on this topic, offering incompatible QoS. No messages will be received from it. Last incompatible policy: RELIABILITY_QOS_POLICY
 ```
+
+{{% notice note %}}
+Warning과 함께 Subscriber가 동작하지 않음을 알 수 있습니다.
+{{% /notice %}}
 
 > C++에서는 아래와 같이 프로그래밍 합니다.
 
