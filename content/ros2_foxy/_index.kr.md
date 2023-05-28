@@ -26,5 +26,5 @@ pre = "<b>[New]ROS 2 Foxy. </b>"
 - [Lecture16. Useful ROS 2 Examples (Misc)](/kr/ros2_foxy/lecture16)
 - [Lecture17. Real Hardware Examples](/kr/ros2_foxy/lecture17)
 - [Lecture18. Point Cloud Deep Learning Example (PointNet)](/kr/ros2_foxy/lecture18)
-- [Lecture19. NVIDIA Isaac Sim](/kr/ros2_foxy/lecture19)
+- [Lecture19. Orbbec ROS 2 Package - Final](/kr/ros2_foxy/lecture19)
 - [Lecture20. NVIDIA Jetson Platform](/kr/ros2_foxy/lecture20)
