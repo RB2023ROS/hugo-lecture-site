@@ -2086,6 +2086,45 @@ $ ros2 param list
 | ob_camera_node.cpp         | 실질적인 topic publish, service server들이 구현되어 있던 코드입니다. 기능은 동일하지만 구조에서 차이가 발생하였습니다.                 |
 | ob_camera_node_factory.cpp | 세마포어를 사용함에 따른 구현상의 작은 변화가 발생하였습니다.                                                                          |
 
+- OBCameraNodeFactory에서의 thread vs semaphore - 이전 버전
+
+```cpp
+void OBCameraNodeFactory::init() {
+  ctx_->setLoggerSeverity(OB_LOG_SEVERITY_NONE);
+  is_alive_.store(true);
+  parameters_ = std::make_shared<Parameters>(this);
+  serial_number_ = declare_parameter<std::string>("serial_number", "");
+  wait_for_device_timeout_ = declare_parameter<double>("wait_for_device_timeout", 2.0);
+  reconnect_timeout_ = declare_parameter<double>("reconnect_timeout", 2.0);
+  query_thread_ = std::thread([=]() {
+    std::chrono::milliseconds timespan(static_cast<int>(reconnect_timeout_ * 1e3));
+    rclcpp::Time first_try_time = this->now();
+    while (is_alive_ && !device_) {
+        ...
+        std::this_thread::sleep_for(actual_timespan);
+      }
+    }
+  });
+}
+```
+
+- OBCameraNodeFactory에서의 thread vs semaphore - 신규 버전
+
+```cpp
+std::shared_ptr<ob::Device> OBCameraNodeDriver::selectDevice(
+    const std::shared_ptr<ob::DeviceList> &list) {
+  if (device_num_ == 1) {
+    RCLCPP_INFO_STREAM(logger_, "Connecting to the default device");
+    return list->getDevice(0);
+  }
+  sem_t *device_sem = sem_open(DEFAULT_SEM_NAME.c_str(), O_CREAT, 0644, 1);
+  if (device_sem == SEM_FAILED) {
+    RCLCPP_INFO_STREAM(logger_, "Failed to open semaphore");
+    return nullptr;
+  }
+  ...
+```
+
 {{% notice note %}}
 list_devices_node.cpp의 빌드 결과물인 list_devices_node의 실행 결과입니다.
 {{% /notice %}}
@@ -2115,10 +2154,10 @@ ros2 run orbbec_camera list_devices_node
     - publishStaticTransforms
   - ~~startPipeline~~ ⇒ startStreams
     - setupPipelineConfig
-    - onNewFrameSetCallback
-      - color_frame
-      - depth_frame
-      - ir_frame
+    - ~~frameSetCallback~~ ⇒ onNewFrameSetCallback
+      - onNewFrameCallback(color_frame)
+      - onNewFrameCallback(depth_frame)
+      - onNewFrameCallback(ir_frame)
       - publishPointCloud
 
 - onNewFrameSetCallback에서 구현상 변경이 발생하였으며, Orbbec SDK와 ROS 2 Topic을 연동하는 onNewFrameCallback 매핑이 이루어졌습니다.

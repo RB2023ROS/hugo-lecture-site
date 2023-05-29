@@ -213,7 +213,7 @@ SPDP 교환 이후, 상대방 Participant의 정보를 통해 양측 Participan
 
 ![Untitled7.png](/kr/ros2_foxy/images16/Untitled7.png?height=300px)
 
-이후, Topic 수행을 위해 각 Participant에 Endpoint에 해당하는 Publisher와 Datawriter가 하나씩 생성됩니다.
+이후, Topic 수행을 위해 각 Participant의 Endpoint에 해당하는 Publisher와 Datawriter가 하나씩 생성됩니다.
 
 ![Untitled8.png](/kr/ros2_foxy/images16/Untitled8.png?height=300px)
 
@@ -322,7 +322,7 @@ RxO는 Requested/Offered의 약자로 QoS가 적용되는 대상을 Publisher
 - **‘N/A’** : Publisher 측과 Subscriber 측 중 한 측에만 적용되어야 한다.
 
 {{% notice note %}}
-Changeable이 ‘YES’ 일 경우에는, 동작하면서도 QoS 의 값이 변경될 수 있지만, ‘NO’일 경우에는 처음 생성된 이후에는 변경할 수 없습니다.
+Modifiable이 ‘YES’ 일 경우에는, 동작하면서도 QoS 의 값이 변경될 수 있지만, ‘NO’일 경우에는 처음 생성된 이후에는 변경할 수 없습니다.
 {{% /notice %}}
 
 - **HISTORY** : 데이터의 재전송을 위해 HistoryCache내 데이터 보관 방법을 결정하며 두 가지 속성을 설정 할 수 있습니다.
@@ -374,7 +374,7 @@ image from : [오로카](https://cafe.naver.com/openrt/24319)
 
 > ros2 프로그래밍에서 QoS를 설정하는 방법은 매우 간단합니다. Publisher, Subscriber 클래스를 생성하면서 QoS 옵션을 매개변수로 전달하면 됩니다.
 
-- python example - RMW QoS Profile 사용 시
+- py_topic_tutorial/qos_example - RMW QoS Profile 사용 시
 
 ```python
 from rclpy.qos import qos_profile_sensor_data

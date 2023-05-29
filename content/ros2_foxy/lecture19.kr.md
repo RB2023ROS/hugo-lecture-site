@@ -766,7 +766,7 @@ sudo apt install ros-foxy-rviz-imu-plugin -y
 [INFO] [1685265445.244405298] [rviz]: Message Filter dropping message: frame 'camera_gyro_optical_frame' at time 1685265444.751 for reason 'Unknown'
 ```
 
-- 실제 topic data를 살펴보아도 frame*id는 camera_gyro_optical_frame로 되어있는 반면, tf2 tree에서 해당 tf2는 확인되지 않습니다. 더불어 angular_velocity만 갱신될 뿐 제일 중요한 orientation data를 얻을 수 없습니다. *(orbbec측의 빠른 업데이트를 기대해봅시다.)\_
+- 실제 topic data를 살펴보아도 frame id는 camera_gyro_optical_frame로 되어있는 반면, tf2 tree에서 해당 tf2는 확인되지 않습니다. 더불어 angular_velocity만 갱신될 뿐 제일 중요한 orientation data를 얻을 수 없습니다. (orbbec측의 빠른 업데이트를 기대해봅시다.)
 
 ```xml
 ---

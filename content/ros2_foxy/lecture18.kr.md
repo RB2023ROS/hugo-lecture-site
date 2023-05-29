@@ -10,6 +10,10 @@ draft: false
 
 이번 시간에는 ROS 2와 딥러닝 모델을 결합하여 Application을 구현해보는 예시를 준비했습니다. 사실 제가 딥러닝 분야에 지식은 매우 얕은지라 모델에 대한 설명은 불가합니다. PyTorch를 통해 구현된 오픈소스에 기반하여 동작하는 ROS 2 코드를 개발하는 맥락에 집중해주시면 감사하겠습니다!
 
+{{% notice note %}}
+이번 예시는 cuda, cudnn 등 GPU를 활용하는 부분이 많습니다. 사용하시는 노트북이 GPU 드라이버를 지원한다면 괜찮지만 그렇지 않은 경우 학습 시 매우 많은 시간이 요구됩니다.
+{{% /notice %}}
+
 - 이번 시간 사용할 모델은 스탠포드의 **PointNet**으로, 3D PointCloud의 feature를 추출하는 가장 대표적인 네트워크입니다.
 
 ![Untitled1.png](/kr/ros2_foxy/images18/Untitled1.png?height=200px)
@@ -77,7 +81,7 @@ pip install open3d
 pip install --upgrade numpy
 ```
 
-- 제공된 검증 코드 내부 모델 경로와 dataset 경로를 수정한 뒤, 예시 프로그램을 실행합니다.
+- 제공된 검증 코드 pointnet_test.py 내부 모델 경로와 dataset 경로를 수정한 뒤, 예시 프로그램을 실행합니다.
 
 ```python
 cd Open3D-PointNet
@@ -127,6 +131,20 @@ classes_dict = {'Airplane': 0, 'Bag': 1, 'Cap': 2, 'Car': 3, 'Chair': 4,
 ![Untitled8.png](/kr/ros2_foxy/images18/Untitled8.png?height=200px)
 
 - 앞선 내용들을 잘 생각하면서, 예시부터 실행해봅시다.
+
+{{% notice note %}}
+예시 실행 전, `pointnet_torch/pointnet_node.py` 코드 내 pth 파일 위치를 갱신해주세요!
+{{% /notice %}}
+
+```python
+class PointNetNode(Node):
+
+    def __init__(self):
+        super().__init__('pointnet_cls_node')
+
+        self.declare_parameter('model_path', '/home/kimsooyoung/Downloads/pointnet/pointnet.pytorch/utils/cls/cls_model_23.pth')
+        self.declare_parameter('num_points', 10000)
+```
 
 ```python
 # Terminal 1 - gazebo launch
